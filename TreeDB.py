@@ -224,7 +224,7 @@ class TreeCRUD:
         SerializationDB.pickleOut(content, TreeCRUD.getPicklePath())
     
     def getPicklePath():
-        return Path.joinPath(LibsDB.cloudPath(), r"Global\code\libs\RLibs\resource\pickle","TreeCRUD.pkl")
+        return LibsDB.picklePath("TreeCRUD")
     
     def textWithBlueBackground(txt = 'txt'):
         from htmlDB import htmlDB

@@ -9,7 +9,7 @@ from LibsDB import LibsDB
 class jupyterDB:
     def header(topic = 'headerName', fontFace = "comic sans ms"):
         import random, yaml
-        colors = yaml.safe_load(File.getFileContent(Path.joinPath(getPath(), 'resource', "colorNames.yaml")))
+        colors = yaml.safe_load(File.getFileContent(Path.joinPath(getPath(),'..', 'resource', "colorNames.yaml")))
         val = "# <font face='{}' color ='{}'>{}</font>".format(fontFace, random.choice(colors),topic)
         print(val)
         from ClipboardDB import ClipboardDB

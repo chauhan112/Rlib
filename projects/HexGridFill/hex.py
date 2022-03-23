@@ -1,5 +1,5 @@
 from RPygame import IPyGameObject, IPositionable, IEventable, MouseClick, ICanvas, \
-    IEvent, Game, StaticScreen,RegularPolygon, PolyColorChange, NonRegularPolygon
+    IEvent, Game, StaticScreen,RegularPolygon, PolyColorChange, NonRegularPolygon, PButton
 import numpy as np
 import pygame
 from OpsDB import IOps
@@ -244,7 +244,7 @@ class GameModel:
         from modules.Explorer.personalizedWidgets import EmptyClass
         ec = EmptyClass()
         ec.head = (255, 0, 0)
-        ec.unvisited = (0,255, 0)
+        ec.unvisited = (0,0, 0)
         ec.obstacle = (255,255, 0)
         ec.visited = (0,0,255)
         return ec
@@ -252,6 +252,7 @@ class DnSAction(MouseClick):
     def __init__(self, parent):
         self._parent = parent
         self._pos_poly_map = None
+        self._path = []
     def check(self, event):
         if not super().check(event):
             return False
@@ -275,6 +276,7 @@ class DnSAction(MouseClick):
             if poly is not None:
                 poly.set_color(self._model.color.head)
                 self._model.current = pos
+                self._path.append(line_of_movement)
     def set_model(self, model: GameModel):
         self._model = model
     def _get_poly_for_position(self, pos):
@@ -283,6 +285,39 @@ class DnSAction(MouseClick):
             for poly in self._parent.get_polygons():
                 self._pos_poly_map[poly.coordinate] = poly
         return self._pos_poly_map[pos]
+class BackButton:
+    def __init__(self):
+        self._mouse_click = MouseClick(None)
+        self._btn = PButton()
+        self._btn.set_text("back", size=20)
+        self._btn.set_size(40, 80)
+        event = self._btn.get_event()
+        event.set_check_func(self.check_func)
+        event.set_event_func(self.callback)
+
+    def callback(self, state):
+        dgm = self._dgm
+        if len(dgm._event._path) == 0:
+            return
+        last_path = dgm._event._path.pop()
+        first= last_path[0]
+        for val in last_path:
+            dgm._model._visited[val] = False
+            poly = dgm._event._get_poly_for_position(val)
+            poly.set_color(dgm._model.color.unvisited)
+        dgm._model.set_visited(first)
+        dgm._model.current = first
+        dgm._event._get_poly_for_position(first).set_color(dgm._model.color.head)
+        
+    def check_func(self, state, event):
+        clicked = self._mouse_click.check(event)
+        return clicked and self._btn.lies(self._mouse_click._point)
+    
+    def get_button(self):
+        return self._btn 
+    
+    def set_model(self, game_model):
+        self._dgm = game_model
 class DarkNShadowGameMock(IOps):
     def __init__(self):
         self._game = None
@@ -296,23 +331,25 @@ class DarkNShadowGameMock(IOps):
         self._event.set_model(self._model)
         self._gr.set_event(self._event)
         self._gr.set_direction_of_tiles((0,1))
+        self._game = Game()
+        self._back_btn = BackButton()
+        self._back_btn.set_model(self)
     def execute(self):
-        self._load_initial_state()
-        try:
-            g = Game()
+            self._load_initial_state()
+        # try:
             sc = StaticScreen(BOARD_SIZE)
-            g.add_screen(sc)
+            self._game.add_screen(sc)
             sc.setframerate(30)
             sc.add_object(np.array(BOARD_SIZE)/2, self._gr)
-            g.start()
-        except Exception as e:
-            print(e)
-            pygame.quit()
+            sc.add_object((0,0), self._back_btn.get_button())
+            self._game.start()
+        # except Exception as e:
+            # print(e)
+            # pygame.quit()
     def load(self, pkl):
         self._model.load_from_pickle(pkl)
     def _load_initial_state(self):
         self._event._get_poly_for_position(self._model.current).set_color(self._model.color.head)
-        print(self._model._obstacles_pos)
         for pos in self._model._obstacles_pos:
             self._event._get_poly_for_position(pos).set_color(self._model.color.obstacle)
 class ClickInfo(PolyColorChange):

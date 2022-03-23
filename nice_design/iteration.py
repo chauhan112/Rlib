@@ -1,3 +1,4 @@
+from modules.Explorer.personalizedWidgets import EmptyClass
 class IFunc:
     def get_key(self):
         pass
@@ -42,6 +43,7 @@ class IDicIterableStrategy:
 class IIterable(INextable, IPreviousable):
     def get(self):
         pass
+
 class INode:
     def get_children(self) -> list:
         pass
@@ -74,6 +76,7 @@ class FirstLevelIterator(IDicIterableStrategy, IIterable, IResetable):
         return self._current_index -1 >= 0
     def get(self):
         return self.get_key()
+        
 class DicIterator(IIterable):
     def __init__(self, dic):
         self.set_dic(dic)
@@ -167,11 +170,9 @@ class Node(INode):
     def get_parent(self):
         return self.parent
 class AnySizeList(IIterable, IResetable):
-    def __init__(self):
-        self._current = None
     def set_data(self, data):
         self._data = data
-        self._dimension  = self._get_shape(self.data)
+        self._dimension  = self._get_shape(self._data)
         self._num_system = NTupleNSystem(self._dimension)
         self.reset()
     def get(self):
@@ -192,7 +193,77 @@ class AnySizeList(IIterable, IResetable):
     def reset(self):
         self._num_system.set_zeros()
     def get_index_of_current_element(self):
-        return self._current
+        return self._num_system._current
     def _get_shape(self, data):
         import numpy as np
         return np.array(data).shape
+    def move_forward(self):
+        self._num_system.add(1)
+    def move_back(self):
+        self._num_system.add(-1)
+class IChildMaker:
+    def get_children(self, value):
+        pass
+    def get_id(self, value):
+        pass
+class GChildMaker(IChildMaker):
+    def set_container(self, container):
+        self._container = container
+    def get_children(self, value):
+        return self._func(self, value)
+    def set_child_getter_func(self, func):
+        self._func = func
+    def get_id(self, value):
+        return self._id_getter_func(self, value)
+    def set_id_getter_func(self, func):
+        self._id_getter_func = func
+class MakeGraphFromIterator(IOps):
+    def __init__(self, add_parent_info = True):
+        self._node_map = {}
+        self._parent_flag = add_parent_info
+        
+    def set_iterable(self, iterator: IIterable):
+        self._iter = iterator
+        if type(self._iter) == list:
+            self._iter = AnySizeList()
+            self._iter.set_data(iterator)
+
+    def execute(self):
+        self._maker.set_container(self._iter._data)
+        visited = set()
+        while self._iter.has_next():
+            val = self._iter.get()
+            self._add_children(self._maker.get_id(val), self._maker.get_children(val), visited)
+            self._iter.move_forward()
+            
+    def _get_node(self, idd):
+        if idd not in self._node_map:
+            self._node_map[idd] = Node(idd)
+        return self._node_map[idd]
+    
+    def _add_children(self, idd, childbre, visited):
+        val = self._get_node(idd)
+        for ch in childbre:
+            child_node = self._get_node(ch)
+            val.children.append(child_node)
+            if self._parent_flag:
+                child_node.parent = val
+                
+    def set_child_maker(self, maker: IChildMaker ):
+        self._maker = maker
+
+class Main:
+    def make_graph(radius=None):
+        from projects.HexGridFill.hex import GameModel
+        gm = GameModel()
+        if radius is not None:
+            gm._grid_model.set_radius(radius)
+        values = gm._grid_model.get_all_tiles()
+        ch = GChildMaker()
+        ch.set_child_getter_func(lambda st, x: dgm._model.get_nebors(x._pos))
+        ch.set_id_getter_func(lambda st, x: x._pos)
+        mgfi = MakeGraphFromIterator(False)
+        mgfi.set_iterable(values)
+        mgfi.set_child_maker(ch)
+        mgfi.execute()
+        return mgfi._node_map

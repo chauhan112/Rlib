@@ -9,8 +9,6 @@ class IPyGameObject:
     def add(self, screen):
         raise NotImplementedError('abstract method')
 class IEventable:
-    def is_eventable(self, event: IEvent):
-        raise NotImplementedError('abstract method')
     def get_event(self) -> IEvent:
         raise NotImplementedError('abstract method')
 class IPositionable:
@@ -183,3 +181,74 @@ class PolyColorChange(MouseClick):
     def callback(self):
         import random
         self._parent.set_color((random.randint(0,255), random.randint(0,255), random.randint(0,255)))
+
+class GEventable(IEvent):
+    def set_event_func(self, func):
+        self._func = func
+    def set_check_func(self,check_func):
+        self._check_func = check_func
+    def check(self, event):
+        return self._check_func(self, event)
+    def set_data(self, data):
+        self._data = data
+    def callback(self):
+        self._func(self)
+    def set_parent(self, parent):
+        self._parent = parent
+
+class PButton(IPyGameObject, IEventable, Colorable, IPositionable):
+    def __init__(self):
+        self._event = None
+        self._poly = None
+        self._height = None
+        self._width = None
+        self._top_left = None
+        self._center = None
+        self._pytext = None
+        self._background_color = (170,170,170) # gray
+        self.set_text("")
+    def set_top_left_position(self, pos):
+        self._top_left = pos
+        self._set_points()
+    def set_center(self, pos):
+        self._center = pos
+    def set_size(self, height, width):
+        self._height = height
+        self._width = width
+        self._set_points()
+    def set_text(self, text, font="arial", size= 35, pos = (2,2)):
+        self._text = text
+        self._font = font
+        self._font_size = size
+        self._text_pos = pos
+    def get_event(self):
+        if self._event is None:
+            self._event = GEventable()
+            self._event.set_check_func(lambda st, x: False)
+            self._event.set_parent(self)
+        return self._event
+    def add(self, screen):
+        a,b = self._top_left
+        pygame.draw.rect(screen.get(), self._background_color, [a,b,self._width,self._height])
+        i, j = self._text_pos
+        if self._pytext is None:
+            
+            smallfont = pygame.font.SysFont(self._font, self._font_size)
+            self._pytext = smallfont.render(self._text , True , (255,255,255))
+        screen.get().blit(self._pytext, (a + i,b +j))
+    def lies(self, pos):
+        if self._poly is None:
+            a, b = self._center
+            h_2, w_2 = self._height/2, self._width/2
+            self._top_left = (a-h_2, b - w_2)
+            self._poly = NonRegularPolygon([self._top_left, (a-h_2, b + w_2), 
+                                            (a + h_2, b + w_2), (a + h_2, b-w_2)])
+        
+        return self._poly.lies(pos[::-1])
+    def _set_points(self):
+        if self._height is not None and self._top_left is not None:
+            a, b = self._top_left
+            self._center =  a + self._height/2, b + self._width /2
+    def set_position(self, pos):
+        self.set_top_left_position(pos)
+        
