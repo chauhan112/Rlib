@@ -76,7 +76,7 @@ class FirstLevelIterator(IDicIterableStrategy, IIterable, IResetable):
         return self._current_index -1 >= 0
     def get(self):
         return self.get_key()
-        
+
 class DicIterator(IIterable):
     def __init__(self, dic):
         self.set_dic(dic)
@@ -217,11 +217,12 @@ class GChildMaker(IChildMaker):
         return self._id_getter_func(self, value)
     def set_id_getter_func(self, func):
         self._id_getter_func = func
+from OpsDB import IOps
 class MakeGraphFromIterator(IOps):
     def __init__(self, add_parent_info = True):
         self._node_map = {}
         self._parent_flag = add_parent_info
-        
+
     def set_iterable(self, iterator: IIterable):
         self._iter = iterator
         if type(self._iter) == list:
@@ -235,12 +236,12 @@ class MakeGraphFromIterator(IOps):
             val = self._iter.get()
             self._add_children(self._maker.get_id(val), self._maker.get_children(val), visited)
             self._iter.move_forward()
-            
+
     def _get_node(self, idd):
         if idd not in self._node_map:
             self._node_map[idd] = Node(idd)
         return self._node_map[idd]
-    
+
     def _add_children(self, idd, childbre, visited):
         val = self._get_node(idd)
         for ch in childbre:
@@ -248,7 +249,7 @@ class MakeGraphFromIterator(IOps):
             val.children.append(child_node)
             if self._parent_flag:
                 child_node.parent = val
-                
+
     def set_child_maker(self, maker: IChildMaker ):
         self._maker = maker
 

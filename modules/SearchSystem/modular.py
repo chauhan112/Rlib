@@ -32,18 +32,18 @@ class IResultDisplayer:
         pass
     def display(self):
         pass
-        
+
 class JupyterResultDisplayer(IResultDisplayer):
     def __init__(self):
         self._results = None
         self._nCols = 6
-        
+
     def set_result(self, results: list[IDisplayableResult]):
         self._results = results
-    
+
     def set_callback(self, callback):
         self._callback = callback
-    
+
     def display(self):
         from WidgetsDB import WidgetsDB
         import ipywidgets as widgets
@@ -51,16 +51,22 @@ class JupyterResultDisplayer(IResultDisplayer):
         output.searchRes.clear_output()
         display(widgets.VBox([output.searchRes, output.buttonRes]))
         with output.searchRes:
-            display(WidgetsDB.getGrid(self._nCols, [self.displayItem(key= x.get_btn_key(), name=x.get_button_name(), 
-                callbackFunc = lambda param: self.callback(x.get_result_info(), output.buttonRes), 
-                                                            tooltip=x.get_tool_tip()) for x in self._results]))
+            elements = []
+            for res in self._results:
+                key = res.get_btn_key()
+                name = res.get_button_name()
+                info = res.get_result_info()
+                tip = res.get_tool_tip()
+                callbackFunc = (lambda val: lambda param: self.callback(val, output.buttonRes))(info)
+                elements.append(self.displayItem(key, name, callbackFunc, tip))
+            display(WidgetsDB.getGrid(self._nCols, elements))
         return output
-    
+
     def callback(self, info, resSect):
         resSect.clear_output()
         with resSect:
             self._callback(info)
-            
+
     def displayItem(self,key, name, callbackFunc, tooltip=None):
         from WidgetsDB import WidgetsDB
         b = WidgetsDB.mButton(name, key, callbackFunc)

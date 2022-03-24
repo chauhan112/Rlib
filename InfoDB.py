@@ -26,15 +26,3 @@ class InfoDB:
         }
         db = Database.dicDB(dic)
         return Database.dbSearch(db, word)
-
-    def personalInfos(word = None):
-        from Database import Database
-        dic = {
-            'phone number': '01627078024',
-            'master card nr': '5401 8712 7678 0440',
-            'master card expiry date': '11/2020',
-            'gmail': 'ichbinsternchen43@gmail.com',
-            'pythonanywhere': "TurboRaja"
-        }
-        db = Database.dicDB(dic)
-        return Database.dbSearch(db, word)

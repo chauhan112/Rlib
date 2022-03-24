@@ -1,4 +1,5 @@
 from modules.Explorer.model import ExplorerUtils, DictionaryExplorer
+import ipywidgets as widgets
 class IRWidget:
     def get(self):
         pass
@@ -27,6 +28,8 @@ class IBox:
         pass
     def get_child(self, nr):
         pass
+    def clear(self):
+        pass
 class RDropdown(IRWidget):
     def __init__(self):
         self._wid = widgets.Dropdown()
@@ -41,7 +44,6 @@ class Addable(IBox):
         self._grid.append(wid)
 class VRBox(Addable, IRWidget):
     def __init__(self):
-        import ipywidgets as widgets
         self._container = widgets.VBox()
         self._children = []
     def get(self):
@@ -53,10 +55,11 @@ class VRBox(Addable, IRWidget):
     def add_rwidget(self, wid: IRWidget):
         self._children.append(wid)
         self.add_ipywidget(wid.get())
+    def clear(self):
+        self._vbox.children = ()
 class HRBox(VRBox):
     def __init__(self):
         self._children = []
-        import ipywidgets as widgets
         self._container = widgets.HBox()
 class HRContrainableBox(Addable):
     def __init__(self):
@@ -77,6 +80,8 @@ class HRContrainableBox(Addable):
         self._children.append(wid)
     def get_child(self, nr):
         return self._children[nr]
+    def clear(self):
+        self._grid.clearGrid()
 class GRWidgetFromIpy(IRWidget):
     def __init__(self, wid):
         self._wid = wid
@@ -88,19 +93,25 @@ class EmptyClass:
 class GenerateNRowsBox(Addable):
     def __init__(self, n, add_row_labels= False):
         self._number_of_rows = n
-        self._box = self._make(n, add_row_labels)
-    def _make(self, n, add_row_labels):
+        self._box = None
+        self.set_row_widgets([HRBox() for i in range(n)])
+        self._add_labels = add_row_labels
+    def _make(self):
         layout = VRBox()
-        for i in range(n):
-            w = HRBox()
-            if add_row_labels:
+        for i in range(self._number_of_rows):
+            w = self._rows_widgets[i]
+            if self._add_labels:
                 w.add_ipywidget(widgets.Label(value= str(i) + " : "))
             layout.add_rwidget(w)
         return layout
     def get(self):
+        if self._box is None:
+            self._box = self._make()
         return self._box.get()
     def get_child(self, nr):
         return self._box.get_child(nr)
+    def set_row_widgets(self, row_widgets: list[IBox]):
+        self._rows_widgets = row_widgets
 class MetaExplorer(IExplorer):
     def __init__(self, exp: IExplorer):
         self._exp = exp
@@ -133,7 +144,6 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         display(self._wid.layout)
         self._fill_values()
     def _create_layout(self):
-        import ipywidgets as widgets
         from WidgetsDB import WidgetsDB
         wid = EmptyClass()
         wid.components = EmptyClass()

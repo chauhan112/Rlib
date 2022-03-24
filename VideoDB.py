@@ -1,22 +1,4 @@
 class VideoDB:
-    def compressVideo(videoFile):
-        pass
-
-    def captureScreen():
-        pass
-
-    def extract(audioOrVideoFile, startTime = None, endTime = None):
-        pass
-
-    def extractSubtitlesFromVideo(videoFile):
-        pass
-
-    def play(audioOrVideo, startTime = 0, endTime=None):
-        pass
-        
-    def crop(x,y, file):
-        pass
-    
     def size(filename):
         import subprocess 
         result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
@@ -27,18 +9,6 @@ class VideoDB:
         return float(result.stdout)
 
 class YoutubeDB:
-    def playLists(listId):
-        pass
-    
-    def playListsInformation(listId):
-        pass
-    
-    def myPlayList():
-        pass
-
-    def updatePlayList():
-        pass
-
     def getSubtitleForVideoId(videoId, original = False):
         from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -51,13 +21,6 @@ class YoutubeDB:
             text += ' ' + line['text']
         return text
 
-class PlayList:
-    def __init__(self):
-        db = ''
-
-    def duration(self):
-        pass
-        
 class AudioDB:
     def playWith():
         class Temp:

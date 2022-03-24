@@ -118,31 +118,41 @@ class ProximitySearch(TextSearch):
 class TelegramHtmlSearch(ISearch):
     def __init__(self):
         self.set_res_collector(GeneralResultCollector({}))
-        self._soup = None
+        self._is_parsed = False
     def set_res_collector(self, collector: IResultCollector):
         self._collector = collector
-    def set_message_html(self, html_file):
-        from FileDatabase import File
-        self._file = html_file
-        self._collector.set_container(File.getFileContent(html_file))
+    def set_htmls(self, html_files):
+        self._files = html_files
     def search(self, word, case = False, reg = False):
         from SearchSystem import DicSearch
-        from modules.SearchSystem.modular import JupyterResultDisplayer, GDisplayableResult
+        from modules.SearchSystem.modular import GDisplayableResult, JupyterResultDisplayer
         from FileDatabase import ChromeHtmlFileOpenerWithHashTag
-        from htmlDB import htmlDB
-        if self._soup is None:
-            self._soup = htmlDB.getParsedData(self._collector.get_container())
+        if not self._is_parsed:
+            self._load_files()
         cr = ChromeHtmlFileOpenerWithHashTag()
-        messages = soup.find_all(attrs={'class': ['message']})
-        user_messages = list(filter(lambda x: 'message-' not in x['id'], messages))
-        dic = {}
-        for val in user_messages:
-            dic[val['id']] = ("".join(list(val.strings))).strip()
-        ds = DicSearch(dic)
-        res = ds.search(word, case, reg)
-        val = [GDisplayableResult(n.replace("message",""), path+f"#go_to_message{n.replace('message','')}",
-                   path+f"#go_to_message{n.replace('message','')}") for n in res]
+        content = self._collector.get_container()
+        val = []
+        for path in content:
+            dic = content[path]
+            ds = DicSearch(dic)
+            message_path = lambda n: path + f"#go_to_message{n.replace('message','')}"
+            val += [GDisplayableResult(n.replace("message",""), message_path(n),message_path(n) )
+                                        for n in ds.search(word, case, reg)]
         jrd = JupyterResultDisplayer()
         jrd.set_callback(cr.openIt)
         jrd.set_result(val)
         jrd.display()
+        
+    def _load_files(self):
+        from FileDatabase import File
+        from htmlDB import htmlDB
+        self._collector.set_container({})
+        for file in self._files:
+            soup = htmlDB.getParsedData(File.getFileContent(file))
+            messages = soup.find_all(attrs={'class': ['message']})
+            user_messages = list(filter(lambda x: 'message-' not in x['id'], messages))
+            dic = {}
+            for val in user_messages:
+                dic[val['id']] = ("".join(list(val.strings))).strip()
+            self._collector.get_container()[file] = dic
+        self._is_parsed = True

@@ -49,13 +49,13 @@ class GraphDB:
                     elif(type(val) == dict):
                         for k in val:
                             pairs.append((key, k))
-                            pairs += getPair(val)
+                            pairs += GraphDB.dic2Pairs(val)
             elif(type(dic[key]) in [int, str, float]):
                 pairs.append((key, dic[key]))
             elif(type(dic[key] == dict)):
                 for k in dic[key]:
                     pairs.append((key, k))
-                    pairs += getPair(dic[key][k])
+                    pairs += GraphDB.dic2Pairs(dic[key][k])
         return pairs
 
     def displayHtml(htmlContent):

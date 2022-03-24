@@ -1,5 +1,4 @@
 from WordDB import WordDB
-from InterfaceDB import ISearchSystem
 class ComparerDB:
     def inCompare(leftIn, right, case = False):
         if(not case):

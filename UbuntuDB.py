@@ -37,6 +37,3 @@ class UbuntuDB:
                         del k['ubuntu'][cat][key]
                 jupyterDB.pickle().write(k, Ops.name)
         return Ops
-
-    def startUpOps():
-        pass

@@ -330,7 +330,7 @@ class JupyterNotebookSE(ISearchEngine):
     
     def callback(self, key):
         self._callbackFunc(key)
-        
+    
 class JupyterNotebookResultReplaceableSE(ISearchEngine):
     def __init__(self,container=None,callbackFunc = print, nCols= 6):
         self._callbackFunc = callbackFunc

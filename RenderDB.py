@@ -7,7 +7,6 @@ class MatrixCalculate:
     
     def render(self):
         line = 1
-        
         while (line != self.maxHeight):
             for i, val in enumerate(self.steps):
                 step, k = val
