@@ -1,5 +1,4 @@
 from modules.Explorer.model import ExplorerUtils, DictionaryExplorer
-import ipywidgets as widgets
 from InterfaceDB import EmptyClass
 class IRWidget:
     def get(self):
@@ -29,6 +28,7 @@ class IBox:
         pass
     def clear(self):
         pass
+import ipywidgets as widgets
 class RDropdown(IRWidget):
     def __init__(self):
         self._wid = widgets.Dropdown()
