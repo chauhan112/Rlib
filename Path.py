@@ -88,7 +88,7 @@ class Path:
                     fileList = [fileList]
                 if(destination == ""):
                     destination = os.getcwd()
-                if os.path.exists(destination):
+                if not os.path.exists(destination):
                     os.makedirs(destination)
                 for f in fileList:
                     shutil.move(f,destination)
@@ -285,7 +285,7 @@ class FrequentPaths:
         val = 'pathsW.pkl'
         if (SystemInfo.isLinux()):
             val = 'paths.pkl'
-        file = Path.joinPath(getPath(), "resource", 'pickle', val)
+        file = Path.joinPath(getPath(),"..", "resource", 'pickle', val)
         paths = SerializationDB.readPickle(file)
         return paths
         

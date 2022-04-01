@@ -125,7 +125,7 @@ class TelegramHtmlSearch(ISearch):
         self._files = html_files
     def search(self, word, case = False, reg = False):
         from SearchSystem import DicSearch
-        from modules.SearchSystem.modular import GDisplayableResult, JupyterResultDisplayer
+        from modules.SearchSystem.modular import GDisplayableResult, JupyterResultDisplayer, DisplayNElement
         from FileDatabase import ChromeHtmlFileOpenerWithHashTag
         if not self._is_parsed:
             self._load_files()
@@ -140,8 +140,12 @@ class TelegramHtmlSearch(ISearch):
                                         for n in ds.search(word, case, reg)]
         jrd = JupyterResultDisplayer()
         jrd.set_callback(cr.openIt)
+        de = DisplayNElement()
+        de.set_limit(30)
         jrd.set_result(val)
+        jrd.set_displayer_way(de)
         jrd.display()
+        
         
     def _load_files(self):
         from FileDatabase import File
@@ -156,3 +160,28 @@ class TelegramHtmlSearch(ISearch):
                 dic[val['id']] = ("".join(list(val.strings))).strip()
             self._collector.get_container()[file] = dic
         self._is_parsed = True
+class DatabasesOfDatabase:
+    def __init__(self, handle = {}):
+        self._handle = handle
+        self.db = None
+        self._tpath = r"D:\TimeLine\2022\telegram-channels"
+    def telegram(self, word, case=False, reg=False):
+        import os
+        from modules.SearchSystem.modular import JupyterResultDisplayer, GDisplayableResult
+        from SearchSystem import DicSearch
+        cpaths = os.listdir(self._tpath)
+        dic = {a:a for a in cpaths}
+        ds = DicSearch(dic)
+        jrd = JupyterResultDisplayer()
+        jrd.set_result([GDisplayableResult(n, '', n) for n in ds.search(word,case,reg)])
+        jrd.set_callback(self._callback)
+        jrd.display()
+    def get(self):
+        return self.db
+    def _callback(self, val):
+        from Path import Path
+        from nice_design.search import TelegramHtmlSearch
+        htmls = Path.filesWithExtension("html", Path.joinPath(self._tpath, val))
+        ths = TelegramHtmlSearch()
+        ths.set_htmls(htmls)
+        self.db = ths

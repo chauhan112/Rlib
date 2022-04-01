@@ -1,29 +1,5 @@
-from modules.FileAnalyser.FileAnalyser import IExplorer
-from modules.mobileCode.tree import LayerDicList, LayeredDisplayElements, Goback
-from modules.mobileCode.CmdCommand import GController, CmdCommandHandler
-class TerminalDicExplorer(IExplorer):
-    def __init__(self, dic,callOnElement=lambda parent, val: val, cmds = []):
-        display_elements = LayeredDisplayElements('l')
-        display_elements._runAfter = True
-        display_elements.setCommand(Goback('b'))
-        self.controller = GController(dic, lister= LayerDicList(3),cmdRunner= CmdCommandHandler(extraCommands= cmds,
-                                        callback= self.callbackFunc), displayer=display_elements )
-        self.callOnElement = callOnElement
-    def callbackFunc(self, ele):
-        cdVal = ele.getCurrentValue()
-        lastPos = ele.parent.parent.elementsDisplayer._lastPos
-        exp = ele.parent.parent.lister
-        lastPos.append(cdVal)
-        from ListDB import ListDB
-        content = ListDB.dicOps().get(exp.dicExp.content, exp.dicExp.currentPath + [cdVal])
-        if (type(content) == dict):
-            exp.dicExp.cd(cdVal)
-        else:
-            self.callOnElement(self, content)
-    def explore(self):
-        self.controller.run()
-from modules.Explorer.personalizedWidgets import EmptyClass
-from modules.Explorer.personalizedWidgets import IExplorer, WidgetsIpyExplorerDisplayer
+from InterfaceDB import EmptyClass
+from modules.Explorer.personalizedWidgets import IExplorer as IExplorer2, WidgetsIpyExplorerDisplayer
 from OpsDB import IOps
 class Node:
     def __init__(self, idd):
@@ -34,7 +10,7 @@ class Node:
     @property
     def value(self):
         return f"node:{self.idd}, d: {self.extra_info.depth}"
-class NodeTreeExplorer(IExplorer):
+class NodeTreeExplorer(IExplorer2):
     def __init__(self, root = None):
         self._pos = [root]
     def cd(self, key):
@@ -49,9 +25,13 @@ class NodeTreeExplorer(IExplorer):
     def dirList(self):
         current = self._pos[-1]
         folders = []
+        files = []
         for c in current.children:
-            folders.append(c.value)
-        return folders, []
+            if len(c.children):
+                folders.append(c.value)
+            else:
+                files.append(c.value)
+        return sorted(folders), sorted(files)
 class Graph2TreeNodeMaker(IOps):
     def __init__(self, graph, first_key):
         self._graph = graph
@@ -137,7 +117,7 @@ class Graph2NodeTreeMakerBreadthFirstSearch(IOps):
             n.extra_info.depth = 0
         return self._node_map[key]
 class Main:
-    def explore(exp: IExplorer, title = "title"):
+    def explore(exp: IExplorer2, title = "title"):
         wied = WidgetsIpyExplorerDisplayer(title)
         wied.set_explorer(exp)
         wied.display()

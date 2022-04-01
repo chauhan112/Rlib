@@ -294,14 +294,3 @@ class TreeCrud(IRunnable):
         return cmds + [AddNewElement("add"), Goback('b')]
 class TreeWithDepth(TreeCrud):
     pass
-    # def run(self):
-        # if self.cnt is None:
-            # self.model.loadReader()
-            # disp = LayeredDisplayElements()
-            # disp._runAfter = True
-            # self.model._currentContent = self.model.getCurrentTree().getContent()
-            # self.cnt = GController(self.model._currentContent, cmdRunner = CmdCommandHandler(
-                        # callback = self._callback, extraCommands= self._getCommands()),
-                    # lister = DicListWithMoreOps(self.layer), displayer = disp)
-        # self.cnt.cmdRunner._loopBreaker = False
-        # self.cnt.run()

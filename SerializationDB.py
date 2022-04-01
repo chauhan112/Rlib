@@ -1,17 +1,17 @@
 import dill as pickle
-from CompressDB import CompressDB
 import os
-from FileDatabase import File
 from LibPath import getPath
 
 class SerializationDB:
     def pickleOut(dataStructure, outFileName):
+        from CompressDB import CompressDB
         data = pickle.dumps(dataStructure)
         dataCompressed = CompressDB.content().compressToBinVal(data)
         with open(outFileName, "wb") as f:
             f.write(dataCompressed)
 
     def readPickle(filePath):
+        from CompressDB import CompressDB
         with open(filePath, "rb") as f:
             binValCompressed = f.read()
         try:

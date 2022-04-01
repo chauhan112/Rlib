@@ -241,7 +241,7 @@ class GameModel:
                 break
         return res
     def _get_color(self):
-        from modules.Explorer.personalizedWidgets import EmptyClass
+        from InterfaceDB import EmptyClass
         ec = EmptyClass()
         ec.head = (255, 0, 0)
         ec.unvisited = (0,0, 0)

@@ -166,3 +166,19 @@ class TreeIterator:
         pass
     def postOrderIterator(self):
         pass
+from OpsDB import IOps
+from modules.Explorer.DictionaryExplorer import Node
+class MaxDepthInverseCalculator(IOps):
+    def __init__(self, root: Node):
+        self._root = root
+    def execute(self):
+        self._root.extra_info.depth = self._assign(self._root)
+    def _assign(self, node):
+        if len(node.children) == 0:
+            node.extra_info.depth = 0
+            return 0
+        depths = []
+        for child in node.children:
+            child.extra_info.depth = self._assign(child)
+            depths.append(child.extra_info.depth)
+        return max(depths) + 1

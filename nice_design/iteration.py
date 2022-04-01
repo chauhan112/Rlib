@@ -1,4 +1,4 @@
-from modules.Explorer.personalizedWidgets import EmptyClass
+from InterfaceDB import EmptyClass
 class IFunc:
     def get_key(self):
         pass

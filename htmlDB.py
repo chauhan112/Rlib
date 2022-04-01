@@ -1,6 +1,5 @@
 import urllib.request
 from bs4 import BeautifulSoup
-import requests
 
 
 class htmlDB:
@@ -19,6 +18,7 @@ class htmlDB:
         return tag[attr]
     
     def downloadPdf(link, name):
+        import requests
         r = requests.get(link, stream = True)
         with open(name,"wb") as pdf: 
             for chunk in r.iter_content(chunk_size=1024):
@@ -61,6 +61,7 @@ class htmlDB:
         return f"<table>{arrHtmlTxt}</table>"
 
     def fetchApiResults(link):
+        import requests
         import json
         r = requests.get(link)
         jsonData = json.loads(r.text)

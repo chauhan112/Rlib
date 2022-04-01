@@ -11,3 +11,7 @@ class ISearchSystem:
         if(reg):
             return self.pattern(word)
         return self.wordSearch(word,case)
+
+class EmptyClass:
+    def __init__(self):
+        pass

@@ -1,5 +1,6 @@
 from modules.Explorer.model import ExplorerUtils, DictionaryExplorer
 import ipywidgets as widgets
+from InterfaceDB import EmptyClass
 class IRWidget:
     def get(self):
         pass
@@ -22,9 +23,7 @@ class IRepondable:
     def set_callback(self, callback: IController):
         pass
 class IBox:
-    def add_rwidget(self, wid: IRWidget):
-        pass
-    def add_ipywidget(self, wid):
+    def add_widget(self, wid: IRWidget):
         pass
     def get_child(self, nr):
         pass
@@ -38,30 +37,34 @@ class RDropdown(IRWidget):
     def get(self):
         return self._wid
 class Addable(IBox):
-    def add_rwidget(self, wid: IRWidget):
-        self.add_ipywidget(wid.get())
-    def add_ipywidget(self, wid):
-        self._grid.append(wid)
+    def add_widget(self, wid):
+        self._children.append(wid)
+        if isinstance(wid, IRWidget):
+            self._grid.append(wid.get())
+        else:
+            self._grid.append(wid)
 class VRBox(Addable, IRWidget):
     def __init__(self):
         self._container = widgets.VBox()
         self._children = []
     def get(self):
         return self._container
-    def add_ipywidget(self, wid):
-        self._container.children += (wid, )
+    def add_widget(self, wid):
+        self._children.append(wid)
+        if isinstance(wid, IRWidget):
+            self._container.children += (wid.get(), )
+        else:
+            self._container.children += (wid, )
+        
     def get_child(self, nr):
         return self._children[nr]
-    def add_rwidget(self, wid: IRWidget):
-        self._children.append(wid)
-        self.add_ipywidget(wid.get())
     def clear(self):
         self._vbox.children = ()
 class HRBox(VRBox):
     def __init__(self):
         self._children = []
         self._container = widgets.HBox()
-class HRContrainableBox(Addable):
+class HRContrainableBox(Addable, IRWidget):
     def __init__(self):
         self._grid = None
         self._children = []
@@ -74,23 +77,17 @@ class HRContrainableBox(Addable):
             print("set width first")
             return
         return self._grid.mainLayout
-    def add_ipywidget(self, wid):
-        self.get()
-        self._grid.append(wid)
-        self._children.append(wid)
     def get_child(self, nr):
         return self._children[nr]
     def clear(self):
+        self._children.clear()
         self._grid.clearGrid()
 class GRWidgetFromIpy(IRWidget):
     def __init__(self, wid):
         self._wid = wid
     def get(self):
         return self._wid
-class EmptyClass:
-    def __init__(self):
-        pass
-class GenerateNRowsBox(Addable):
+class GenerateNRowsBox(IRWidget):
     def __init__(self, n, add_row_labels= False):
         self._number_of_rows = n
         self._box = None
@@ -101,14 +98,15 @@ class GenerateNRowsBox(Addable):
         for i in range(self._number_of_rows):
             w = self._rows_widgets[i]
             if self._add_labels:
-                w.add_ipywidget(widgets.Label(value= str(i) + " : "))
-            layout.add_rwidget(w)
+                w.add_widget(widgets.Label(value= str(i) + " : "))
+            layout.add_widget(w)
         return layout
     def get(self):
         if self._box is None:
             self._box = self._make()
         return self._box.get()
     def get_child(self, nr):
+        self.get()
         return self._box.get_child(nr)
     def set_row_widgets(self, row_widgets: list[IBox]):
         self._rows_widgets = row_widgets
@@ -139,6 +137,7 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         self._exp = explorer
         self._mexp = MetaExplorer(self._exp)
     def display(self):
+        from IPython.display import display
         self.get() # makes sure that self._wid is created
         self._wid.components.title.value = self._title
         display(self._wid.layout)
@@ -196,6 +195,33 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         if val == '..':
             txt = '/'.join(vals[:-1])
         self._wid.components.dropdown.value = txt
+class SearchWidget(IRWidget):
+    def __init__(self):
+        self._gnrb = GenerateNRowsBox(2)
+        self._initialize()
+    def _initialize(self):
+        self._txt_wid = widgets.Text(placeholder="search text word")
+        self._search_btn = widgets.Button(description="search")
+        self._out = widgets.Output(layout=widgets.Layout(width='auto'))
+        self._reg_widgets = widgets.Checkbox(description="reg", indent=False, layout={'width':"auto"})
+        ch = self._gnrb.get_child(0)
+        ch.add_widget(self._txt_wid)
+        ch.add_widget(self._reg_widgets)
+        ch.add_widget(self._search_btn)
+        self._gnrb.get_child(1).add_widget(self._out)
+        self._search_btn.on_click(self._on_search_click)
+    def _on_search_click(self, btn_info):
+        search_string = self._txt_wid.value
+        if search_string.strip() == "":
+            return 
+        self._out.clear_output()
+        reg = self._reg_widgets.value
+        with self._out:
+            self._db.search(search_string, reg=reg)
+    def set_database(self, db):
+        self._db = db
+    def get(self):
+        return self._gnrb.get()
 class Main:
     def explore(exp: IExplorer, title = "title"):
         wied = WidgetsIpyExplorerDisplayer(title)

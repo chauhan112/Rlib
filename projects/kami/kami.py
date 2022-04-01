@@ -1,16 +1,11 @@
 import numpy as np
 import cv2
-from modules.Explorer.personalizedWidgets import IBox, GenerateNRowsBox
 from modules.Explorer.DictionaryExplorer import Node
 import os
 from SerializationDB import SerializationDB
-GRID_SIZE = (28,10)
-class IAnalyser:
-    def analyse(self):
-        pass
-class ISolver:
-    def solve(self):
-        pass
+from OpsDB import IOps
+from ImageProcessing import CVImage, MatplotImage, IColorBoundSelector
+
 class IKamiObj:
     def get_id(self):
         pass
@@ -50,46 +45,8 @@ class KamiObject(IKamiObj, ITextable):
         sum_x = np.sum(cnt[..., 0])
         sum_y = np.sum(cnt[..., 1])
         return int(sum_x / length), int(sum_y / length)
-class IColorBoundSelector:
-    def get_bounds(self):
-        pass
-class ColorBoundFromPickle(IColorBoundSelector):
-    def __init__(self, pkl):
-        self._file = pkl
-    def get_bounds(self):
-        return SerializationDB.readPickle(self._file)
-    def add_color_from_image(self, image_path):
-        mcbfi = ManualColorBoundFromImageCV2(image_path)
-        val = mcbfi.get_bounds()
-        self.add_given_color(val)
-    def add_given_color(self, colors_dict= {}):
-        vals = self.get_bounds()
-        vals.update(colors_dict)
-        SerializationDB.pickleOut(vals, self._file)
-class ManualColorBoundFromImageCV2(IColorBoundSelector):
-    def __init__(self, img):
-        self._img = img
-        self._bounds = {}
-    def export(self, name):
-        if not name.endswith(".pkl"):
-            name += ".pkl"
-        SerializationDB.pickleOut(self._bounds, name)
-    def get_bounds(self):
-        from ImageProcessing import ImageProcessing as imp
-        bounds = {}
-        while True:
-            value = imp.selectColorHSV(self._img)
-            name = input("name color: ")
-            bounds[name] = value
-            if input("Are there more colors (y/n)?").strip().lower() != "y":
-                break
-        self._bounds = bounds
-        return self._bounds
 class IContourDetector:
     def get_contour(self):
-        pass
-class IOps:
-    def execute(self):
         pass
 class DrawContour(IOps):
     def __init__(self, imgPath, contours):
@@ -156,52 +113,6 @@ class IProximityDetector:
 class ISerializable:
     def get_data(self):
         pass
-class IImage:
-    def save(self, name):
-        pass
-    def display(self):
-        pass
-class CVImage(IImage):
-    def __init__(self, data = None):
-        self.data = data
-    def set_image(self, img_path):
-        self.data = cv2.imread(img_path)
-        self._path = img_path
-    def display(self):
-        import matplotlib.pyplot as plt
-        data = cv2.cvtColor(self.data, cv2.COLOR_BGR2RGB)
-        plt.imshow(data)
-        plt.show()
-    def save(self, name):
-        if not name.endswith(".png"):
-            name += ".png"
-        cv2.imwrite(name, self.data)
-    def display_in_window(self):
-        cv2.imshow('image',self.data)
-        cv2.waitKey(0)
-    def open_in_program(self):
-        from FileDatabase import File
-        file = "test.png"
-        self.save(file)
-        File.openFile(file)
-class MatplotImage(IImage):
-    def __init__(self, data = None):
-        self.data = data
-        if self.data is not None:
-            self._cv_img = CVImage(cv2.cvtColor(self.data, cv2.COLOR_RGB2BGR))
-    def display(self):
-        self._cv_img.display()
-    def save(self, name):
-        self._cv_img.save(name)
-    def display_in_window(self):
-        self._cv_img.display_in_window()
-    def open_in_program(self):
-        self._cv_img.open_in_program()
-    def set_image(self, img_path):
-        data = cv2.imread(img_path)
-        self.data = data[:,:,::-1]
-        self._path = img_path
-        self._cv_img = CVImage(data)
 class ContourOps:
     def add_text(text, pos, img : CVImage, font_scale = 0.5):
         cv2.putText(img.data, text, pos, cv2.FONT_HERSHEY_COMPLEX, font_scale, (0, 0, 0))
@@ -214,17 +125,34 @@ class ContourOps:
 class IStrategy:
     def execute(self):
         pass
+class IFontWriter:
+    def write(self, text, pos, img: CVImage):
+        pass
+class FontOnImage(IFontWriter):
+    def __init__(self):
+        self.set_color((0, 0, 0))
+        self.set_scale(1)
+        self.set_font_type(cv2.FONT_HERSHEY_COMPLEX)
+    def write(self, text, pos, img:CVImage):
+        cv2.putText(img.data, text, pos, self._font_type, self._font_scale, self._color)
+    def set_color(self, color):
+        self._color = color
+    def set_font_type(self, font):
+        self._font_type = font
+    def set_scale(self, scale):
+        self._font_scale = scale
 class NumberKamiImage(IOps):
     def __init__(self, img_path):
         self.set_image(img_path)
         self._objs: list[ITextable] = []
+        self.font_writer(FontOnImage())
     def set_image(self, img_path):
         self._imgg = CVImage()
         self._imgg.set_image(img_path)
     def execute(self):
         for obj in self._objs:
             pos = obj.get_text_pos()
-            ContourOps.add_text(str(obj.get_index()), pos, self._imgg, 1)
+            self._writer.write(str(obj.get_index()), pos, self._imgg)
     def get_img(self):
         return self._imgg
     def set_contour_finders(self, detector: IContourDetector):
@@ -246,6 +174,8 @@ class NumberKamiImage(IOps):
         return pos
     def set_objects(self, objs: list[ITextable]):
         self._objs = objs
+    def font_writer(self, writer: IFontWriter):
+        self._writer = writer
 class MakeObjects(IOps):
     def __init__(self, img_path, min_area_size = 10):
         self.set_image(img_path)
@@ -478,6 +408,7 @@ class SummarizeTheQuestion(IOps):
 class PictureSplitMethod(IProximityDetector, ISerializable):
     def __init__(self):
         self._nebor_finder = None
+        self._empty_section_color = None
     def set_image(self, path):
         self._img_path = path
     def _get_mosaic_grids(self, path):
@@ -500,7 +431,13 @@ class PictureSplitMethod(IProximityDetector, ISerializable):
             self._vals = self._get_mosaic_grids(self._img_path)
             self._nebor_finder = NeborFinder()
             self._nebor_finder.set_domain(self._vals)
-        return self._nebor_finder.execute()
+        res = self._nebor_finder.execute()
+        remove_discard = lambda xSet: set(filter(lambda x: x._color != self._empty_section_color, xSet))
+        res = remove_discard(res)
+        for i, val in enumerate(res):
+            val._nebors = remove_discard(val._nebors)
+            val._id = i
+        return res
     def set_color_bound(self, ranges):
         self._ranges = ranges
     def set_color_bound_detector(self, dete: IColorBoundSelector):
@@ -515,6 +452,8 @@ class PictureSplitMethod(IProximityDetector, ISerializable):
         for val in vals:
             pos[val.get_id()] = val._positions
         return {'relation': rel, 'color': colors, 'positions': pos}
+    def set_ignore_color(self, color):
+        self._empty_section_color = color
 class NeborFinder:
     def set_domain(self, vals: list[MosaicRectPiece]):
         self._val = vals
@@ -581,8 +520,8 @@ class KamiObjs(ITextable):
         self._positions = positions
         self._color = color
         self._id = _id
-    def set_img_splitter(self, splitter): 
-        # the reason for setting splitter like this instead of giving image as input is to save 
+    def set_img_splitter(self, splitter):
+        # the reason for setting splitter like this instead of giving image as input is to save
         # processing power because there can be many
         # kami objects but the splitter is same for all the kami objects
         self._splitter = splitter
@@ -721,21 +660,6 @@ class DistanceCalcWithDijektra:
                     val = 0
                 dic[key][neb] = val
         return dic
-class AnalyserTool:
-    def __init__(self, img_path):
-        self._path = img_path
-        self._color_map = ColorBoundFromPickle(os.path.dirname(self._path) + os.sep + "colors.pkl").get_bounds()
-        self._pkl_path = img_path + '.pkl'
-    def get_key_depth_map(self):
-        return Main.hypothesis().nebor().get_key_depth_map(self._pkl_path)
-    def show_image_with_numbers(self, numbers = None, all_with_number = None):
-        if all_with_number is not None:
-            vals = self.get_key_depth_map()
-            numbers = [v for v in vals if vals[v] == all_with_number]
-        Main.number_kami_image(self._path, self._color_map).from_pickle(self._pkl_path, numbers)
-    def get_pkl_info(self):
-        qfi = QuestionFromPickle(self._pkl_path)
-        return qfi.get_info()
 class OneToEveryOnePathCostCheck(IOps):
     def set_info(self, infos):
         self._infos = infos
@@ -822,238 +746,6 @@ class KamiGraphTreeMakerWithColor(IOps):
         self._graph = info['relation']
         self._color_map = ListDB.dicOps().reverseKeyValue(info['color'])
         self._color_options = list(info['color'].keys())
-class DepthCaculator(IOps):
-    def __init__(self, root: Node):
-        self._root = root
-        self._max_dep = 0
-    def execute(self):
-        self._assign(self._root)
-    def _assign(self, node: Node, depth = 0):
-        if depth > self._max_dep:
-            self._max_dep = depth
-        node.extra_info.depth = depth
-        for child_node in node.children:
-            self._assign(child_node, depth + 1)
-class MaxDepthInverseCalculator(IOps):
-    def __init__(self, root: Node):
-        self._root = root
-    def execute(self):
-        self._root.extra_info.depth = self._assign(self._root)
-    def _assign(self, node):
-        if len(node.children) == 0:
-            node.extra_info.depth = 0
-            return 0
-        depths = []
-        for child in node.children:
-            child.extra_info.depth = self._assign(child)
-            depths.append(child.extra_info.depth)
-        return max(depths) + 1
-class Main:
-    def nebors_finder(img_path, color_map):
-        class Temp:
-            def split_method(grid_size = GRID_SIZE):
-                psm = PictureSplitMethod()
-                psm.set_image(img_path)
-                psm.set_color_bound(color_map)
-                psm.set_grid_size(grid_size)
-                return psm.get_nebors()
-            def contour_method(min_area = 30):
-                knd = KamiNeborDetector(min_area)
-                knd.set_image(img_path)
-                knd.set_color_bound(color_map)
-                return knd.get_nebors()
-        return Temp
-    def number_kami_image(img_path, color_map):
-        class Temp:
-            def contour_method(colors=None, size=30):
-                if colors is None:
-                    colors = color_map.keys()
-                nki = NumberKamiImage(img_path)
-                ccd = CV2ContourDetector(img_path)
-                ccd.set_filter_area_size(size)
-                for ke in colors:
-                    l, u = color_map[ke]
-                    ccd.add_color_bound(l, u)
-                nki.set_contour_finders(ccd)
-                nki.execute()
-                nki.get_img().open_in_program()
-            def split_method(colors= None, grid_size = GRID_SIZE):
-                vals = Main.nebors_finder(img_path, color_map).split_method(grid_size)
-                Temp.only_kami_objs(vals, grid_size, colors)
-            def only_kami_objs(vals, grid_size = GRID_SIZE, colors= None):
-                kamiObjs = Temp._kami_objects_to_kami_numberable_objects(vals, grid_size, colors)
-                nki = NumberKamiImage(img_path)
-                nki.set_objects(kamiObjs)
-                nki.execute()
-                nki.get_img().open_in_program()
-            def _kami_objects_to_kami_numberable_objects(vals, grid_size, colors=None):
-                if colors is None:
-                    colors = list(color_map.keys())
-                splitter = ImageSplitterIntoBlocks()
-                splitter.set_image(img_path)
-                splitter.set_grid(grid_size)
-                kamiObjs =[]
-                for vla in vals:
-                    if vla._color not in colors:
-                        continue
-                    obj = KamiObjs(vla._id, vla._positions, vla._color)
-                    obj.set_color_map(color_map)
-                    obj.set_img_splitter(splitter)
-                    kamiObjs.append(obj)
-                return kamiObjs
-            def from_pickle(pkl, ids = None):
-                vals = SerializationDB.readPickle(pkl)
-                kamiParts = []
-                for col in vals['color']:
-                    for _id in vals['color'][col]:
-                        if ids is None:
-                            kamiParts.append(KamiPart(_id, col, vals['positions'][_id]))
-                        elif _id in ids:
-                            kamiParts.append(KamiPart(_id, col, vals['positions'][_id]))
-                Temp.only_kami_objs(kamiParts)
-            def save_as_pickle(outfile= None):
-                psm = PictureSplitMethod()
-                psm.set_image(img_path)
-                psm.set_color_bound(color_map)
-                psm.set_grid_size(GRID_SIZE)
-                eq = ExportQuestion()
-                eq.set_serializable(psm)
-                if outfile is None:
-                    outfile = img_path + '.pkl'
-                eq.export(outfile)
-        return Temp
-    def color_bound_detector(img_path, out_file_name= None):
-        mcbc = ManualColorBoundFromImageCV2(img_path)
-        vals = mcbc.get_bounds()
-        if out_file_name is None:
-            return vals
-        mcbc.export(out_file_name)
-    def project():
-        class Temp:
-            def display_all(set_nr):
-                from Path import Path
-                path = f'kami-images/set-{set_nr}/'
-                pngs = Path.filesWithExtension('png', path)
-                for png in pngs:
-                     Temp.number(png).split()
-            def number(img_path):
-                import os
-                pkl_path = os.path.dirname(img_path) + os.sep + "colors.pkl"
-                colormap = ColorBoundFromPickle(pkl_path).get_bounds()
-                class Tem:
-                    def contour():
-                        Main.number_kami_image(img_path, colormap).contour_method()
-                    def split():
-                        Main.number_kami_image(img_path, colormap).split_method()
-                return Tem
-        return Temp
-    def hypothesis():
-        class Temp:
-            def nebor():
-                class Tem:
-                    def get_key_depth_map(pkl):
-                        from ListDB import ListDB
-                        from modules.Explorer.DictionaryExplorer import Graph2NodeTreeMakerBreadthFirstSearch
-                        qfi = QuestionFromPickle(pkl)
-                        rel = qfi.get_info() ['relation']
-                        res ={}
-                        for key in rel:
-                            n = Graph2NodeTreeMakerBreadthFirstSearch(rel, key)
-                            res[key] = n.execute().extra_info.depth
-                        return ListDB.sortDicBasedOnValue(res)
-                    def explorer_for_depth_analysis(pkl, index):
-                        qfi = QuestionFromPickle(pkl)
-                        rel = qfi.get_info() ['relation']
-                        from modules.Explorer.DictionaryExplorer import NodeTreeExplorer, Graph2NodeTreeMakerBreadthFirstSearch, Main
-                        Main.explore(NodeTreeExplorer(Graph2NodeTreeMakerBreadthFirstSearch(rel, index).execute()))
-                return Tem
-            def distance( fr, to, pkl = None, infos = None):
-                if pkl is not None:
-                    infos = QuestionFromPickle(pkl).get_info()
-                if infos is None:
-                    print('Give info')
-                    return
-                class Tem:
-                    def path():
-                        dcwd = Tem._dcwd_init()
-                        return dcwd.generate_path(to)
-                    def _dcwd_init():
-                        dcwd = DistanceCalcWithDijektra()
-                        dcwd.set_info(infos)
-                        dcwd.set_initial_pos(fr)
-                        return dcwd
-                    def cost():
-                        dcwd = Tem._dcwd_init()
-                        return dcwd.calc_path_cost(fr, to)
-                return Tem
-        return Temp
-    def solve(img_path, max_steps, pkl = None):
-        if pkl is None:
-            pkl = img_path + "_colors.pkl"
-            if not os.path.exists(pkl):
-                Main.color_bound_detector(img_path, pkl)
-        color_bounds = ColorBoundFromPickle(pkl).get_bounds()
-        qfi_pkl = img_path +'.pkl'
-        if not os.path.exists(qfi_pkl):
-            Main.number_kami_image(img_path, color_bounds).save_as_pickle()
-        vals = Main.nebors_finder(img_path, color_bounds).split_method()
-        kst = KamiSolverTreeMethod()
-        kst.set_max_steps(max_steps)
-        kst.set_pickle(qfi_pkl)
-        Main.number_kami_image(img_path, color_bounds).from_pickle(qfi_pkl)
-        return kst.get_steps()
-class KamiSolver(ISolver):
-    def __init__(self):
-        self._problem_data = None
-    def set_image(self, img):
-        pass
-    def set_problem_data(self, data):
-        self._problem_data = data
-    def solve(self):
-        pass
-    def set_problem(self, problem: IQuestion):
-        self._problem_data = problem.get_info()
-        self._problem = problem
-class AnalyserGUI(IBox):
-    def __init__(self):
-        self._lay = self._get_layout()
-    def _get_layout(self):
-        from WidgetsDB import WidgetsDB
-        import ipywidgets as widgets
-        from Path import Path
-        lay = GenerateNRowsBox(4)
-        row1 = lay.get_child(0)
-        row1.add_ipywidget(widgets.Label(value = "Current image:: "))
-        row1.add_ipywidget(widgets.Dropdown())
-        row1.add_ipywidget(WidgetsDB.button('open'))
-        row1.add_ipywidget(WidgetsDB.button('number'))
-        row2 = lay.get_child(1)
-        row2.add_ipywidget(widgets.Label(value = "dirs:: "))
-        row2.add_ipywidget(widgets.Dropdown(options= Path.getDir('kami-images')))
-        row2.add_ipywidget(WidgetsDB.button('update'))
-        return lay
-    def get(self):
-        return self._lay.get()
-    def add_events(self):
-        open_btn = self._lay.get_child(0).get_child(2)
-        open_btn.on_click(lambda x: File.openFile(self._lay.get_child(0).get_child(1).value))
-        number_btn = self._lay.get_child(0).get_child(3)
-        number_btn.on_click(lambda x: AnalyserTool(
-            self._lay.get_child(0).get_child(1).value).show_image_with_numbers())
-        def assign(x):
-            lay._lay.get_child(0).get_child(1).options = \
-                Path.filesWithExtension("png",lay._lay.get_child(1).get_child(1).value)
-        update_btn = self._lay.get_child(1).get_child(2)
-        update_btn.on_click(assign)
-    def old_operations(self):
-        # 1-> display
-        self._lay.get_child(0).add_ipywidget(WidgetsDB.button('display'))
-        display_btn = self._lay.get_child(0).get_child(4)
-        def display_img(img_path):
-            mi = MatplotImage()
-            mi.set_image(img_path)
-            mi.display()
-        display_btn.on_click(lambda x: display_img(self._lay.get_child(0).get_child(1).value))
 class NewNode(Node):
     @property
     def value(self):
@@ -1179,9 +871,23 @@ class ExtractImagesFrom6ImageSet(IOps):
         ly, hy = round(yl + shift_y) ,round(yl + shift_y + width)
         lx, hx = round(xl + shift_x) ,round(xl + shift_x + height)
         MatplotImage(self._img.data[lx:hx, ly:hy]).save(path)
-class RemoveLowerPartOfLever(IOps):
+class RemoveLowerPartOfLevel(IOps):
     def execute(self):
         MatplotImage(self._img.data[:-144,:]).save(self._img._path)
     def set_image(self, img):
         self._img = MatplotImage()
         self._img.set_image(img)
+from ImageProcessing import ImageRequiring
+class TestColorBound(IOps, ImageRequiring):
+    def set_color_bound_pickle(self, pickle):
+        self._pkl = pickle
+        self._color_map = SerializationDB.readPickle(pickle)
+    def execute(self):
+        for color in self._color_map:
+            low, upp = self._color_map[color]
+            self._display_img(self._img_path, low, upp)
+    def _display_img(self, low, upp):
+        am = ApplyMask()
+        am.set_image(self._img_path)
+        am.set_mask(low, upp)
+        am.execute().display()
