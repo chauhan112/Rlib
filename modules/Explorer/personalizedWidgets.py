@@ -28,9 +28,9 @@ class IBox:
         pass
     def clear(self):
         pass
-import ipywidgets as widgets
 class RDropdown(IRWidget):
     def __init__(self):
+        import ipywidgets as widgets
         self._wid = widgets.Dropdown()
     def set_options(self, options):
         self._wid.options = options
@@ -45,6 +45,7 @@ class Addable(IBox):
             self._grid.append(wid)
 class VRBox(Addable, IRWidget):
     def __init__(self):
+        import ipywidgets as widgets
         self._container = widgets.VBox()
         self._children = []
     def get(self):
@@ -62,6 +63,7 @@ class VRBox(Addable, IRWidget):
         self._vbox.children = ()
 class HRBox(VRBox):
     def __init__(self):
+        import ipywidgets as widgets
         self._children = []
         self._container = widgets.HBox()
 class HRContrainableBox(Addable, IRWidget):
@@ -94,6 +96,7 @@ class GenerateNRowsBox(IRWidget):
         self.set_row_widgets([HRBox() for i in range(n)])
         self._add_labels = add_row_labels
     def _make(self):
+        import ipywidgets as widgets
         layout = VRBox()
         for i in range(self._number_of_rows):
             w = self._rows_widgets[i]
@@ -144,6 +147,7 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         self._fill_values()
     def _create_layout(self):
         from WidgetsDB import WidgetsDB
+        import ipywidgets as widgets
         wid = EmptyClass()
         wid.components = EmptyClass()
         wid.components.title, wid.components.dropdown, wid.components.text, wid.components.selection, \
@@ -200,6 +204,7 @@ class SearchWidget(IRWidget):
         self._gnrb = GenerateNRowsBox(2)
         self._initialize()
     def _initialize(self):
+        import ipywidgets as widgets
         self._txt_wid = widgets.Text(placeholder="search text word")
         self._search_btn = widgets.Button(description="search")
         self._out = widgets.Output(layout=widgets.Layout(width='auto'))
