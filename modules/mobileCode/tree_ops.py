@@ -146,21 +146,22 @@ class Dic2Graph(IOps):
         self._path.clear()
         self._node_map.clear()
         self._path.append('root')
-        self._get_node('/'.join(self._path))
         self._execute(self._dic)
         return self._node_map
     def _execute(self, val):
         for key in val:
             value = val[key]
-            node = self._get_node('/'.join(self._path))
-            node.children.append(self._get_node('/'.join(self._path + [key])))
+            node = self._get_node(self._path)
+            node.children.append(self._get_node(self._path + [key]))
             self._path.append(key)
             if type(value) == dict:
                 self._execute(value)
             self._path.pop()
-    def _get_node(self, val):
+    def _get_node(self, loc: list[str]):
+        val = "/".join(loc)
         if val not in self._node_map:
             node = self._node_creator.create(val)
+            node.extra_info.value = loc[-1]
             self._node_map[val] = node
         return self._node_map[val]
     def set_node_creator(self, creator):
@@ -235,6 +236,7 @@ class TreeNodeExplorer(IExplorer):
     def _modify_func(self, old: MTreeable, new: MTreeable):
         new.extra_info.depth = old.extra_info.depth
         new.extra_info.number = old.extra_info.number
+        new.extra_info.value = old.extra_info.value
         return new
 class ChangeLayerNr(GCommand):
     def callback(self, parent):
@@ -252,7 +254,7 @@ class Node2Dic(IOps):
     def _node_2_dic(self, node):
         dic = {}
         for ch in node.children:
-            dic[os.path.basename(ch.idd)] = self._node_2_dic(ch)
+            dic[ch.extra_info.value] = self._node_2_dic(ch)
         return dic
 class SyncNodeWithFile(IOps):
     def __init__(self, root, file):
@@ -324,6 +326,7 @@ class AddNew(GCommand, ModelNeedable):
         if len(self.params) > 1:
             val = " ".join(self.params[1:])
             new_node = MTreeable("/".join([node.idd, val]))
+            new_node.extra_info.value = val
             found = False
             for ch in node.children:
                 if ch.idd.replace(node.idd, "").strip("/") == val:
@@ -373,7 +376,7 @@ class Paste(GCommand, ModelNeedable):
         self._creator.set_dic(content)
         root = self._creator.execute()['root']
         current = exp._pos[-1]
-        ids = set([os.path.basename(x.idd) for x in current.children])
+        ids = set([x.extra_info.value for x in current.children])
         for ch in root.children:
             val = ch.idd[len("root/"):]
             if val not in ids:
@@ -390,7 +393,7 @@ class Paste(GCommand, ModelNeedable):
 class NameDisplayModel:  # singleton
     instance = None
     def __init__(self):
-        self.set_display_info_func(lambda x: os.path.basename(x.idd))
+        self.set_display_info_func(lambda x: x.extra_info.value)
     def get_instance():
         if NameDisplayModel.instance is None:
             NameDisplayModel.instance = NameDisplayModel()
@@ -402,19 +405,19 @@ class NameDisplayModel:  # singleton
 class DepthInfo(GCommand):
     def callback(self, parent):
         model = NameDisplayModel.get_instance()
-        model.set_display_info_func(lambda x: f"{x.extra_info.depth}-{os.path.basename(x.idd)}")
+        model.set_display_info_func(lambda x: f"{x.extra_info.depth}-{x.extra_info.value}")
     def get_help(self):
         return f"{self.idd} -> show depth information"
 class NoInfo(GCommand):
     def callback(self, parent):
         model = NameDisplayModel.get_instance()
-        model.set_display_info_func(lambda x: os.path.basename(x.idd))
+        model.set_display_info_func(lambda x: x.value)
     def get_help(self):
         return f"{self.idd} -> set default information"
 class NumberOfChildrenInfo(GCommand):
     def callback(self, parent):
         model = NameDisplayModel.get_instance()
-        model.set_display_info_func(lambda x: f"{x.extra_info.number}-{os.path.basename(x.idd)}")
+        model.set_display_info_func(lambda x: f"{x.extra_info.number}-{x.extra_info.value}")
     def get_help(self):
         return f"{self.idd} -> set total number of children info"
 class FillNumber(IOps):

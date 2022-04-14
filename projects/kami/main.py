@@ -42,7 +42,7 @@ class Main:
                 nki = NumberKamiImage(img_path)
                 nki.set_objects(kamiObjs)
                 if writer is not None:
-                    nki.font_writer(writer)
+                    nki.set_font_writer(writer)
                 nki.execute()
                 nki.get_img().open_in_program()
             def _kami_objects_to_kami_numberable_objects(vals: list[KamiPart], grid_size, colors=None):

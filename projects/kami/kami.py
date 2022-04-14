@@ -5,7 +5,6 @@ import os
 from SerializationDB import SerializationDB
 from OpsDB import IOps
 from ImageProcessing import CVImage, MatplotImage, IColorBoundSelector
-
 class IKamiObj:
     def get_id(self):
         pass
@@ -16,7 +15,7 @@ class IKamiObj:
 class ITextable:
     def get_text_pos(self):
         pass
-    def get_index(self):
+    def get_text(self):
         pass
 class KamiObject(IKamiObj, ITextable):
     def __init__(self, index, contour, bound):
@@ -26,7 +25,7 @@ class KamiObject(IKamiObj, ITextable):
         self._nebors = []
     def get_contour(self):
         return self._con
-    def get_index(self):
+    def get_text(self):
         return self._index
     def get_color_bound(self):
         return self._bound
@@ -145,14 +144,14 @@ class NumberKamiImage(IOps):
     def __init__(self, img_path):
         self.set_image(img_path)
         self._objs: list[ITextable] = []
-        self.font_writer(FontOnImage())
+        self.set_font_writer(FontOnImage())
     def set_image(self, img_path):
         self._imgg = CVImage()
         self._imgg.set_image(img_path)
     def execute(self):
         for obj in self._objs:
             pos = obj.get_text_pos()
-            self._writer.write(str(obj.get_index()), pos, self._imgg)
+            self._writer.write(str(obj.get_text()), pos, self._imgg)
     def get_img(self):
         return self._imgg
     def set_contour_finders(self, detector: IContourDetector):
@@ -174,7 +173,7 @@ class NumberKamiImage(IOps):
         return pos
     def set_objects(self, objs: list[ITextable]):
         self._objs = objs
-    def font_writer(self, writer: IFontWriter):
+    def set_font_writer(self, writer: IFontWriter):
         self._writer = writer
 class MakeObjects(IOps):
     def __init__(self, img_path, min_area_size = 10):
@@ -568,8 +567,8 @@ class KamiObjs(ITextable):
         mrp.set_colors_domain(self._color_map)
         mrp.set_image_data(self._splitter.get(pos).data)
         return mrp
-    def get_index(self):
-        return str(self._id)
+    def get_text(self):
+        return self._id
 class Nebor2VerticesForDijeckstra(IOps):
     def __init__(self):
         self._res = None
@@ -853,7 +852,8 @@ class ExtractImagesFrom6ImageSet(IOps):
         self._img = MatplotImage()
         self._img.set_image(path)
     def execute(self):
-        folder = self._target_path + os.sep + os.path.basename(self._img._path)
+        name = os.path.basename(self._img._path).split(".")[0]
+        folder = self._target_path + os.sep + name
         if not os.path.exists(folder):
             os.makedirs(folder)
         for i in [0,1]:
@@ -884,10 +884,256 @@ class TestColorBound(IOps, ImageRequiring):
         self._color_map = SerializationDB.readPickle(pickle)
     def execute(self):
         for color in self._color_map:
+            print(color)
             low, upp = self._color_map[color]
-            self._display_img(self._img_path, low, upp)
+            self._display_img(low, upp)
     def _display_img(self, low, upp):
+        from ImageProcessing import ApplyMask
         am = ApplyMask()
         am.set_image(self._img_path)
         am.set_mask(low, upp)
         am.execute().display()
+class GeneralInfoDisplayKamiObject(ITextable):
+    def get_text_pos(self):
+        return self._obj.get_text_pos()
+    def get_text(self):
+        return str(self._info)
+    def set_info(self, info):
+        self._info = info
+    def set_kami_object(self, obj: ITextable):
+        self._obj = obj
+class GraphIterator:
+    def set_graph(self, graph):
+        self._graph = graph
+    def set_child_func(self, func):
+        self._func = func
+    def _get_childen(self, key):
+        return self._func(self, key)
+    def set_initial_value(self, first):
+        self._initial_value = first
+    def __iter__(self):
+        self._visited = set()
+        self._iterator = self._oter(self._initial_value)
+        return self
+    def __next__(self):
+        return next(self._iterator)
+    def _oter(self, val):
+        yield val
+        self._visited.add(val)
+        children = self._get_childen(val)
+        for chi in children:
+            if chi in self._visited:
+                continue
+            for val in self._oter(chi):
+                yield val
+class ClusterFinder(IOps):
+    def __init__(self):
+        gi = GraphIterator()
+        gi.set_child_func(lambda st, key: st._graph[key])
+        self.set_iterator(gi)
+    def set_iterator(self, iterator):
+        self._iterator = iterator
+    def set_relation(self, graph):
+        self._rel = graph
+        self._iterator.set_graph(graph)
+        self
+    def execute(self):
+        not_visited = set(self._rel.keys())
+        groups = {}
+        current_id = 0
+        while len(not_visited) > 0:
+            val = not_visited.pop()
+            self._iterator.set_initial_value(val)
+            groups[current_id] = [i for i in self._iterator]
+            not_visited = not_visited.difference(set(groups[current_id]))
+            current_id += 1
+        return groups
+class ImageAnalyser:
+    def __init__(self):
+        self._parser = None
+        self._ques_pkl = None
+        self.set_ignore_color("none")
+        self._mat_image = None
+        self._number_image = NumberKamiImageFromSplitPickle()
+    def set_ignore_color(self, color):
+        self._ignore_color = color
+    def set_pickle_file(self, pkl):
+        self._ques_pkl = pkl
+    def set_color_pickle(self, color_pkl):
+        self._color_map = SerializationDB.readPickle(color_pkl)
+    def set_img(self, img_path):
+        self._img_path = img_path
+        self.set_pickle_file(f'{img_path}.pkl')
+        self._parser = None
+    def number_kami_image(self):
+        self._number_image.set_image(self._img_path)
+        self._number_image.set_color_map(self._color_map)
+        self._number_image.set_pickle(self._ques_pkl)
+        self._number_image.set_text_display_func(lambda x: str(x.idd))
+        self._number_image.execute()
+    def get_depth_info(self):
+        from projects.kami.main import Main
+        return Main.hypothesis().nebor().get_key_depth_map(self._ques_pkl)
+    def set_step(self, max_step:int):
+        self._max_step = max_step
+    def depth_info_writer(self):
+        func = lambda x: str(x.extra_info.depth)
+        self._number_image.set_image(self._img_path)
+        self._number_image.set_color_map(self._color_map)
+        self._number_image.set_pickle(self._ques_pkl)
+        self._number_image.set_text_display_func(func)
+        self._number_image.execute()
+    def parse(self):
+        if self._parser is None:
+            self._parser = self._get_parser()
+        return self._parser.get_nebors()
+    def _get_parser(self):
+        from projects.kami.main import GRID_SIZE
+        psm = PictureSplitMethod()
+        psm.set_image(self._img_path)
+        psm.set_color_bound(self._color_map)
+        psm.set_grid_size(GRID_SIZE)
+        psm.set_ignore_color(self._ignore_color)
+        return psm
+    def export(self, outfile = None):
+        eq = ExportQuestion()
+        eq.set_serializable(self._get_parser())
+        if outfile is None:
+            outfile = self._img_path + '.pkl'
+            self._ques_pkl = outfile
+        eq.export(outfile)
+    def solve(self):
+        kst = KamiSolverTreeMethod()
+        kst.set_max_steps(self._max_step)
+        kst.set_pickle(self._ques_pkl)
+        self.number_kami_image()
+        return kst.get_steps()
+    def find_cluster(self):
+        rel = SerializationDB.readPickle(self._ques_pkl)['relation']
+        cf = ClusterFinder()
+        cf.set_relation(rel)
+        return cf.execute()
+    def get_image(self) -> MatplotImage:
+        if self._mat_image is None:
+            self._mat_image = MatplotImage()
+            self._mat_image.set_image(self._img_path)
+        return self._mat_image
+    def get_question(self):
+        vals = SerializationDB.readPickle(self._ques_pkl)
+        return vals['relation'], vals['color']
+class AdvanceNumberKamiImage(IOps):
+    def __init__(self):
+        self.set_filter_func(lambda xlist: filter(lambda x: True, xlist))
+        self.set_font_writer(FontOnImage())
+    def set_image(self, img_path):
+        self._img_path = img_path
+        self.reset_text_on_image()
+    def set_object(self, objects: list):
+        self._objs = objects
+    def execute(self):
+        new_objs = self._filter_func(self._objs)
+        for obj in new_objs:
+            self._writer.write(self._display_text_function(obj), self._pos_finder(obj), self._imgg)
+    def set_filter_func(self, func):
+        self._filter_func = func
+    def set_font_writer(self, writer: IFontWriter):
+        self._writer = writer
+    def set_set_font_scale(self, scale):
+        self._writer.set_scale(scale)
+    def set_display_text_function(self, func):
+        self._display_text_function = func
+        self.reset_text_on_image()
+    def set_position_finder(self, func):
+        self._pos_finder = func
+    def reset_text_on_image(self):
+        self._imgg = CVImage()
+        self._imgg.set_image(self._img_path)
+class NumberKamiImageFromSplitPickle(IOps):
+    def __init__(self):
+        self._anki = None
+        self._node_map = {}
+        self._depth_info = None
+        self._pos_finder_func = lambda x: x.extra_info.txt_pos
+        self.set_text_display_func(lambda x: str(x.idd))
+    def set_pickle(self, pickle:str):
+        self._ques_pkl = pickle
+        self._depth_info = None
+    def set_image(self, image:str):
+        self._img_path = image
+    def set_color_map(self, color_map:dict):
+        self._color_map = color_map
+    def _make_node_map(self):
+        self._node_map.clear()
+        from SerializationDB import SerializationDB
+        from ListDB import ListDB
+        vals = SerializationDB.readPickle(self._ques_pkl)
+        rel = vals['relation']
+        color_map = ListDB.dicOps().reverseKeyValue(vals['color'])
+        for key in rel:
+            for val in rel[key]:
+                self._get_node(key).children.add(self._get_node(val))
+        # fill depth info in the nodes
+        depths_info = self.get_depth_info()
+        for key in depths_info:
+            node = self._get_node(key)
+            node.extra_info.depth = depths_info[key]
+        self._fill_text_pos(vals, color_map)
+        return self._node_map
+    def _fill_text_pos(self, vals, color_map_inv):
+        from projects.kami.main import GRID_SIZE
+        splitter = ImageSplitterIntoBlocks()
+        splitter.set_image(self._img_path)
+        splitter.set_grid(GRID_SIZE)
+        positions = vals['positions']
+        kami_ob = KamiObjs(None, None, None)
+        kami_ob.set_img_splitter(splitter)
+        kami_ob.set_color_map(self._color_map)
+        for key in positions:
+            kami_ob._color = color_map_inv[key]
+            kami_ob._id = key
+            kami_ob._positions = positions[key]
+            node = self._node_map[key]
+            node.extra_info.txt_pos = kami_ob.get_text_pos()
+    def get_depth_info(self):
+        if self._depth_info is None:
+            from projects.kami.main import Main
+            self._depth_info = Main.hypothesis().nebor().get_key_depth_map(self._ques_pkl)
+        return self._depth_info
+    def _get_node(self, key):
+        from modules.FileAnalyser.FileAnalyser import GNode
+        if key not in self._node_map:
+            node = GNode(key)
+            node.children = set()
+            self._node_map[key] = node
+        return self._node_map[key]
+    def get_numbering_model(self):
+        if self._anki is None:
+            self._anki = AdvanceNumberKamiImage()
+            self._anki.set_object(self._make_node_map().values())
+            self._anki.set_image(self._img_path)
+        return self._anki
+    def execute(self):
+        anki = self.get_numbering_model()
+        x = anki._imgg.data.shape[0]
+        anki.set_set_font_scale(x/1300)
+        anki.set_position_finder(self._pos_finder_func)
+        anki.set_display_text_function(self._text_display_func)
+        anki.execute()
+        anki._imgg.open_in_program()
+    def set_text_display_func(self, func):
+        self._text_display_func = func
+class ExtractDomain(IOps): # extract only sub ids groups and their relation
+    def set_domain(self, domain: list):
+        self._domain = set(domain)
+    def set_relation(self, graph: dict):
+        self._graph = graph
+    def execute(self):
+        new_graph = {}
+        for key in self._graph:
+            if key not in self._domain:
+                continue
+            new_graph[key] = []
+            for v in self._graph[key]:
+                if v in self._domain:
+                    new_graph[key].append(v)
+        return new_graph
