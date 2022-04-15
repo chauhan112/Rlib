@@ -411,7 +411,7 @@ class DepthInfo(GCommand):
 class NoInfo(GCommand):
     def callback(self, parent):
         model = NameDisplayModel.get_instance()
-        model.set_display_info_func(lambda x: x.value)
+        model.set_display_info_func(lambda x: x.extra_info.value)
     def get_help(self):
         return f"{self.idd} -> set default information"
 class NumberOfChildrenInfo(GCommand):

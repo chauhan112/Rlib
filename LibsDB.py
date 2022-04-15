@@ -15,7 +15,10 @@ class LibsDB:
         from ModuleDB import ModuleDB
         if(ModuleDB.laptopName() == "raja-ZenBook-UX433FN-UX433FN"):
             return "/home/raja/sciebo"
-        return RegexDB.regexSearch(".*cloud", getPath())[0].replace("\\",os.sep)
+        try:
+            return RegexDB.regexSearch(".*cloud", getPath())[0].replace("\\",os.sep)
+        except:
+            return os.sep.join([getPath(), '..', 'resource', "code-dump"]
     
     def picklePath(val = None):
         k = os.sep.join([getPath(), '..', 'resource', 'pickle'])
