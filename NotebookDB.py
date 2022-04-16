@@ -100,8 +100,9 @@ class NotebookDB:
         import os
         from LibsDB import LibsDB
         import datetime
+        from FileDatabase import File
 
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
-        filePath = os.sep.join([LibsDB.cloudPath(), os.sep.join(['Global', 'code', 'daily code dumper', f'{datetime.datetime.now().year}']),
-            fileName])
+        filePath = os.sep.join([File.getFileContent(jupyterDB.resource().dirPath + os.sep + "codeDump.txt"), 
+            f'{datetime.datetime.now().year}']), fileName])
         return filePath
