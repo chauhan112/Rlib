@@ -105,5 +105,5 @@ class NotebookDB:
 
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
         filePath = os.sep.join([File.getFileContent(jupyterDB.resource().dirPath + os.sep + "codeDump.txt"), 
-            f'{datetime.datetime.now().year}']), fileName])
+            f'{datetime.datetime.now().year}', fileName])
         return filePath
