@@ -18,7 +18,7 @@ class LibsDB:
         try:
             return RegexDB.regexSearch(".*cloud", getPath())[0].replace("\\",os.sep)
         except:
-            return os.sep.join([getPath(), '..', 'resource', "code-dump"]
+            return os.sep.join([getPath(), '..', 'resource', "code-dump"])
     
     def picklePath(val = None):
         k = os.sep.join([getPath(), '..', 'resource', 'pickle'])

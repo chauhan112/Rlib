@@ -7,7 +7,15 @@ class VideoDB:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT)
         return float(result.stdout)
-
+        
+    def extract_audio_from_video(video_path, out_name = None, audio_format="mp3"):
+        from moviepy.editor import VideoFileClip
+        clip = VideoFileClip(video_path)
+        if out_name is None:
+            out_name = video_path +"."+ audio_format
+        clip.audio.write_audiofile(out_name)
+        clip.close()
+        
 class YoutubeDB:
     def getSubtitleForVideoId(videoId, original = False):
         from youtube_transcript_api import YouTubeTranscriptApi
@@ -55,7 +63,7 @@ class AudioDB:
                 return Te
         
         return Temp
-
+from OpsDB import IOps
 class CategorizeVideoIntoDifferentSizes(IOps):
     def __init__(self, files, target_folder= None):
         self.files = files

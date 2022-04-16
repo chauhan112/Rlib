@@ -109,7 +109,7 @@ class ModuleDB:
     
     def modulePath(modulename):
         import inspect
-        return inspect.getfile(os)
+        return inspect.getfile(modulename)
 
     def run_once(f):
         def wrapper(*args, **kwargs):
@@ -119,7 +119,10 @@ class ModuleDB:
         wrapper.has_run = False
         return wrapper
         
-    def reloadClass(className, moduleName, params):
+    def reloadClass(clas, params):
+        import inspect
+        moduleName=inspect.getmodule(clas).__name__
+        className = clas.__name__
         # params is globals()
         commands = [f'import {moduleName}', 'from importlib import reload', f'reload({moduleName})', 
                     f'{className} = {moduleName}.{className}', 'params.update(locals())']
