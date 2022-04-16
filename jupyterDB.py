@@ -237,7 +237,7 @@ class jupyterDB:
     def resource():
         class Res:
             def __init__(self):
-                self.dirPath = Path.joinPath(getPath(), "resource")
+                self.dirPath = Path.joinPath(getPath(),'..', "resource")
             def folder(self):
                 Path.openExplorerAt(self.dirPath)
             def getPath(self, path):
