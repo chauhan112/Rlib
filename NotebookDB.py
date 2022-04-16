@@ -101,6 +101,7 @@ class NotebookDB:
         from LibsDB import LibsDB
         import datetime
         from FileDatabase import File
+        from jupyterDB import jupyterDB
 
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
         filePath = os.sep.join([File.getFileContent(jupyterDB.resource().dirPath + os.sep + "codeDump.txt"), 
