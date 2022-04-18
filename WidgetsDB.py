@@ -86,6 +86,8 @@ class WidgetsDB:
                     def __init__(self):
                         self.searchRes = widgets.Output()
                         self.buttonRes = widgets.Output()
+                    def display(self):
+                        display(widgets.VBox([self.searchRes, self.buttonRes]))
                 return _OutWidget()
         return Temp
 

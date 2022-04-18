@@ -3,6 +3,7 @@ from ComparerDB import ComparerDB
 from FileDatabase import File
 import os
 
+
 class SearchSystem:
     pass
        
@@ -32,24 +33,18 @@ class DicSearch:
 
 class SearchEngine:
     def __init__(self,content,  searchSys, nCols = 6):
+        from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
         self.searchSys = searchSys(content)
         self.nCols = nCols + 1 
-
+        self._displayer_engine = JupyterResultDisplayer()
+        self._displayer_engine.set_displayer_way(DisplayNElement())
+        self._displayer_engine.set_callback(self._callback)
+        
     def displayer(self, result):
-        from WidgetsDB import WidgetsDB
-        import ipywidgets as widgets
-        output = WidgetsDB.searchEngine().resultWidget()
-        output.searchRes.clear_output()
-        display(widgets.VBox([output.searchRes,output.buttonRes]))
-        with output.searchRes:
-            display(WidgetsDB.getGrid(self.nCols, [self.displayItem(key= x, name=self.buttonName(x), 
-                callbackFunc=lambda x: self.callback(x, output.buttonRes), tooltip=self.toolTip(x)) for x in result]))
-        return output
-    
-    def callback(self, button, resSect):
-        resSect.clear_output()
-        with resSect:
-            self._callback(button._key)
+        from modules.SearchSystem.modular import GDisplayableResult
+        res = [GDisplayableResult(self.buttonName(ele), self.toolTip(ele), ele) for ele in result]
+        self._displayer_engine.set_result(res)
+        return self._displayer_engine.display()
     
     def _callback(self, result):
         raise NotImplementedError("Overload this function")
@@ -69,6 +64,7 @@ class SearchEngine:
         b = WidgetsDB.mButton(name, key, callbackFunc)
         b.tooltip = tooltip
         return b
+
 
 class DicSearchEngine(SearchEngine):
     def __init__(self, content, nCols = 6, engine= DicSearch):
@@ -339,10 +335,9 @@ class JupyterNotebookResultReplaceableSE(ISearchEngine):
         
     def display(self, result):
         from WidgetsDB import WidgetsDB
-        import ipywidgets as widgets
         output = WidgetsDB.searchEngine().resultWidget()
         output.searchRes.clear_output()
-        display(widgets.VBox([output.searchRes,output.buttonRes]))
+        output.display()
         with output.searchRes:
             display(WidgetsDB.getGrid(self._nCols, [self.displayItem(key= x, name=self.buttonName(x), 
                 callbackFunc=lambda x: self._callback(x, output.buttonRes), tooltip=self.toolTip(x)) for x in result]))

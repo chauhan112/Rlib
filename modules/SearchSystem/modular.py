@@ -73,7 +73,7 @@ class AllDisplayer(INumberOfDisplayer):
         output = WidgetsDB.searchEngine().resultWidget()
         output.searchRes.clear_output()
         self._result_area = output.buttonRes
-        display(widgets.VBox([output.searchRes, output.buttonRes]))
+        output.display()
         with output.searchRes:
             elements = []
             for res in self._results:
@@ -132,7 +132,7 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
         self._buttons = HRContrainableBox()
         self._buttons.set_width(6)
         self._pager_wid = PageSelectioOpsWidget()
-        self.set_limit(40) 
+        self.set_limit(40)
         self._set_default_layout()
         self._set_pager_widget_callbacks()
         
@@ -164,15 +164,15 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
                 val.hide()
     def _set_default_layout(self):
         nrows = 2
+        self._res_row_id = 1
+        self._page_row_id = 0
         gnrb = GenerateNRowsBox(nrows)
-        rows = []
-        for i in range(nrows):
-            hc = HRContrainableBox()
-            hc.set_width(6)
-            rows.append(hc)
-        gnrb.set_row_widgets(rows)
+        hc = HRContrainableBox()
+        hc.set_width(1)
+        hc.add_widget(self._pager_wid._pager)
+        gnrb.set_row_widgets([hc, self._buttons])
         self.set_layout(gnrb)
-        
+
     def set_limit(self, val):
         from WidgetsDB import WidgetsDB
         self._limit = val
@@ -187,23 +187,22 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
     
     def set_elements(self, elements: list[IDisplayableResult]):
         self._elements = elements
+        self._key_mgr = None
         
     def get(self):
-        res_row = 1
-        page_row = 0
+        import math
         wid = self._layout
         if self._key_mgr is None:
-            import math
             self._key_mgr = KeyManager(self._elements)
             self._key_mgr.set_limit_per_page(self._limit)
-            wid.get_child(res_row).add_widget(self._buttons)
-            wid.get_child(page_row).add_widget(self._pager_wid._pager)
             self._total_pages = math.ceil(len(self._elements) / self._limit)
             self._pager_wid._pageMax.value = str(self._total_pages)
             self._pager_wid._pageTxt.max = self._total_pages
-            self._page_selected(1) 
         if len(self._key_mgr.getButtonIndices()) == 1:
-            wid.get_child(page_row).get_child(0).hide()
+            wid.get_child(self._page_row_id).get_child(0).hide()
+        else:
+            wid.get_child(self._page_row_id).get_child(0).show()
+        self._page_selected(1) 
         return wid.get()
     
     def set_layout(self, box: IBox):
@@ -215,21 +214,28 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
         return self.get()
 class JupyterResultDisplayer(IResultDisplayer):
     def __init__(self):
+        from WidgetsDB import WidgetsDB
         self._results = None
-        self._result_area = None
+        self._area = WidgetsDB.searchEngine().resultWidget()
         self.set_displayer_way(AllDisplayer())
 
     def set_result(self, results: list[IDisplayableResult]):
         self._results = results
 
     def set_callback(self, callback):
-        self._callback = callback
-
+        def m_callback(info):
+            self._area.buttonRes.clear_output()
+            with self._area.buttonRes:
+                callback(info)
+        self._callback = m_callback
+        
     def display(self):
+        self._area.display()
         self._way.set_elements(self._results)
         self._way.set_callback_func(self._callback)
         lay = self._way.get_layout()
-        display(lay)
+        with self._area.searchRes:  
+            display(lay)
         return lay
     def set_displayer_way(self, way :INumberOfDisplayer):
         self._way = way

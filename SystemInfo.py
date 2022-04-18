@@ -1,4 +1,3 @@
-
 class SystemInfo:
     def getName():
         import socket

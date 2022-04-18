@@ -202,8 +202,7 @@ class Database:
         from StaticDisplayerManager import StaticDisplayerManager
         from Path import Path
         from IPython.display import display
-        path = getPath()
-        pyfiles = Path.filesWithExtension("py", path)
+        pyfiles = Path.filesWithExtension("py", getPath())
         StaticDisplayerManager.display('total modules file number', len(pyfiles))
         return Database.dbSearch(engine(pyfiles, nCols=5), keyWord)
     def dicDB(dic, displayer = print):
