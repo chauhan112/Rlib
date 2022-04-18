@@ -3,6 +3,7 @@ import cv2
 import os
 from SerializationDB import SerializationDB
 from OpsDB import IOps
+from LibPath import *
 class ImageProcessing:
     def showImgFromFile(imgPath):
         from PIL import Image
@@ -97,7 +98,6 @@ class ImageProcessing:
     def detectFace(path = ""):
         import cv2, os
         from ClipboardDB import ClipboardDB
-        from LibPath import getPath
         faces = cv2.CascadeClassifier(os.sep.join([resourcePath(),"assests", "xmls", "haarcascade_frontalface_alt.xml"]))
         if(path == ""):
             img = ClipboardDB.getImage()
@@ -217,7 +217,6 @@ class ShowImage:
         return GIF(path)
 class ICOPath:
     def _path():
-        from LibPath import getPath
         from Path import Path
         return Path.joinPath(resourcePath(), "assests")
     def listICOFiles():

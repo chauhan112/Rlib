@@ -1,7 +1,7 @@
 from FileDatabase import File
 from SerializationDB import SerializationDB
 import os
-from LibPath import getPath
+from LibPath import *
 from Path import Path
 
 class ProjectSerialization:

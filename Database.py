@@ -1,6 +1,6 @@
 from ComparerDB import ComparerDB
 from FileDatabase import File
-from LibPath import getPath
+from LibPath import *
 import os
 from SearchSystem import FilesContentSearchEngine, FilePathsSearchEngine, DicSearchEngine
 from LibsDB import LibsDB

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LibPath-raja", # Replace with your own username
-    version="0.1.1",
+    version="0.1.2",
     author="Raja Babu Chauhan",
     author_email="rajababuchauhan500@gmail.com",
     description="personal library path",

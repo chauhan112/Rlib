@@ -1,4 +1,4 @@
-from LibPath import getPath
+from LibPath import +
 import os
 
 class LibsDB:

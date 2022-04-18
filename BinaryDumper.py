@@ -3,10 +3,10 @@ from Database import DB, DBResources
 from SerializationDB import SerializationDB
 import time, os
 from CryptsDB import CryptsDB
+from LibPath import resourcePath
 
 class _BinaryDumper:
     def __init__(self):
-        from LibPath import resourcePath
         from Path import Path
         self.dbPath = Path.joinPath(DBResources.location, "BinaryDumper.db")
         self.db = sqlite3.connect(self.dbPath)

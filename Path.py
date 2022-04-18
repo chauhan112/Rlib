@@ -3,7 +3,7 @@ import shutil
 import webbrowser
 from ListDB import ListDB
 from ComparerDB import ComparerDB
-from LibPath import getPath
+from LibPath import *
 from SerializationDB import SerializationDB
 from SearchSystem import GSearchEngine, JupyterNotebookSE, DicSearch
 

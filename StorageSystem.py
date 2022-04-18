@@ -34,7 +34,7 @@ class _StorageSytem:
         return GPickleCRUD(file, [index])
 
     def _storagePath(self):
-        from LibPath import getPath
+        from LibPath import resourcePath
         storagepath = Path.joinPath(resourcePath(), "StorageSystem")
         return storagepath
 

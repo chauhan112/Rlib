@@ -7,7 +7,7 @@ from LibPath import *
 
 class ExampleDB:
     def parsingNumerikContent(content = None):
-        numerikContent = yaml.safe_load(File.getFileContent(getPath() +"\\resource\\examplesDB.yaml"))['numerik'].split("\n")
+        numerikContent = yaml.safe_load(File.getFileContent(resourcePath() +"examplesDB.yaml"))['numerik'].split("\n")
         if(content is not None):
             numerikContent = content
         content = list(filter(lambda l: WordDB.searchWordWithRegex("^[0-9]+" , l.strip()), numerikContent))
@@ -24,7 +24,7 @@ class ExampleDB:
         return ExampleDB.mergeDic(ParserDB.parseBlock(newG))
 
     def parsingPhilosophyContent():
-        content = yaml.safe_load(File.getFileContent(getPath() +"\\resource\\examplesDB.yaml"))['philosophy'].strip().split("\n")
+        content = yaml.safe_load(File.getFileContent(resourcePath() +"examplesDB.yaml"))['philosophy'].strip().split("\n")
         content = list(filter(lambda l: WordDB.searchWordWithRegex("^[0-9]+" , l.strip()), content))
 
         exp1 = "^.*?(?=[a-zA-Z])"

@@ -1,7 +1,6 @@
 import os,yaml
 from ClipboardDB import ClipboardDB
 from Path import Path
-from LibPath import getPath
 from FileDatabase import File
 from SerializationDB import SerializationDB
 from LibsDB import LibsDB

@@ -1,4 +1,4 @@
-from LibPath import getPath
+from LibPath import resourcePath
 import os
 from LibsDB import LibsDB
 from SerializationDB import SerializationDB

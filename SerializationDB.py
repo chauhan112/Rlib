@@ -1,6 +1,6 @@
 import dill as pickle
 import os
-from LibPath import getPath
+from LibPath import resourcePath
 
 class SerializationDB:
     def pickleOut(dataStructure, outFileName):
