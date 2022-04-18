@@ -31,14 +31,14 @@ class ArchiveDB:
     def getFileContentAsDictionary():
         from Path import Path
         from FileDatabase import File
-        path = Path.joinPath(getPath(), "resource","treeDB.yaml")
+        path = Path.joinPath(resourcePath(),"treeDB.yaml")
         content = yaml.safe_load(File.getFileContent(path))
         return content
 
     def overwritePrototype(content):
         from Path import Path
         from FileDatabase import File
-        file = Path.joinPath(getPath(), "resource", "Prototype.ipynb")
+        file = Path.joinPath(resourcePath(), "Prototype.ipynb")
         File.overWrite(file, content)
 
     def toQtPath(path):

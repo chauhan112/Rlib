@@ -258,7 +258,10 @@ class SizeFillerStrategy(IFillerStrategy):
         from FileDatabase import File
         ch = node.children
         if len(ch) == 0:
-            node.extra_info.size = File.size(node.idd)
+            try:
+                node.extra_info.size = File.size(node.idd)
+            except: 
+                node.extra_info.size = 0
             return node.extra_info.size
         node.extra_info.size = sum([self.fill(n) for n in ch])
         return node.extra_info.size

@@ -48,7 +48,7 @@ class HomeWorkCorrectionTool:
         
     def initialize(self, question_format = None):
         question_format = yaml.safe_load(question_format)
-        self.homeworkFolders =  Path.basename(os.listdir(os.sep.join([self.homeworkPath, "to check"])))
+        self.homeworkFolders = list(map(os.path.basename, os.listdir(os.sep.join([self.homeworkPath, "to check"]))))
         if(len(self.homeworkFolders) != 8):
             print("[-] unzip the folders first")
         self.remarks = self.getRemark(question_format)

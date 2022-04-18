@@ -356,7 +356,9 @@ class EventCalender:
         from PickleCRUDDB import PickleCRUD
         return PickleCRUD("LifeLogs", loc= ["events"])
 
-    def setEvent(date, time, eventDescription):
+    def setEvent(date: str, time:str, eventDescription:str):
+        # date - dd.mm.yyyy 16.06.2021
+        # time - 1800, 18:00
         pi = EventCalender._pickle()
         try:
             pi.read([date, time])

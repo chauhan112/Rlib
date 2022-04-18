@@ -98,7 +98,7 @@ class ImageProcessing:
         import cv2, os
         from ClipboardDB import ClipboardDB
         from LibPath import getPath
-        faces = cv2.CascadeClassifier(os.sep.join([getPath(), "resource","assests", "xmls", "haarcascade_frontalface_alt.xml"]))
+        faces = cv2.CascadeClassifier(os.sep.join([resourcePath(),"assests", "xmls", "haarcascade_frontalface_alt.xml"]))
         if(path == ""):
             img = ClipboardDB.getImage()
         else:
@@ -219,7 +219,7 @@ class ICOPath:
     def _path():
         from LibPath import getPath
         from Path import Path
-        return Path.joinPath(getPath(),"resource", "assests")
+        return Path.joinPath(resourcePath(), "assests")
     def listICOFiles():
         from Path import Path
         path = ICOPath._path()

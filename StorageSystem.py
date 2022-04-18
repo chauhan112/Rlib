@@ -35,7 +35,7 @@ class _StorageSytem:
 
     def _storagePath(self):
         from LibPath import getPath
-        storagepath = Path.joinPath(getPath(), "resource", "StorageSystem")
+        storagepath = Path.joinPath(resourcePath(), "StorageSystem")
         return storagepath
 
     def folder(self):

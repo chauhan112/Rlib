@@ -26,7 +26,7 @@ class SerializationDB:
         k.archive()
 
     def deserializeProject(pklFile):
-        pklFile = os.sep.join([getPath(), "resource", "project", pklFile])
+        pklFile = os.sep.join([resourcePath(), "project", pklFile])
         k = SerializationDB.readPickle(pklFile)
         k.restore()
 

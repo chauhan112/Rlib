@@ -6,11 +6,11 @@ from CryptsDB import CryptsDB
 
 class _BinaryDumper:
     def __init__(self):
-        from jupyterDB import jupyterDB
+        from LibPath import resourcePath
         from Path import Path
         self.dbPath = Path.joinPath(DBResources.location, "BinaryDumper.db")
         self.db = sqlite3.connect(self.dbPath)
-        self.dumperFolder = Path.joinPath(jupyterDB.resource().dirPath, "binaryDumper")
+        self.dumperFolder = Path.joinPath(resourcePath(), "binaryDumper")
         self.alreadyRead = {}
 
     def add(self,key, overwrite = True, content = None):

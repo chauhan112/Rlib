@@ -11,11 +11,14 @@ from SerializationDB import SerializationDB
 class Bachelorarbeit:
     dbPath = None
     binPath = None
+    def reprocessCloudPath(path):
+        currentCloudPath = RegexDB.regexSearch(".*cloud", path)[0]
+        return path.replace(currentCloudPath, LibsDB.cloudPath())
     def explorer():
         from ExplorerDB import ExplorerDB 
         from jupyterDB import jupyterDB
         from TreeDB import TreeDB
-        ba = LibsDB.reprocessCloudPath(Bachelorarbeit.path().getContentOfThisTable()['bachelorArbeit docs'])
+        ba = Bachelorarbeit.reprocessCloudPath(Bachelorarbeit.path().getContentOfThisTable()['bachelorArbeit docs'])
         exp = ExplorerDB.osFileExplorer(ba)
         exp.setFileDisplayer("ipynb", lambda x: TreeDB.openWebLink(jupyterDB.localIpyLink(x, False)))
         return exp
@@ -37,7 +40,7 @@ class Bachelorarbeit:
             def seminarPaper():
                 paths = Path.paths().getContent()
                 seminarPath = paths['seminar arbeit rwth']
-                File.openFile(LibsDB.reprocessCloudPath(Path.joinPath(seminarPath, 'operations', 'artifacts', 'seminar paper', 
+                File.openFile(Bachelorarbeit.reprocessCloudPath(Path.joinPath(seminarPath, 'operations', 'artifacts', 'seminar paper', 
                                             'V3_SeminarPaper14Dec.pdf')))
             
             def plan():
@@ -46,7 +49,7 @@ class Bachelorarbeit:
             def _openRelPath(path):
                 paths = Path.paths().getContent()
                 bpath = paths['Bachelorarbeit']
-                File.openFile(LibsDB.reprocessCloudPath(Path.joinPath(bpath, path)))
+                File.openFile(Bachelorarbeit.reprocessCloudPath(Path.joinPath(bpath, path)))
         return Temp
 
     def cmd():

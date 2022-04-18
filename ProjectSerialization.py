@@ -10,7 +10,7 @@ class ProjectSerialization:
         s.archive()
     
     def unarchive(name):
-        pklFile = os.sep.join([getPath(), "resource", "project", name])
+        pklFile = os.sep.join([resourcePath(), "project", name])
         k = SerializationDB.readPickle(pklFile)
         k.restore()
     
@@ -64,13 +64,13 @@ class _Serialize:
             File.createFile(Path.joinPath(name, f), self.content[f])
     
     def archive(self):
-        outFile = os.sep.join([getPath(), "resource", "project", self.name + ".pkl"])
+        outFile = os.sep.join([resourcePath(), "project", self.name + ".pkl"])
         if(os.path.exists(outFile)):
             print("project name already exists")
             return
         SerializationDB.pickleOut(self, outFile)
 
     def readPklFile(pklFile):
-        pklFile = os.sep.join([getPath(), "resource", "project", pklFile])
+        pklFile = os.sep.join([resourcePath(), "project", pklFile])
         k = SerializationDB.readPickle(pklFile)
         k.restore()

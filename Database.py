@@ -195,7 +195,7 @@ class Database:
         return PdfSearchEngine(files)
     def resourceDB():
         from Path import Path
-        files = Path.getFiles(Path.joinPath(getPath(), "resource"), walk = True)
+        files = Path.getFiles(resourcePath(), walk = True)
         return Database.getDB(files)
     def moduleDB(keyWord = None, engine = FilesContentSearchEngine):
         from LibPath import getPath

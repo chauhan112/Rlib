@@ -21,13 +21,14 @@ class MicpadTools:
         print(f"Size of a {len(a)}")
         print(f"Size of b {len(b)}")
         print("A - B")
-        print(set(Path.basename(a)).difference(set(Path.basename(b))))
+        print(set(map(os.path.basename,a)).difference(set(map(os.path.basename,b))))
         print("B - A")
-        print(set(Path.basename(b)).difference(set(Path.basename(a))))
+        print(set(map(os.path.basename,b)).difference(set(map(os.path.basename,a))))
 class MicpadStuff:
     def pathRes():
+        from archives.locally_temporal.Bachelorarbeit import Bachelorarbeit
         dic = SerializationDB.readPickle(LibsDB.picklePath("globals.pkl"))
-        return LibsDB.reprocessCloudPath(dic['archive']['micpad_resource_aug_2020'])
+        return Bachelorarbeit.reprocessCloudPath(dic['archive']['micpad_resource_aug_2020'])
     def linksDB(word = None):
         links = SerializationDB.readPickle(f"{MicpadStuff.pathRes()}{os.sep}links.pkl")
         db = Database.urlDB(links)

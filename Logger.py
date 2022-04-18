@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from PickleCRUDDB import PickleCRUD
 from ListDB import ListDB
 from SerializationDB import SerializationDB
-from jupyterDB import jupyterDB
+from Path import Path
 
 def downLoadFile(url, path):
     pass
@@ -11,7 +11,7 @@ class FoodLogger:
     def __init__(self):
         self.outPklFile = PickleCRUD('LifeLogs')
         self.category = 'eating'
-        self.dumpingPath = jupyterDB.resource().getPath('recycleBin\\eatingDelete.pkl')
+        self.dumpingPath = Path.joinPath(resourcePath(), 'recycleBin\\eatingDelete.pkl')
         self.recyleBin = {}
         raise IOError("needs testing")
     

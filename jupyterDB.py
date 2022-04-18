@@ -9,7 +9,7 @@ from LibsDB import LibsDB
 class jupyterDB:
     def header(topic = 'headerName', fontFace = "comic sans ms"):
         import random, yaml
-        colors = yaml.safe_load(File.getFileContent(Path.joinPath(getPath(),'..', 'resource', "colorNames.yaml")))
+        colors = yaml.safe_load(File.getFileContent(Path.joinPath(resourcePath(), "colorNames.yaml")))
         val = "# <font face='{}' color ='{}'>{}</font>".format(fontFace, random.choice(colors),topic)
         print(val)
         from ClipboardDB import ClipboardDB
@@ -168,27 +168,8 @@ class jupyterDB:
                 self.path = getPath()
             def folder(self):
                 Path.openExplorerAt(self.path)
-            def getLibPath(self, libName):
-                return LibsDB.getLibPath(libName)
-            def openLib(self,className, equalityTest = False):
-                checker = lambda x,y: x in y
-                if(equalityTest):
-                    checker = lambda x,y: x == y
-                if(className.endswith('.py')):
-                    File.openFile(self.getLibPath(className))
-                File.openFile(LibsDB.libPathOfClass(className, checker=checker))
-            def libPath4Class(self,className):
-                return LibsDB.libPathOfClass(className)
-            def content(self, wordHint, raw = False, checker = lambda x,y: x in y):
-                from ModuleDB import ModuleDB
-                content = File.getFileContent(LibsDB.libPathOfClass(wordHint, checker))
-                if(raw):
-                    return content
-                return ModuleDB.colorPrint("py", content)
             def size(self):
                 jupyterDB.libSize()
-            def addPathToFront(self, filename):
-                return self.path + os.sep + filename
             def totalNrOfLines(self):
                 files = Path.filesWithExtension("py", self.path)
                 su = 0
@@ -233,18 +214,6 @@ class jupyterDB:
 
                 return LibSizePlot()
         return Lib()
-
-    def resource():
-        class Res:
-            def __init__(self):
-                self.dirPath = Path.joinPath(getPath(),'..', "resource")
-            def folder(self):
-                Path.openExplorerAt(self.dirPath)
-            def getPath(self, path):
-                if(type(path) == list):
-                    path = Path.joinPath(*path)
-                Path.joinPath(self.dirPath, path)
-        return Res()
 
     def pickle():
         class Pkl:
@@ -324,11 +293,6 @@ class jupyterDB:
         return ModuleDB.colorPrint(typ, content)
 
     def startUp():
-        from TreeDB import TreeDB
-        from FileDatabase import File
-        from TreeDB import ForestDB
-        from TimeDB import TimeDB
-
         class SetUp:
             def home():
                 content = SetUp._text(jupyterDB.startUp().Ops().home().getContent())
@@ -343,7 +307,7 @@ class jupyterDB:
                 SetUp._both()
                 exec(content)
 
-            def _both():
+            def both():
                 content = SetUp._text(jupyterDB.startUp().Ops().both().getContent())
                 exec(content)
 
@@ -354,47 +318,29 @@ class jupyterDB:
                         if(type(loc) == str):
                             loc = [loc]
                         super().__init__("globals", ['codes','start up'] + loc )
-                    def add(self, lineOrContent):
-                        val = self.read()
+                    def add(self, lineOrContent = None):
+                        if lineOrContent is None:
+                            lineOrContent = jupyterDB.clip().text()
+                        val = self._read()
                         val += lineOrContent.splitlines()
                         super().add([], val, True)
 
                     def delete(self, lineNrRange):
-                        a, b = IOps._parse(lineNrRange)
-                        self._extractNAddNUpdate([],a-1, b)
-
-                    def _parse(lineRange):
-                        if(type(lineRange) ==  int):
-                            return lineRange, lineRange
-                        a,b = lineRange.split("-")
-                        return int(a), int(b)
-
-                    def _extractNAddNUpdate(self, lines, a, b):
-                        val = self.read()
-                        newVal  = val[:a]
-                        newVal += lines
-                        newVal += val[b:]
-                        super().add([], newVal, True)
-
-                    def replace(self, line, lineNr):
-                        self._extractNAddNUpdate(line.splitlines(),lineNr-1, lineNr)
-
-                    def insert(self, line, at):
-                        self._extractNAddNUpdate(line.splitlines(),at-1, at-1)
-
+                        val = self._read()
+                        if type(lineNrRange) == int:
+                            del val[lineNrRange]
+                        elif type(lineNrRange) == str:
+                            a, b = list(map(int, lineNrRange.split("-")))
+                            val = val[:a-1] + val[b:]
+                        super().add([], val, True)
                     def display(self):
-                        content = "\n".join(self.read())
+                        content = "\n".join(self._read())
                         from GraphDB import GraphDB
                         return GraphDB.displayCode().smallNrOfLines(content, "py")
 
-                    def read(self):
+                    def _read(self):
                         return super().read([])
 
-                    def getContent(self):
-                        return self.read()
-
-                    def getStructure(self):
-                        return self.read()
                 class Temp:
                     def office():
                         class OOps(IOps):
@@ -433,74 +379,10 @@ class jupyterDB:
         else:
             return res
 
-    def myDetails():
-        class Attr:
-            def __init__(self, val):
-                self.value = val
-            def get(self):
-                return self.value
-            def copy(self):
-                from jupyterDB import jupyterDB
-                jupyterDB.clip().copy(self.value)
-        class Tempo:
-            def email():
-                class Email:
-                    def rwth():
-                        return Attr("Raja.Chauhan@rwth-aachen.de")
-                    def fh():
-                        return Attr("raja-babu.chauhan@alumni.fh-aachen.de")
-                    def access():
-                        return Attr("r.chauhan@access-technology.de")
-                return Email
-
-            def phoneNr():
-                return Attr("01627078024")
-
-            def matriculationNr():
-                return Attr("3194210")
-
-            def bankInfo():
-                class Temp:
-                    def iban():
-                        return Attr("DE06 6607 0024 0113 5011 00")
-
-                    def bic():
-                        return Attr("DEUTDEDB660")
-
-                    def kundeNummer():
-                        return Attr("1921135011")
-
-                    def allInOne():
-                        return Attr(" ".join(["IBAN:" , Temp.iban().get(), "bic:", Temp.bic().get(), "kundeNummer: ",
-                                              Temp.kundeNummer().get()]))
-
-                return Temp
-
-            def address():
-                class Temp:
-                    def street():
-                        return Attr("Kullenhofstraße")
-
-                    def houseNr():
-                        return Attr("66")
-
-                    def roomNr():
-                        return Attr("1014")
-
-                    def pobNr():
-                        return Attr("52074")
-
-                    def allInOne():
-                        return Attr(" ".join([Temp.street().get(), Temp.houseNr().get(), " room Nr.",
-                                              Temp.roomNr().get(), "Plz.",Temp.pobNr().get()]))
-                return Temp
-
-        return Tempo
-
     def notifyWindow(title, msg, timeInsec = 2, icon=None):
         from plyer import notification
         if(icon is None):
-            icon = Path.joinPath(jupyterDB.resource().dirPath,r"assests\python_18894.ico")
+            icon = Path.joinPath(resourcePath(),r"assests\python_18894.ico")
         notification.notify(
             title = title,
             message = msg,

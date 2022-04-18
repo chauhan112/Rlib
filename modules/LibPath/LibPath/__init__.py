@@ -1,9 +1,17 @@
 def insertPath():
     import sys
-    sys.path.insert(0, getPath())
+    path = getPath()
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 def getPath():
-    return r"C:\Users\49162\Desktop\cloud\Global\code\libs\RLibs"
+    return 'C:\\Users\\49162\\Desktop\\cloud\\Global\\code\\libs\\RLibs'
+
+def resourcePath():
+    return 'C:\\Users\\49162\\Desktop\\cloud\\Global\\code\\libs\\resource'
+
+def dumperPath():
+    return 'C:\\Users\\49162\\Desktop\\cloud\\Global\\code\\daily code dumper'
 
 def computerName():
     return 'home'

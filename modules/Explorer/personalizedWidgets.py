@@ -227,9 +227,14 @@ class SearchWidget(IRWidget):
         self._db = db
     def get(self):
         return self._gnrb.get()
+        
 class Main:
     def explore(exp: IExplorer, title = "title"):
         wied = WidgetsIpyExplorerDisplayer(title)
         wied.set_explorer(exp)
         wied.display()
         return wied
+    def gui_for_db(db):
+        sw = SearchWidget()
+        sw.set_database(db)
+        return sw.get()

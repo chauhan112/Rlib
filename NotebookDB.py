@@ -98,12 +98,8 @@ class NotebookDB:
     def outFilename(date = None):
         from TimeDB import TimeDB
         import os
-        from LibsDB import LibsDB
         import datetime
-        from FileDatabase import File
-        from jupyterDB import jupyterDB
 
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
-        filePath = os.sep.join([File.getFileContent(jupyterDB.resource().dirPath + os.sep + "codeDump.txt"), 
-            f'{datetime.datetime.now().year}', fileName])
+        filePath = os.sep.join([dumperPath(), f'{datetime.datetime.now().year}', fileName])
         return filePath

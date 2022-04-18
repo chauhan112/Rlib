@@ -146,6 +146,7 @@ class Dic2Graph(IOps):
         self._path.clear()
         self._node_map.clear()
         self._path.append('root')
+        self._get_node(self._path)
         self._execute(self._dic)
         return self._node_map
     def _execute(self, val):

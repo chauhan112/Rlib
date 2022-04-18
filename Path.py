@@ -114,11 +114,6 @@ class Path:
             for x in files:
                 shutil.copy2( x, target_path + os.sep + os.path.basename(x))
 
-    def basename(arr):
-        if(type(arr) != list):
-            return os.path.basename(arr)
-        return list(map(os.path.basename, arr))
-
     def delete(files):
         for di in files:
             os.remove(di)
@@ -187,27 +182,11 @@ class Path:
                 db.search(word)
                 return db
         return PathOps()
-
-    def resource(file):
-        from LibPath import getPath
-        file = Path.joinPath(getPath(), "resource", file)
-        if(os.path.exists(file)):
-            return file
-        print("No such file")
-
-    def insertPath(path):
-        import sys
-        sys.path.insert(0, path)
     
     def changeSeparator(path):
         from WordDB import WordDB
         return WordDB.replaceWithRegex(r"\\+", "<sjdfsdj>", WordDB.replaceWithRegex("/+","<sjdfsdj>",  
             path)).replace("<sjdfsdj>", os.sep)
-
-    def convert2CloudPath(path):
-        from LibsDB import LibsDB
-        from WordDB import WordDB
-        return Path.joinPath(WordDB.replaceWithRegex("^.*?cloud", LibsDB.cloudPath().replace("\\",r"\\"), path))
     
     def arrange():
         class Temp:
@@ -285,7 +264,7 @@ class FrequentPaths:
         val = 'pathsW.pkl'
         if (SystemInfo.isLinux()):
             val = 'paths.pkl'
-        file = Path.joinPath(getPath(),"..", "resource", 'pickle', val)
+        file = Path.joinPath(resourcePath(), 'pickle', val)
         paths = SerializationDB.readPickle(file)
         return paths
         
