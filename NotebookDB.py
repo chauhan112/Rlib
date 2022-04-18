@@ -98,6 +98,7 @@ class NotebookDB:
     def outFilename(date = None):
         from TimeDB import TimeDB
         import os
+        from LibPath import dumperPath
         import datetime
 
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
