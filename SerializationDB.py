@@ -1,6 +1,5 @@
 import dill as pickle
 import os
-from LibPath import resourcePath
 
 class SerializationDB:
     def pickleOut(dataStructure, outFileName):
@@ -26,6 +25,7 @@ class SerializationDB:
         k.archive()
 
     def deserializeProject(pklFile):
+        from LibPath import resourcePath
         pklFile = os.sep.join([resourcePath(), "project", pklFile])
         k = SerializationDB.readPickle(pklFile)
         k.restore()
