@@ -7,6 +7,7 @@ from SerializationDB import SerializationDB
 from LibsDB import LibsDB
 
 class jupyterDB:
+    _dbdbs = None
     def header(topic = 'headerName', fontFace = "comic sans ms"):
         import random, yaml
         colors = yaml.safe_load(File.getFileContent(Path.joinPath(resourcePath(), "colorNames.yaml")))
@@ -310,7 +311,10 @@ class jupyterDB:
             def both():
                 content = SetUp._text(jupyterDB.startUp().Ops().both().getContent())
                 exec(content)
-
+            def gui():
+                from modules.GUIs.startUpGUI import StartUpGUI
+                sug = StartUpGUI()
+                return sug.display()
             def Ops():
                 from PickleCRUDDB import PickleCRUD
                 class IOps(PickleCRUD):
@@ -328,9 +332,11 @@ class jupyterDB:
                     def delete(self, lineNrRange):
                         val = self._read()
                         if type(lineNrRange) == int:
-                            del val[lineNrRange]
+                            del val[lineNrRange-1]
                         elif type(lineNrRange) == str:
-                            a, b = list(map(int, lineNrRange.split("-")))
+                            a, b = list(map(int, lineNrRange.split(":")))
+                            if b < 0 and len(val) > 0:
+                                b = (b % len(val)) + 1 
                             val = val[:a-1] + val[b:]
                         super().add([], val, True)
                     def display(self):
@@ -389,3 +395,9 @@ class jupyterDB:
             timeout = timeInsec,
             app_icon = icon
         )
+    def dbdb():
+        from modules.Explorer.personalizedWidgets import Main
+        from nice_design.database_of_database import DatabaseOfDatabases
+        if jupyterDB._dbdbs is None:
+            jupyterDB._dbdbs = Main.gui_for_db(DatabaseOfDatabases())
+        return jupyterDB._dbdbs

@@ -60,7 +60,8 @@ class VRBox(Addable, IRWidget):
     def get_child(self, nr):
         return self._children[nr]
     def clear(self):
-        self._vbox.children = ()
+        self._container.children = ()
+        self._children.clear()
 class HRBox(VRBox):
     def __init__(self):
         import ipywidgets as widgets
@@ -216,9 +217,7 @@ class SearchWidget(IRWidget):
         self._gnrb.get_child(1).add_widget(self._out)
         self._search_btn.on_click(self._on_search_click)
     def _on_search_click(self, btn_info):
-        search_string = self._txt_wid.value
-        if search_string.strip() == "":
-            return 
+        search_string = self._txt_wid.value.strip()
         self._out.clear_output()
         reg = self._reg_widgets.value
         with self._out:

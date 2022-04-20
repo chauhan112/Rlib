@@ -282,10 +282,9 @@ class LocalTree:
         print("Total number of trees in the forest : " + str(len(k)))
         print("Content size : " + str(len(content)))
 
-    def search(self, word, reg = False, openWindow = False):
+    def search(self, word, reg = False):
         from Database import D1Database
         from WidgetsDB import WidgetsDB
-        from AutomationDB import Automation
         from ClipboardDB import ClipboardDB
         trees = self._reader()
         vals = list(trees.keys())
@@ -293,11 +292,6 @@ class LocalTree:
         k = [vals[x] for x in db.search(word, reg = reg)]
         def copy(x):
             ClipboardDB.copy2clipboard(trees[x.description])
-            if(openWindow):
-                import time
-                File.openFile(Path.joinPath(Temp.path(), "index.drawio"))
-                time.sleep(5)
-                Automation.control("v")
         return WidgetsDB.getGrid(7, [WidgetsDB.button(name=x, callbackFunc=copy, tooltip=x) for x in k])
     
     def updateKey(self, oldname, newName):

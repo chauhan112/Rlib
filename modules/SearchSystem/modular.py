@@ -234,6 +234,7 @@ class JupyterResultDisplayer(IResultDisplayer):
         self._way.set_elements(self._results)
         self._way.set_callback_func(self._callback)
         lay = self._way.get_layout()
+        self._area.searchRes.clear_output()
         with self._area.searchRes:  
             display(lay)
         return lay

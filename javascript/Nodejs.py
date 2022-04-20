@@ -32,9 +32,10 @@ class Nodejs:
             print(line)
 
     def syntax(word):
+        from Database import Database
         synts = {
             'import path' : "const path = require('path')",
             'run dev' : "npm run dev",
             "serve static page": """app.use(express.static("./websockets"));"""
         }
-        ListDB.functionOnElementWithoutReturns(print, ListDB.searchInDic(word, synts))
+        return Database.dicDB(synts)

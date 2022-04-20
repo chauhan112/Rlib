@@ -111,6 +111,7 @@ class _BinaryDumper:
 
     def search(self,word = "", applyOnValue = None):
         from SearchSystem import DicSearchEngine
+        from jupyterDB import jupyterDB
         from Path import Path
         if(applyOnValue is None):
             applyOnValue = jupyterDB.clip().copy

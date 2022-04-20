@@ -86,7 +86,9 @@ class MarkdownToolsDB:
         pipe = MarkdownToolsDB.dic['pipe']
         return MarkdownToolsDB.brace(val, lr = pipe)
     def search(word):
-        ListDB.functionOnElementWithoutReturns(print, ListDB.searchInDic(word, MarkdownToolsDB.dic))
+        from Database import Database
+        return Database.dicDB(MarkdownToolsDB.dic)
+
     def limit(var, tends2):
         return f"\\lim _{{{var} \\rightarrow {tends2}}}"
     def summation(bottom, top, functExp = ""):

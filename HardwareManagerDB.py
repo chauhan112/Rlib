@@ -1,6 +1,6 @@
 from SearchSystem import GeneralSearchEngine
 class HardwareManagerDB:
-    def search():
+    def dbs():
         class Temp:
             def name():
                 return GeneralSearchEngine(content, callBackFunc=lambda key, con: print(con[key]))

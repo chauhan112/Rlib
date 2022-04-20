@@ -1,5 +1,5 @@
 def has_partition(dgm: DarkNShadowGameMock):
-    from projects.kami.kami import GraphIterator
+    from nice_design.iteration import GraphIterator
     vertices = [t._pos for t in dgm._model._grid_model.get_all_tiles() if dgm._model.is_passable(t._pos)]
     if len(vertices) == 0:
         return False

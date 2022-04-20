@@ -17,10 +17,7 @@ class StaggingAreaDB:
             print(f"translating {path}")
             dic = _translate(path)
         SerializationDB.pickleOut(dic, path)
-    def miniCondaPath():
-        paths = {'office': r"C:\Users\rajac\Miniconda3"}
-        from ModuleDB import ModuleDB
-        return paths[ModuleDB.laptopName()]
+
     def get_default_windows_app(suffix):
         import shlex
         import winreg

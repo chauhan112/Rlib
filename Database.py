@@ -196,7 +196,7 @@ class Database:
     def resourceDB():
         from Path import Path
         files = Path.getFiles(resourcePath(), walk = True)
-        return Database.getDB(files)
+        return Database.pathDB(files)
     def moduleDB(keyWord = None, engine = FilesContentSearchEngine):
         from LibPath import getPath
         from StaticDisplayerManager import StaticDisplayerManager

@@ -68,21 +68,15 @@ class TreeDB:
                 return Tem
             def path():
                 return ForestDB.getForestPath()
-            def search(word, reg = False, openWindow = False):
+            def search(word, reg = False):
                 from Database import D1Database
                 from WidgetsDB import WidgetsDB
-                from AutomationDB import Automation
                 trees = SerializationDB.readPickle(LibsDB.picklePath("abstraction"))
                 vals = list(trees.keys())
                 db = D1Database(vals)
                 k = [vals[x] for x in db.search(word, reg = reg)]
                 def copy(x):
                     ClipboardDB.copy2clipboard(trees[x.description])
-                    if(openWindow):
-                        import time
-                        File.openFile(Path.joinPath(Temp.path(), "index.drawio"))
-                        time.sleep(5)
-                        Automation.control("v")
                 return WidgetsDB.getGrid(7, [WidgetsDB.button(name=x, callbackFunc=copy, tooltip=x) for x in k])
             def cache():
                 class Tools:

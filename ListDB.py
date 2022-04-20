@@ -33,17 +33,6 @@ class ListDB:
     def listFilter(func, arr):
         return list(filter(func, arr))
 
-    def searchInDic(word, dic, case = False):
-        vals = []
-        for key in dic:
-            if( ComparerDB.inCompare(word, key, case)):
-                vals.append(f"{key} : {dic[key]}")
-        return vals
-
-    def functionOnElementWithoutReturns(func, container):
-        for val in container:
-            func(val)
-
     def filterOutResult(filterByWords, result):
         ignoringTables = set([])
         result = set(result)

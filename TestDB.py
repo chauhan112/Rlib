@@ -26,11 +26,7 @@ class TestDB:
             '3. tree structure to diagram']
         assert(ListDB.reList(inp, False) == out)
 
-    def mouseMoveTesting(): 
-        from AutomationDB import Automation
-        pts = [(100,100), (200,100), (200,200), (100, 200)]
-        Automation.moveMouse(pts)
-    
+
     def combinerTest():
         from StaggingAreaDB import StaggingAreaDB
         from MathObjectDB import OpenRange

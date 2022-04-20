@@ -28,14 +28,14 @@ class NumericalAnalysis:
         return avg
             
     def sympySyntax(word):
+        from Database import Database
         syntaxes = {
             'unknown function' : "d = symbols(\"d\" , cls = Function)",
             'symbol' : "x = symbols('x')",
             'symbols': "x,y,z = symbols('x y z')",
             'integrate': ""
-        }
-
-        ListDB.functionOnElementWithoutReturns(print, ListDB.searchInDic(word, syntaxes))
+        }   
+        return Database.dicDB(syntaxes)
 
     def newtonMethod(f, df, tolerance = 1e-6, initialValue = 0, maxIter = 1e6):
         x = initialValue

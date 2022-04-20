@@ -253,6 +253,31 @@ class MakeGraphFromIterator(IOps):
     def set_child_maker(self, maker: IChildMaker ):
         self._maker = maker
 
+class GraphIterator:
+    def set_graph(self, graph):
+        self._graph = graph
+    def set_child_func(self, func):
+        self._func = func
+    def _get_childen(self, key):
+        return self._func(self, key)
+    def set_initial_value(self, first):
+        self._initial_value = first
+    def __iter__(self):
+        self._visited = set()
+        self._iterator = self._oter(self._initial_value)
+        return self
+    def __next__(self):
+        return next(self._iterator)
+    def _oter(self, val):
+        yield val
+        self._visited.add(val)
+        children = self._get_childen(val)
+        for chi in children:
+            if chi in self._visited:
+                continue
+            for val in self._oter(chi):
+                yield val
+
 class Main:
     def make_graph(radius=None):
         from projects.HexGridFill.hex import GameModel
