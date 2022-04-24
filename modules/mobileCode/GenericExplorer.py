@@ -1,5 +1,6 @@
 from modules.FileAnalyser.FileAnalyser import DynamicNodeExplorer
-from modules.Explorer.personalizedWidgets import IExplorer, IExplorerDisplayer
+from modules.Explorer.personalizedWidgets import IExplorerDisplayer
+from modules.Explorer.model import IExplorer
 from modules.mobileCode.tree_ops import IRenderer
 import os
 from modules.FileAnalyser.FileAnalyser import GNode

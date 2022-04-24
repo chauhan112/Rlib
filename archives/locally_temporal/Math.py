@@ -13,7 +13,7 @@ class _DocInterface:
     def __init__(self):
         self._conDB = None
     def _getFiles(self):
-        raise IOError("Not implemented yet error")
+        return self._files
     def pathDB(self):
         return _Opener.pathDB(self._getFiles())
     def contentDB(self):
@@ -21,7 +21,8 @@ class _DocInterface:
         if(self._conDB is None):
             self._conDB = Database.pdfDB(self._getFiles())
         return self._conDB
-        
+    def set_files(self, files):
+        self._files = files
 class MathTheoryAndExercises:
     from Database import Database
     dbs = {}
@@ -110,28 +111,33 @@ class MathTheoryAndExercises:
                     
                     def exercises():
                         class T:
-                            def _openDB(path):
-                                files = Path.filesWithExtension("pdf", path)
+                            def _openDB(paths):
+                                files = []
+                                for path in paths:
+                                    files += Path.filesWithExtension("pdf", path)
                                 return _Opener.pathDB(files)
-                            
                             def questions():
                                 class Q:
+                                    cw_path = Path.joinPath(Temp._getPath(), "Practice materials", "CW")
+                                    hw_path = Path.joinPath(Temp._getPath(), "Practice materials", "HW")
                                     def cw():
-                                        path = Path.joinPath(Temp._getPath(), "Practice materials", "CW")
-                                        return T._openDB(path)
+                                        return T._openDB([Q.cw_path])
                                     def hw():
-                                        path = Path.joinPath(Temp._getPath(), "Practice materials", "HW")
-                                        return T._openDB(path)
+                                        return T._openDB([Q.hw_path])
+                                    def both():
+                                        return T._openDB([Q.hw_path, Q.cw_path])
                                 return Q
                             
                             def answers():
                                 class A:
+                                    cw_path = Path.joinPath(Temp._getPath(), "Practice materials", "Losüngs CW")
+                                    hw_path = Path.joinPath(Temp._getPath(), "Practice materials", "HW answers")
                                     def cw():
-                                        path = Path.joinPath(Temp._getPath(), "Practice materials", "Losüngs CW")
-                                        return T._openDB(path)
+                                        return T._openDB([A.cw_path])
                                     def hw():
-                                        path = Path.joinPath(Temp._getPath(), "Practice materials", "HW answers")
-                                        return T._openDB(path)
+                                        return T._openDB([A.hw_path])
+                                    def both():
+                                        return T._openDB([A.hw_path, A.cw_path])
                                 return A
                         return T
                 return Temp

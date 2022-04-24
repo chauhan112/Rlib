@@ -1,5 +1,6 @@
 from InterfaceDB import EmptyClass
-from modules.Explorer.personalizedWidgets import IExplorer as IExplorer2, WidgetsIpyExplorerDisplayer
+from modules.Explorer.personalizedWidgets import WidgetsIpyExplorerDisplayer
+from modules.Explorer.model import IExplorer
 from OpsDB import IOps
 class Node:
     def __init__(self, idd):
@@ -10,7 +11,7 @@ class Node:
     @property
     def value(self):
         return f"node:{self.idd}, d: {self.extra_info.depth}"
-class NodeTreeExplorer(IExplorer2):
+class NodeTreeExplorer(IExplorer):
     def __init__(self, root = None):
         self._pos = [root]
     def cd(self, key):
@@ -117,7 +118,7 @@ class Graph2NodeTreeMakerBreadthFirstSearch(IOps):
             n.extra_info.depth = 0
         return self._node_map[key]
 class Main:
-    def explore(exp: IExplorer2, title = "title"):
+    def explore(exp: IExplorer, title = "title"):
         wied = WidgetsIpyExplorerDisplayer(title)
         wied.set_explorer(exp)
         wied.display()

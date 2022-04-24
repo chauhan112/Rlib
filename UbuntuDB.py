@@ -4,8 +4,6 @@ class UbuntuDB:
         from jupyterDB import jupyterDB
         from Database import Database
         from ListDB import ListDB
-        from ConformationDB import Confirmation
-
         class Temp(DicSearchEngine):
             def _callback(self, item):
                 print(self.searchSys.container[item])

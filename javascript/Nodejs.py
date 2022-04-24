@@ -31,11 +31,11 @@ class Nodejs:
         for line in lines:
             print(line)
 
-    def syntax(word):
+    def syntax(word=None):
         from Database import Database
         synts = {
             'import path' : "const path = require('path')",
             'run dev' : "npm run dev",
             "serve static page": """app.use(express.static("./websockets"));"""
         }
-        return Database.dicDB(synts)
+        return Database.dbSearch(Database.dicDB(synts), word)

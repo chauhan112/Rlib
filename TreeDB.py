@@ -161,7 +161,7 @@ class ForestDB:
         }
         return computers[socket.gethostname()]
 
-    def searchInContents(word, reg = False):
+    def search(word, case =True,  reg = False):
         from ComparerDB import ComparerDB
         from RegexDB import RegexDB
         from WidgetsDB import WidgetsDB

@@ -346,7 +346,7 @@ class MakeAnimation(IOps):
         images = []
         for filename in self._images:
             images.append(imageio.imread(filename))
-        imageio.mimsave(self._output_name, images)
+        imageio.mimsave(self._output_name, images, duration=self._duration)
     def set_duration_between_frames(self, duration):
         self._duration = duration
     def set_output_filename(self, name):

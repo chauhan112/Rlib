@@ -5,14 +5,12 @@ from SystemInfo import SystemInfo
 class GitDB:
     repo = None
     currentBranch = None
-    def syntax(keyWord):
+    def syntax(keyWord=None):
         from jupyterDB import jupyterDB
         name = "syntax"
         k = jupyterDB.pickle().read(name)
         from Database import Database
-        db = Database.dicDB(k['git'])
-        db.search(keyWord)
-        return db
+        return Database.dbSearch(Database.dicDB(k['git']), keyWord)
         
     def setPath(gitPath):
         from git import Repo

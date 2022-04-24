@@ -140,7 +140,7 @@ class WidgetsDB:
         display(widgets.HBox([topWithSelc, outputDisplay]))
         return title, dropdown, text, selection, b1,b2, logOut, outputDisplay
         
-    def ioArea():
+    def ioArea(displayLayout= True):
         title, dropdown, text, selection, outputDisplay = WidgetsDB._basicFileExplorerIO()
         top = widgets.HBox(children=[dropdown, text], layout = widgets.Layout(width = 'auto'))
         b1 = widgets.Button(description='copy path', layout=widgets.Layout(width='auto'))
@@ -149,7 +149,8 @@ class WidgetsDB:
         inputs = widgets.VBox([title,top, selection, fileOps], 
                             layout = widgets.Layout(width = 'auto', max_width = "50%"))
         layout = widgets.HBox([inputs, outputDisplay])
-        display(layout)
+        if displayLayout:
+            display(layout)
         from DataStructure import DataStructure
         k = {
             'title': title,
@@ -158,7 +159,8 @@ class WidgetsDB:
             'dirList': selection,
             'b1': b1,
             'b2': b2,
-            'fileOps': fileOps
+            'fileOps': fileOps,
+            'layout': layout
         }
         return DataStructure.nestedNamespace(k), outputDisplay
 

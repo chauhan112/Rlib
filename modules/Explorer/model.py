@@ -1,14 +1,13 @@
 import os
 
-class Explorer:
-    def __init__(self, content):
-        self.content = content
-        
+class IExplorer:
     def cd(self, key):
-        return NotImplementedError("Please implement getNext with key")
-    
+        pass
+    def dirList(self):
+        pass
     def goBack(self):
-        return NotImplementedError("Please implement goBack")
+        pass
+        
 
 class ExplorerUtils:
     def dirsWithIcon(dirList):
@@ -152,7 +151,7 @@ class ZipFileExplorer(FileExplorerWithPaths):
             path = filename
         self.tool.extractWithPaths(self.zipPath, [path], to= self._extractingPath)
 
-class OSFileExplorer(Explorer):
+class OSFileExplorer(IExplorer):
     def __init__(self,initialPath = None):
         self.path = initialPath
         if(initialPath is None):
@@ -192,9 +191,9 @@ class OSFileExplorer(Explorer):
         folders.insert(0, '.')   
         return folders, files
 
-class DictionaryExplorer(Explorer):
+class DictionaryExplorer(IExplorer):
     def __init__(self, dic):
-        super().__init__(dic)
+        self._content = dic
         self.currentPath = []
     
     def cd(self, key):
@@ -213,7 +212,7 @@ class DictionaryExplorer(Explorer):
         self.currentPath.pop()
     
     def keys(self):
-        p = self.content
+        p = self._content
         for key in self.currentPath:
             p = p[key]
         folders = []
@@ -233,28 +232,10 @@ class DictionaryExplorer(Explorer):
         return folders, vals
 
     def getCurrentValue(self):
-        p = self.content
+        p = self._content
         for key in self.currentPath:
             p = p[key]
         return p
-        
-class IExplorer:
-    def cd(self, key):
-        raise NotImplementedError('abstract method')
-    
-    def dirList(self):
-        raise NotImplementedError('abstract method')
-        
-    def goBack(self):
-        raise NotImplementedError('abstract method')
-    
-    def getCurrentPath(self):
-        raise NotImplementedError('abstract method')
-    
-    def setCurrentPath(self, path):
-        raise NotImplementedError('abstract method')
-    def displayContent(self, path):
-        raise NotImplementedError('abstract method')
         
 class ZipExplorerWithFilter(ZipFileExplorer):
     def __init__(self, zipPath):
@@ -264,7 +245,7 @@ class ZipExplorerWithFilter(ZipFileExplorer):
     def filterPaths(self):
         raise IOError("implement this method")
 
-class ZipExplorer:
+class ZipExplorer(IExplorer):
     def __init__(self, zipPath):
         from ZiptoolDB import ZiptoolDB
         self.tool = ZiptoolDB
@@ -272,9 +253,9 @@ class ZipExplorer:
         from modules.mobileCode.CmdCommand import DicList
         self.zipPath = zipPath
         
-        files = ZiptoolDB.getZipContent(zipPath)
+        self._files = ZiptoolDB.getZipContent(zipPath)
         fl = FileList2Dic("/")
-        fl.setData(files)
+        fl.setData(self._files)
         self._content = fl.execute()
         self._exp = DicList()
         self._exp.setData(self._content)
@@ -284,7 +265,7 @@ class ZipExplorer:
         
         
         self._extractingPath = "." + os.path.basename(self.zipPath)[:-4]
-        self.currentPath = "/".join(self._exp.dicExp.currentPath)
+        self._currentPath = "/".join(self._exp.dicExp.currentPath)
         self.sep = "/"
         
     def dirList(self):
@@ -295,15 +276,15 @@ class ZipExplorer:
         for val in vals:
             if val == '..':
                 continue
-            content =ListDB.dicOps().get(self._exp.dicExp.content, 
+            content =ListDB.dicOps().get(self._exp.dicExp._content, 
                                          self._exp.dicExp.currentPath+ [val])
             if type (content) == dict and content != {}:
                 folders.append(val)
             else:
                 files.append(val)
-            params = ['..', f'... t:{len(self._currentList)} f:{self._from}']
-            if self._from > 0:
-                params = ['^^^'] + params
+        params = ['..', f'... t:{len(self._currentList)} f:{self._from}']
+        if self._from > 0:
+            params = params +['^^^']
         return ['.',*params] + folders, files
     
     def cd(self, val):
@@ -313,9 +294,7 @@ class ZipExplorer:
         if val == '.':
             return
         if val == '..':
-            self._from = 0
-            self._exp.dicExp.goBack()
-            self._currentList = self._exp.get()
+            self.goBack()
             return
         if val == '...':
             if self._from + self.deltaVal < len(self._currentList):
@@ -327,14 +306,18 @@ class ZipExplorer:
             return
         self._exp.dicExp.cd(val)
         self._currentList = self._exp.get()
-        self.currentPath = "/".join(self._exp.dicExp.currentPath)
+        self._currentPath = "/".join(self._exp.dicExp.currentPath)
         
     def extract(self, filename):
         path = "/".join(self._exp.dicExp.currentPath + [filename])
         if(path == ''):
             path = filename
         self.tool.extractWithPaths(self.zipPath, [path], to= self._extractingPath)
-
+    def goBack(self):
+        self._from = 0
+        self._exp.dicExp.goBack()
+        self._currentList = self._exp.get()
+        self._currentPath = "/".join(self._exp.dicExp.currentPath)
 
 class ExplorerTest:
     def test_getLevel1FileOrFolder():

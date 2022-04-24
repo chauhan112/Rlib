@@ -1,12 +1,14 @@
 from modules.Explorer.displayer import IExt,NotebookGeneralDisplayer
 class ExplorerDB:
+    _exp = None
     def zipExplorer(path, exts = {}):
-        from modules.Explorer.ZipFileExplorerDisplayer import  OldZipFileExplorerDisplayer
+        from modules.Explorer.ZipFileExplorerDisplayer import ZipFileExplorerDisplayer
         from modules.Explorer.model import ZipExplorer
-        return ExplorerDB._setExtraDisplayer(OldZipFileExplorerDisplayer(path, ZipExplorer), exts)
+        return ExplorerDB._setExtraDisplayer(ZipFileExplorerDisplayer(path, ZipExplorer), exts)
     def _setExtraDisplayer(exp, exts):
         for key in exts:
             exp.displayer.set_extension_displayer(key,exts[key])
+        ExplorerDB._exp = exp
         return exp
     def dicExplorer(dic, name = None):
         import json

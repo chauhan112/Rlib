@@ -1,14 +1,7 @@
-from modules.Explorer.model import ExplorerUtils, DictionaryExplorer
+from modules.Explorer.model import ExplorerUtils, DictionaryExplorer, IExplorer
 from InterfaceDB import EmptyClass
 class IRWidget:
     def get(self):
-        pass
-class IExplorer:
-    def cd(self, key):
-        pass
-    def dirList(self):
-        pass
-    def goBack(self):
         pass
 class IController:
     def run(self):
@@ -36,6 +29,27 @@ class RDropdown(IRWidget):
         self._wid.options = options
     def get(self):
         return self._wid
+class RCheckbox:
+    def __init__(self, **kwargs):
+        import ipywidgets as widgets
+        self._wid = widgets.Checkbox(**kwargs)
+        self._wid.observe(self._changed, names="value")
+        self.on_checked(lambda x: x)
+        self.on_unchecked(lambda x: x)
+    def on_checked(self, func):
+        self._on_checked = func
+    def on_unchecked(self, func):
+        self._on_unchecked = func
+    def on_changed(self, func):
+        self.on_checked(func)
+        self.on_unchecked(func)
+    def get(self):
+        return self._wid
+    def _changed(self, x):
+        if self._wid.value:
+            self._on_checked(x)
+        else:
+            self._on_unchecked(x)
 class Addable(IBox):
     def add_widget(self, wid):
         self._children.append(wid)
@@ -127,19 +141,23 @@ class MetaExplorer(IExplorer):
         self._exp.goBack()
     def dirList(self):
         folders, files = self._exp.dirList()
-        folders = ['.','..'] + folders
+        if '.' not in folders:
+            folders = ['.','..'] + folders
         return folders, files
 class DicExplorerAdapter(DictionaryExplorer):
     def dirList(self):
         return self.keys()
-class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
+class WidgetsIpyExplorerDisplayer(IExplorerDisplayer):
     def __init__(self, title=''):
         self._title = title
         self._wid = None
         self._exp = None
+        self.set_location_func(self._update_loc)
     def set_explorer(self, explorer: IExplorer):
         self._exp = explorer
         self._mexp = MetaExplorer(self._exp)
+    def set_location_func(self, func):
+        self._loc_func = func
     def display(self):
         from IPython.display import display
         self.get() # makes sure that self._wid is created
@@ -154,7 +172,6 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         wid.components.title, wid.components.dropdown, wid.components.text, wid.components.selection, \
             wid.components.outputDisplay = WidgetsDB._basicFileExplorerIO()
         wid.components.footer = HRContrainableBox()
-        wid.components.footer._btns = {}
         max_buttons_in_a_row = 4
         wid.components.dropdown = widgets.Text()
         wid.components.disabled = True
@@ -169,11 +186,7 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
         if self._wid is None:
             self._wid = self._create_layout()
         return self._wid
-    def add_button(self, idd, button_widget):
-        if idd in self._wid.components.footer._btns:
-            return
-        self._wid.components.footer._btns[idd] = button_widget
-        self._wid.components.footer.add_widget(button_widget)
+
     def _fill_values(self):
         try:
             self._wid.components.selection.unobserve(self._on_dirlist_select, names = 'value')
@@ -187,19 +200,21 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer, VRBox):
             value = change['new'].replace(ExplorerUtils.dirIcon(), '').strip()
             self._mexp.cd(value)
             self._wid.components.text.value = ''
-            self._update_loc(value)
+            self._wid.components.dropdown.value = self._loc_func(value)
             self._fill_values()
         else:
             self._wid.components.text.value = change['new']
             # clicked on file
         self._wid.components.outputDisplay.clear_output()
-    def _update_loc(self, val):
+    def _update_loc(self, selected: str):
         value = self._wid.components.dropdown.value
         vals = value.split("/")
-        txt = '/'.join(vals + [val])
-        if val == '..':
+        txt = '/'.join(vals + [selected])
+        if selected == '..':
             txt = '/'.join(vals[:-1])
-        self._wid.components.dropdown.value = txt
+        return txt
+    def set_file_displayers(self, disp):
+        self._displayer = disp
 class SearchWidget(IRWidget):
     def __init__(self):
         self._gnrb = GenerateNRowsBox(2)

@@ -1,21 +1,16 @@
 from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement, GDisplayableResult
-from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget, Main
+from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget, SearchWidget
 import ipywidgets as widgets
 from nice_design.search import TelegramChannels
+from modules.GUIs.search_guis import CodeDumperSearchGUI, FileSearchGUI, SyntaxSearchGUI,BachelorSubjectSearchGUI
 from SearchSystem import DicSearch
 from Database import Database
+from nice_design.interfaces import IDatabaseGUI, IAbout
+from TreeDB import ForestDB
+from PickleCRUDDB import PickleSearchEngine
 
-class IDatabaseGUI:
-    def display(self):
-        raise NotImplementedError("abstract method")
-
-class IAbout:
-    def display_info(self):
-        raise NotImplementedError("abstract method")
-
-class DefaultDatabaseGUI(IAbout):
+class DefaultDatabaseGUI(IAbout, IDatabaseGUI):
     def __init__(self):
-        from modules.Explorer.personalizedWidgets import SearchWidget
         self._sw = SearchWidget()
     def display(self):
         print(self.display_info())
@@ -33,25 +28,21 @@ class DatabaseOfDatabases:
         self._default_db = DefaultDatabaseGUI()
         self._dbs = {
             'rlib module':( Database.moduleDB(), 'search in Rlib codes'),
-            'code dumper': 'search in the autologged code',
-            'pdf files': 'search in the given list of pdf files',
-            'notebook ipynb': 'search in given notebook files',
-            'text files': 'search in given text files and open at found line number',
+            'code dumper': (CodeDumperSearchGUI(),'search in the autologged code'),
+            'text files': (FileSearchGUI(),'search in the text files'), # pdf, text, video, ipynb
             'urls': (UrlDB.db(), 'search in the stored urls history'),
-            'resources': 'search in the resources files and open them',
-            'forest': 'search in the forest files paths names',
-            'video': 'search in the given names of given video paths',
-            'pickle db': 'search in all the resource pickle files',
-            'syntax': 'search in the programming languages syntaxes', # cpp, py, ubuntu, string formats, git, regexs, sympy
+            'resources': (Database.resourceDB(),'search in the resources files and open them'),
+            'forest': (Database.forestDB(), 'search in the forest files paths names'),
+            'pickle db': (PickleSearchEngine(),'search in all the resource pickle files'),
+            'syntax': (SyntaxSearchGUI(), 'search in the programming languages syntaxes'),
             'dictionary': 'search in the given dictionary and print the content',
             'pycode': 'search in code godown of python',
-            'paths': 'search in the stored path',
-            'tree content': 'search in the content of drawio files',
+            'tree content': (ForestDB, 'search in the content of drawio files'),
             'projects': 'search in archived projects',
             'stuffs': 'search in stuffs logged',
             'telegram channels': (TelegramChannels(True),'search in the telegram exported channels'),
             'qt code library': 'search in qt code library cpp',
-            'bachelor': 'search in bachelor subjects content', #android, SWT, machine learning, ihk, data science, maths
+            'bachelor': (BachelorSubjectSearchGUI(), 'search in bachelor subjects content'),
         }
         self._info_index = 1
         self._db_index = 0
@@ -68,7 +59,7 @@ class DatabaseOfDatabases:
             print(info , "is not implemented yet")
             return
         db = self._dbs[info][self._db_index]
-        if not isinstance(self._dbs[info], IDatabaseGUI):
+        if not isinstance(db, IDatabaseGUI):
             db = self._default_db
             db.set_db_info(self._dbs[info][self._info_index])
             db.set_db(self._dbs[info][self._db_index])

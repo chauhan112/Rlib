@@ -27,7 +27,7 @@ class NumericalAnalysis:
             count +=1
         return avg
             
-    def sympySyntax(word):
+    def sympySyntax():
         from Database import Database
         syntaxes = {
             'unknown function' : "d = symbols(\"d\" , cls = Function)",

@@ -26,12 +26,10 @@ class RegexDB:
         return f"(?<={ahead}){regex}(?={behind})"
     def isThereRegexMatch(regex, content):
         return WordDB.regexMatchFound(regex, content)
-    def regexs(val):
+    def regexs(val=None):
         file = os.sep.join([LibsDB.picklePath(), "regexDB.pkl"])
         regexes = SerializationDB.readPickle(file)
-        db = Database.dicDB(regexes)
-        db.search(val)
-        return db
+        return Database.dbSearch(Database.dicDB(regexes), val)
     def replace(regex,text, replacingFunc):
         founds = WordDB.searchWordWithRegex(regex, text)
         newText = ''
@@ -46,8 +44,12 @@ class RegexDB:
         """
         * only works for a single line because you are defining the entire structure
         """
+        if type(exp) == str:
+            reg = exp
+        else:
+            reg = exp.get()
         import re
-        reg = re.compile(exp.get())
+        reg = re.compile(reg)
         f = reg.match(text)
         if f is not None:
             return f.groupdict()

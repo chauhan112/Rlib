@@ -48,7 +48,6 @@ class jupyterDB:
                         self._write(val)
                     def read_keys(self):
                         return list(self._read(self._key).keys())
-                    @property
                     def db(self):
                         return Database.syntaxDB(self._read(self._key), self._key)
                     def _read(self, key =  None):
@@ -117,6 +116,7 @@ class jupyterDB:
                     fileBaseName = os.path.basename(f)
                     print(fileBaseName, end=",")
                     vals [fileBaseName] = self.read(f)
+                
                 class Temp:
                     def __init__(self, container):
                         self.container = container
@@ -125,6 +125,7 @@ class jupyterDB:
                         for key in self.container:
                             lsiting += self.container[key]
                         self._db = Database.allRunCellDB(_ih = lsiting)
+                        self._db.set_tooltip(lambda x: self.getFileInfo(int(x.replace("line",""))))
 
                     def search(self, word, case = False, reg = False):
                         self._db.search(word, case, reg)
@@ -395,7 +396,9 @@ class jupyterDB:
             timeout = timeInsec,
             app_icon = icon
         )
-    def dbdb():
+    def dbdb(reload =False):
+        if reload:
+            jupyterDB._dbdbs = None
         from modules.Explorer.personalizedWidgets import Main
         from nice_design.database_of_database import DatabaseOfDatabases
         if jupyterDB._dbdbs is None:

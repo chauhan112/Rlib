@@ -322,7 +322,7 @@ class TimeDB:
     def dateCheckCondition(date):
         class Temp:
             def between(fromDate, toDate):
-                # date format: (yyyy, mm, dd) inclusive
+                """date format: (yyyy, mm, dd) inclusive"""
                 toNu = lambda y,m,d : y*365 + m*31 + d
                 return toNu(*date) >= toNu(*fromDate) and toNu(*date) <= toNu(*toDate)
             
@@ -357,8 +357,7 @@ class EventCalender:
         return PickleCRUD("LifeLogs", loc= ["events"])
 
     def setEvent(date: str, time:str, eventDescription:str):
-        # date - dd.mm.yyyy 16.06.2021
-        # time - 1800, 18:00
+        """ date - dd.mm.yyyy 16.06.2021, time - 1800, 18:00"""
         pi = EventCalender._pickle()
         try:
             pi.read([date, time])

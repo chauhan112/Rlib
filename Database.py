@@ -140,6 +140,7 @@ class DBServer:
         for i in founds:
             name = self.keysFilter(self.getName(i))
             self.displayContainer.append(WidgetsDB.mButton(name, i, self.resultDisplay))
+        display(self.displayContainer.mainLayout)
     def getName(self, index):
         raise IOError("set button keys")
     def _setButtonNameFilter(self, keyFilter):
@@ -275,12 +276,6 @@ class Database:
         from TreeDB import ForestDB
         db = engine(Path.filesWithExtension("drawio", ForestDB.getForestPath()))
         return Database.dbSearch(db,word)
-    def pickleDB(word = None):
-        from LibsDB import LibsDB
-        from Path import Path
-        files = Path.filesWithExtension("pkl", LibsDB.picklePath())
-        db = Database.getDB(files, keysFilter=os.path.basename, displayer=print)
-        return Database.dbSearch(db,word)
     def pathDB(filepaths):
         return FilePathsSearchEngine(filepaths)
     def allRunCellDB(_ih = None):
@@ -291,8 +286,8 @@ class Database:
         if(_ih is None):
             _ih = list(set(ListDB.flatten(ListDB.dicOps().flatten(SerializationDB.readPickle(jupyterDB.codeDumper().fileName)).values())))
         from ModuleDB import ModuleDB
-        db = Database.dicDB({f'line{i}': _ih[i] for i in range(len(_ih))}, displayer=lambda x:display(ModuleDB.colorPrint("python",x)))
-        return Database.dbSearch(db, None)
+        lines = {f'line{i}': _ih[i] for i in range(len(_ih))}
+        return Database.dicDB(lines, displayer=lambda x:display(ModuleDB.colorPrint("python",x)))
     def dbSearch(db, word):
         if(word is not None):
             db.search(word)

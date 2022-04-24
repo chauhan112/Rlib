@@ -369,7 +369,7 @@ class LA_2_HW_Correct:
         
     def showFiles(zipPath):
         from modules.Explorer.model import ZipExplorerWithFilter
-        from modules.Explorer.Explorer import ZipFileExplorerDisplayer
+        from modules.Explorer.displayer import ZipFileExplorerDisplayer
         class LA_HW(ZipExplorerWithFilter):
             def filterPaths(self):
                 return LA_2_HW_Correct._getStudentFilePaths(self.zipPath)

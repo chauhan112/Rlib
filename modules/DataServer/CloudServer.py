@@ -206,3 +206,10 @@ class GitHubFileSendablePortal(GPortal,IFilePortal):
 
 class GoogleFileSendablePortal(GPortal,IFilePortal):
     pass
+    
+class Main:
+    def local_portal_test():
+        ser = CloudServer("cloud/server", FileSendablePathPortal("cloud/portal"))
+        cli = CloudClient("cloud/client", FileSendablePathPortal("cloud/portal"))
+        ser.start()
+        cli.start()

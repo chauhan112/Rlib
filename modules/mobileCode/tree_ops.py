@@ -1,6 +1,7 @@
 import os
 from SerializationDB import SerializationDB
-from modules.Explorer.personalizedWidgets import IExplorer, IExplorerDisplayer
+from modules.Explorer.personalizedWidgets import IExplorerDisplayer
+from modules.Explorer.model import IExplorer
 class ICommand:
     def check(self, parent, val):
         pass

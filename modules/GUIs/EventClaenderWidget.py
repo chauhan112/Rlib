@@ -61,7 +61,6 @@ class EventCalenderMainController:
     
     def okClicked(self, btn):
         self.view._opsSelection.value.okButton()
-        
 class EventCalenderModel:
     def __init__(self):
         self.calender = EventCalender
@@ -79,7 +78,6 @@ class EventCalenderModel:
         hour = "{:0>2d}".format(date.hour)
         minute = "{:0>2d}".format(date.minute)
         return f"{hour}:{minute}"
-    
 class IDropdownSelection:
     def __init__(self, parent):
         self.parent = parent

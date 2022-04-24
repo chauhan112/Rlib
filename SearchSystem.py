@@ -39,10 +39,11 @@ class SearchEngine:
         self._displayer_engine = JupyterResultDisplayer()
         self._displayer_engine.set_displayer_way(DisplayNElement())
         self._displayer_engine.set_callback(self._callback)
+        self.set_tooltip(self.buttonName)
         
     def displayer(self, result):
         from modules.SearchSystem.modular import GDisplayableResult
-        res = [GDisplayableResult(self.buttonName(ele), self.toolTip(ele), ele) for ele in result]
+        res = [GDisplayableResult(self.buttonName(ele), self._tooltip_func(ele), ele) for ele in result]
         self._displayer_engine.set_result(res)
         return self._displayer_engine.display()
     
@@ -56,8 +57,8 @@ class SearchEngine:
     def buttonName(self, item):
         return item
     
-    def toolTip(self, item):
-        return self.buttonName(item)
+    def set_tooltip(self, func):
+        self._tooltip_func = func
        
     def displayItem(self,key, name, callbackFunc, tooltip=None):
         from WidgetsDB import WidgetsDB
@@ -211,7 +212,10 @@ class CodeDumperEngine(SearchEngine):
 class PdfSearch(FilesContentSearch):
     def getContent(self, path):
         from Pdf_Database import PDF
-        return PDF.readPdf(path)
+        try:
+            return PDF.readPdf(path)
+        except:
+            return []
      
 class PdfSearchEngine(FilesContentSearchEngine):
     def __init__(self, pdfs, cols = 6):
@@ -222,7 +226,7 @@ class PdfSearchEngine(FilesContentSearchEngine):
         from ModuleDB import ModuleDB
         file, pageNr = resItem
         k = jupyterDB.pickle().read("paths")
-        urlPath = file.replace(os.sep, "/")
+        urlPath = os.path.abspath(file).replace(os.sep, "/")
         fpu = f"file:///{urlPath}#page={pageNr}"
         browser = k['programs'][ModuleDB.laptopName()]['chrome']
         pa = f'"{browser}" "{fpu}"'
