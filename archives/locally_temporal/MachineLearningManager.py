@@ -1,6 +1,7 @@
 from Path import FrequentPaths, Path
 from SearchSystem import DicSearchEngine
 from FileDatabase import File
+from Database import Database
 class Sth(DicSearchEngine):
     def _callback(self, item):
         import webbrowser
@@ -15,7 +16,7 @@ class MachineLearningManager:
             def defaultForm():
                 files = {f"task {n}": Tmep._filePath(n) for n in range(1, 14)}
                 s = Sth(files)
-                s.search("")
+                return s
             def inIpynbForm(nr):
                 fle = Tmep._filePath(nr, "ipynb")
                 content = File.getFileContent(fle)
@@ -59,7 +60,7 @@ class MachineLearningManager:
                     return
                 files = {f"Task {i}":hPath.format(i) for i in range(1, 14)}
                 s = Sth(files)
-                s.search("")
+                return s
             def db():
                 from FileDatabase import File
                 from SearchSystem import FilesContentSearchEngine

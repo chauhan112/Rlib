@@ -181,7 +181,6 @@ class PolyColorChange(MouseClick):
     def callback(self):
         import random
         self._parent.set_color((random.randint(0,255), random.randint(0,255), random.randint(0,255)))
-
 class GEventable(IEvent):
     def set_event_func(self, func):
         self._func = func
@@ -195,7 +194,6 @@ class GEventable(IEvent):
         self._func(self)
     def set_parent(self, parent):
         self._parent = parent
-
 class PButton(IPyGameObject, IEventable, Colorable, IPositionable):
     def __init__(self):
         self._event = None
@@ -232,7 +230,6 @@ class PButton(IPyGameObject, IEventable, Colorable, IPositionable):
         pygame.draw.rect(screen.get(), self._background_color, [a,b,self._width,self._height])
         i, j = self._text_pos
         if self._pytext is None:
-            
             smallfont = pygame.font.SysFont(self._font, self._font_size)
             self._pytext = smallfont.render(self._text , True , (255,255,255))
         screen.get().blit(self._pytext, (a + i,b +j))
@@ -241,9 +238,8 @@ class PButton(IPyGameObject, IEventable, Colorable, IPositionable):
             a, b = self._center
             h_2, w_2 = self._height/2, self._width/2
             self._top_left = (a-h_2, b - w_2)
-            self._poly = NonRegularPolygon([self._top_left, (a-h_2, b + w_2), 
+            self._poly = NonRegularPolygon([self._top_left, (a-h_2, b + w_2),
                                             (a + h_2, b + w_2), (a + h_2, b-w_2)])
-        
         return self._poly.lies(pos[::-1])
     def _set_points(self):
         if self._height is not None and self._top_left is not None:
@@ -251,4 +247,3 @@ class PButton(IPyGameObject, IEventable, Colorable, IPositionable):
             self._center =  a + self._height/2, b + self._width /2
     def set_position(self, pos):
         self.set_top_left_position(pos)
-        

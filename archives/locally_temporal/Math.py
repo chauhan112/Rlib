@@ -100,7 +100,7 @@ class MathTheoryAndExercises:
                         class T(_DocInterface):
                             def _getFiles(self):
                                 return Path.filesWithExtension("pdf", Path.joinPath(Temp._getPath(), 
-                                                                                    "Books Scripts\books"))
+                                                                                    r"Books Scripts\books"))
                         if(refresh):
                             MathTheoryAndExercises.dbs[key] = T()
                         try:
@@ -150,8 +150,8 @@ class MathTheoryAndExercises:
                     def docs(refresh = False):
                         key = "Ana 2"
                         class T(_DocInterface):
-                            def _getFiles():
-                                return Path.joinPath(Temp._getPath(), "Ana2_Skript.pdf")
+                            def _getFiles(self):
+                                return [Path.joinPath(Temp._getPath(), "Ana2_Skript.pdf")]
                         if(refresh):
                             MathTheoryAndExercises.dbs[key] = T()
                         try:
@@ -161,30 +161,23 @@ class MathTheoryAndExercises:
                         return MathTheoryAndExercises.dbs[key] 
                     
                     def exercises():
-                        class AQ:
-                            def _getType():
-                                raise IOError("Not implemented yet")
-                            def cw():
-                                return Path.joinPath(Temp._getPath(), "CW", QA._getType())
-                            def hw():
-                                return Path.joinPath(Temp._getPath(), "HW", QA._getType())
-                            
-                        class T:
+                        class QA:
                             def _openDB(path):
                                 files = Path.filesWithExtension("pdf", path)
                                 return _Opener.pathDB(files)
+                            def __init__(self, typ):
+                                self._type = typ
+                            def cw(self):
+                                return QA._openDB(Path.joinPath(Temp._getPath(), "CW", self._type))
+                            def hw(self):
+                                return QA._openDB(Path.joinPath(Temp._getPath(), "HW", self._type))
                             
+                        class T:
                             def questions():
-                                class Q(QA):
-                                    def _getType():
-                                        return "Tasks"
-                                return Q
+                                return QA('Tasks')
                             
                             def answers():
-                                class A(QA):
-                                    def _getType():
-                                        return "Solutions"
-                                return A
+                                return QA('Solutions')
                         return T
                 return Temp
         return Teml
@@ -219,12 +212,12 @@ class MathTheoryAndExercises:
                 class T:
                     def questions():
                         class Q(_DocInterface):
-                            def _getFiles(): 
+                            def _getFiles(self): 
                                 path = Path.joinPath(Temp._getPath(), "operations", "Homework")
                                 files = Path.filesWithExtension("pdf", path)
                                 files = list(filter(lambda x: "NumI-"in x, files))
                                 return files
-                        return Q
+                        return Q()
                     
                     def answers():
                         from SearchSystem import FoldersExplorerDisplayer

@@ -565,3 +565,43 @@ class ZipFileExplorerDisplayer(ZipFileExplorerDisplayer):
         super().__init__(zipPath, ZipExplorerWithLargeNumberOfContent)
     def setSectionSize(self, size):
         self.explorer.sectionSize = size
+class PdfSearchGUI(IDatabaseGUI, IAbout):
+    def __init__(self):
+        self._make_layout()
+    def _make_layout(self):
+        self._gnrb = GenerateNRowsBox(2)
+        self._gnrb.get_child(0).add_widget(widgets.Text(placeholder="path or variable name"))
+        self._is_path_wid = RCheckbox(description="is path", indent = False, layout={'width': 'auto'})
+        self._gnrb.get_child(0).add_widget(self._is_path_wid.get())
+        self._gnrb.get_child(0).add_widget(widgets.Checkbox(
+            description="walk", indent = False,  layout={'width': 'auto'}))
+        self._gnrb.get_child(0).add_widget(widgets.Button(description="execute"))
+        self._gnrb.get_child(1).add_widget(widgets.Output())
+        self._hw = HideableWidget()
+        self._hw.set_widget(self._gnrb.get_child(0).get_child(2))
+        self._hw.hide()
+        self._is_path_wid.on_changed(self._show_on_path_selected)
+        self._sw = SearchWidget()
+        self._gnrb.get_child(0).get_child(-1).on_click(self._pdf_search)
+    def display(self):
+        display(self._gnrb.get())
+        return self._gnrb.get()
+    def display_info(self):
+        return "search in pdf files and or variables in the notebook"
+    def _show_on_path_selected(self, btn):
+        if self._is_path_wid.get().value:
+            self._hw.show()
+        else:
+            self._hw.hide()
+    def _pdf_search(self, btn):
+        path = self._gnrb.get_child(0).get_child(1)
+        val = self._gnrb.get_child(0).get_child(0).value.strip()
+        if not path.value:
+            files = jupyterDB._params[val]
+        else:
+            files = Path.filesWithExtension('pdf', val, walk=self._gnrb.get_child(0).get_child(2).value)
+        out = self._gnrb.get_child(1).get_child(0)
+        out.clear_output()
+        with out:
+            self._sw.set_database(Database.pdfDB(files))
+            display(self._sw.get())
