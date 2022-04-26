@@ -2,7 +2,8 @@ from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget, SearchWidget
 import ipywidgets as widgets
 from nice_design.search import TelegramChannels
-from modules.GUIs.search_guis import CodeDumperSearchGUI, FileSearchGUI, SyntaxSearchGUI, BachelorSubjectSearchGUI
+from modules.GUIs.search_guis import CodeDumperSearchGUI, FileSearchGUI, SyntaxSearchGUI, BachelorSubjectSearchGUI,\
+    CodesGodownSearch
 from SearchSystem import DicSearch
 from Database import Database
 from nice_design.interfaces import IDatabaseGUI, IAbout
@@ -35,14 +36,13 @@ class DatabaseOfDatabases:
             'forest': (Database.forestDB, 'search in the forest files paths names'),
             'pickle db': (PickleSearchEngine,'search in all the resource pickle files'),
             'syntax': (SyntaxSearchGUI, 'search in the programming languages syntaxes'),
-            'dictionary': 'search in the given dictionary and print the content',
-            'pycode': 'search in code godown of python',
+            'pycode': (CodesGodownSearch.py, 'search in code godown of python'),
             'tree content': (ForestDB, 'search in the content of drawio files'),
-            'projects': 'search in archived projects',
             'stuffs': 'search in stuffs logged',
             'telegram channels': (lambda : TelegramChannels(True),'search in the telegram exported channels'),
-            'qt code library': 'search in qt code library cpp',
+            'qt code library': (CodesGodownSearch.cpp,'search in cpp code library qt'),
             'bachelor': (BachelorSubjectSearchGUI, 'search in bachelor subjects content'),
+            'js code godown': (CodesGodownSearch.js, "search in the all js files from code godown")
         }
         self._info_index = 1
         self._db_index = 0

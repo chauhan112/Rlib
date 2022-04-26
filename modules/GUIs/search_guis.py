@@ -473,7 +473,7 @@ class StochastikSearchGUI(MathSearchGUI):
             'exercises': MathTheoryAndExercises.stochastik().exercises().questions,
             'solutions': MathTheoryAndExercises.stochastik().exercises().answers,
         }
-        
+
 class MLSearchGUI(MathSearchGUI):
     def _set_ops(self):
         from archives.locally_temporal.MachineLearningManager import MachineLearningManager
@@ -502,7 +502,7 @@ class BachelorSubjectSearchGUI(IAbout, IDatabaseGUI):
 
     def _make_layout(self):
         self._gnrb = GenerateNRowsBox(3)
-        self._gnrb.get_child(0).add_widget(widgets.Dropdown(options=['machine learning', 'ihk'] + list(self._ops_map.keys()),
+        self._gnrb.get_child(0).add_widget(widgets.Dropdown(options=list(self._ops_map.keys()),
                                                     layout= {'width':'auto'} ))
         self._gnrb.get_child(0).add_widget(widgets.Button(description="select"))
         self._out = widgets.Output()
@@ -523,3 +523,20 @@ class BachelorSubjectSearchGUI(IAbout, IDatabaseGUI):
                 self._ops_map[sub].execute()
             else:
                 print('not implemented yet')
+
+class CodesGodownSearch:
+    def cpp():
+        from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
+        pmfs = PickleManyFilesSearch()
+        pmfs.set_pickle(r"D:\TimeLine\global\codes\cpp_codes.pkl")
+        return pmfs
+    def py():
+        from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
+        pmfs = PickleManyFilesSearch()
+        pmfs.set_pickle(r"D:\TimeLine\global\codes\py_files.pkl")
+        return pmfs
+    def js():
+        from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
+        pmfs = PickleManyFilesSearch()
+        pmfs.set_pickle(r"D:\TimeLine\global\codes\js_codes.pkl")
+        return pmfs
