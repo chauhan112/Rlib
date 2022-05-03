@@ -119,13 +119,14 @@ class ModuleDB:
         wrapper.has_run = False
         return wrapper
         
-    def reloadClass(clas):
+    def reloadClass(clas, params = None):
         import inspect
         from jupyterDB import jupyterDB
         moduleName=inspect.getmodule(clas).__name__
         className = clas.__name__
         # params is globals()
-        params = jupyterDB._params
+        if params is None:
+            params = jupyterDB._params
         commands = [f'import {moduleName}', 'from importlib import reload', f'reload({moduleName})', 
                     f'{className} = {moduleName}.{className}', 'params.update(locals())']
         exec("\n".join(commands))

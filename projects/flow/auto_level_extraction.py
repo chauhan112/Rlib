@@ -64,6 +64,7 @@ class ArrayFromImage:
             for j in range(len(arr[i])):
                 new_arr[i][j]=flatten_list[i*len(arr[0])+j]
         return new_arr
+        
     def save(self, filename: str):
         if filename.endswith(filename):
             filename += ".txt"

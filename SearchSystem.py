@@ -10,10 +10,15 @@ class SearchSystem:
 class ISearch:
     def search(self, word, case = False, reg = False):
         raise NotImplementedError("abstract method")
-
-class DicSearch:
-    def __init__(self, container):
+    def set_container(self, container):
+        raise NotImplementedError("abstract method")
+class ContainerSetable:
+    def set_container(self, container):
         self.container = container
+        
+class DicSearch(ContainerSetable):
+    def __init__(self, container):
+        self.set_container(container)
         
     def search(self, word, case = False, reg = False):
         return self._gSearch(lambda key: ComparerDB.has(word, key, case, reg) or ComparerDB.has(word, self.container[key], case, reg))
@@ -30,7 +35,7 @@ class DicSearch:
             if(func(key)):
                 res.append(key)
         return res
-
+    
 class SearchEngine:
     def __init__(self,content,  searchSys, nCols = 6):
         from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
@@ -71,7 +76,7 @@ class DicSearchEngine(SearchEngine):
     def __init__(self, content, nCols = 6, engine= DicSearch):
         super().__init__(content, engine, nCols)
         self._runCallback = None
-    
+
     def _callback(self, item):
         if(self._runCallback is None):
             print(self.searchSys.container[item])
@@ -81,12 +86,12 @@ class DicSearchEngine(SearchEngine):
     def setCallback(self, funcWith2Params):
         self._runCallback = funcWith2Params
 
-class MultilineStringSearch(ISearchSystem):
+class MultilineStringSearch(ISearchSystem, ContainerSetable):
     def __init__(self, content, allRes = False):
         self.allRes = allRes
         if(type(content) == str):
             content = content.splitlines()
-        super().__init__(content)
+        self.set_container(content)
     def wordSearch(self, word, case = False):
         return self._iterator(lambda val: ComparerDB.inCompare(leftIn=word, right=val, case=case))
     def pattern(self, patt):
@@ -105,10 +110,10 @@ class MultilineStringSearch(ISearchSystem):
         if(self.allRes):
             return founds
 
-class FilesContentSearch(ISearchSystem):
+class FilesContentSearch(ISearchSystem, ContainerSetable):
     def __init__(self, filepaths):
         container = {path: MultilineStringSearch(self.getContent(path)) for path in filepaths}
-        super().__init__(container)
+        self.set_container(container)
     def wordSearch(self, word, case = False):
         return self._iterator(lambda key: self.container[key].wordSearch(word, case))
     def pattern(self, patt):
@@ -128,14 +133,9 @@ class FilesContentSearch(ISearchSystem):
 class FilesContentSearchEngine(SearchEngine):
     def __init__(self, filepaths, engine = FilesContentSearch, nCols = 6, callBackFunc = None):
         super().__init__(filepaths, engine, nCols)
-        self._runCallback = callBackFunc
-        def openApp(path, lineNr):
-            app = NotepadAppTextOpener()
-            app.setData(lineNr)
-            app.openIt(path)
-        if(callBackFunc is None):
-            from FileDatabase import NotepadAppTextOpener
-            self._runCallback = openApp
+        self.set_callback(self._openApp)
+        if callBackFunc is not None:
+            self.set_callback(callBackFunc)
 
     def buttonName(self, item):
         return os.path.basename(item[0])
@@ -151,7 +151,16 @@ class FilesContentSearchEngine(SearchEngine):
     
     def _callback(self, resItem):
         self._runCallback(resItem[0], resItem[1])
-
+    
+    def _openApp(self, path, lineNr):
+        from FileDatabase import NotepadAppTextOpener
+        app = NotepadAppTextOpener()
+        app.setData(lineNr)
+        app.openIt(path)
+    
+    def set_callback(self, func):
+        self._runCallback = func
+    
 class StringListSearchEngine(SearchEngine):
     def __init__(self, stringLisrt):
         class Temp(MultilineStringSearch):

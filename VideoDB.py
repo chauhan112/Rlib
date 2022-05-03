@@ -1,13 +1,13 @@
 class VideoDB:
     def size(filename):
-        import subprocess 
+        import subprocess
         result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                              "format=duration", "-of",
                              "default=noprint_wrappers=1:nokey=1", filename],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT)
         return float(result.stdout)
-        
+
     def extract_audio_from_video(video_path, out_name = None, audio_format="mp3"):
         from moviepy.editor import VideoFileClip
         clip = VideoFileClip(video_path)
@@ -15,7 +15,7 @@ class VideoDB:
             out_name = video_path +"."+ audio_format
         clip.audio.write_audiofile(out_name)
         clip.close()
-        
+
 class YoutubeDB:
     def getSubtitleForVideoId(videoId, original = False):
         from youtube_transcript_api import YouTubeTranscriptApi
@@ -38,15 +38,15 @@ class AudioDB:
                 return Audio(url=uri)
             def path(filePath):
                 return Audio(filename=filePath)
-            
+
         return Temp
-    
+
     def examples():
         class Temp:
             def TestAudio():
                 from IPython.display import Audio
                 return Audio("http://www.nch.com.au/acm/8k16bitpcm.wav")
-            
+
             def manuallyCreatedAudio():
                 import numpy as np
                 class Te:
@@ -55,14 +55,23 @@ class AudioDB:
                         t = np.linspace(0,5,Te.framerate*5)
                         data = np.sin(2*np.pi*220*t) + np.sin(2*np.pi*224*t)
                         return data, framerate
-                    
+
                     def audioDataWithChannels():
                         dataleft = np.sin(2*np.pi*220*t)
                         dataright = np.sin(2*np.pi*224*t)
                         return [dataleft, dataright], framerate
                 return Te
-        
+
         return Temp
+    def playText(text):
+        import pyttsx3
+        from FileDatabase import File
+        engine = pyttsx3.init()
+        name="pythonsezv7W.mp3"
+        engine.save_to_file(text, name)
+        engine.runAndWait()
+        File.openFile(name)
+        
 from OpsDB import IOps
 class CategorizeVideoIntoDifferentSizes(IOps):
     def __init__(self, files, target_folder= None):
@@ -72,7 +81,7 @@ class CategorizeVideoIntoDifferentSizes(IOps):
         from OpsDB import OpsDB
         import os
         from Path import Path
-        
+
         sizes = {f: VideoDB.size(f) for f in self.files}
         sizesInMin = {f:sizes[f]/60 for f in sizes}
         sizes_group = OpsDB.group(sizesInMin, lambda x: round(sizesInMin[x]//5) )

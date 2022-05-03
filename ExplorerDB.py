@@ -2,9 +2,10 @@ from modules.Explorer.displayer import IExt,NotebookGeneralDisplayer
 class ExplorerDB:
     _exp = None
     def zipExplorer(path, exts = {}):
-        from modules.Explorer.ZipFileExplorerDisplayer import ZipFileExplorerDisplayer
-        from modules.Explorer.model import ZipExplorer
-        return ExplorerDB._setExtraDisplayer(ZipFileExplorerDisplayer(path, ZipExplorer), exts)
+        from modules.Explorer.ZipFileExplorerDisplayer import NewZipFileExplorer
+        exp = ExplorerDB._setExtraDisplayer(NewZipFileExplorer(path), exts)
+        exp.display()
+        return exp
     def _setExtraDisplayer(exp, exts):
         for key in exts:
             exp.displayer.set_extension_displayer(key,exts[key])

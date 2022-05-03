@@ -301,13 +301,14 @@ class FileModel:
     def get_recycle_path(self):
         return self._recycle_file
     def _initialize(self, path):
-        from modules.Logger.TextWriter import TextWriter
+        from modules.Logger.TextWriter import TextWriter, TextParser
         self._working_dir = path
         info_file = self._working_dir + os.sep + "trees.txt"
         self._recycle_file = self._working_dir + os.sep + ".storage.pkl"
         if not os.path.exists(info_file):
             File.createFile(info_file )
-        self._reader = TextWriter(info_file)
+        self._reader = TextWriter()
+        self._reader.set_parser(TextParser(info_file))
         if not os.path.exists(self._recycle_file):
             SerializationDB.pickleOut({}, self._recycle_file)
         if not os.path.exists(self.get_current_file()):

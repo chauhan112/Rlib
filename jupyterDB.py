@@ -16,7 +16,7 @@ class jupyterDB:
         from ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(val)
         return val
-    
+
     def syntax():
         class SyntaxDatabase:
             def _path():
@@ -31,7 +31,7 @@ class jupyterDB:
                 for key in content:
                     res[key] = SyntaxDatabase.ops(pkl_path, key)
                 return SimpleNamespace(**res)
-                
+
             def ops(pkl, key):
                 class Temp:
                     def _set_path(self, pkl_path: str):
@@ -64,7 +64,7 @@ class jupyterDB:
                 t._set_root_loc(key)
                 return t
         return SyntaxDatabase
-        
+
     def desktop(openFolder = True):
         from menuinst.knownfolders import FOLDERID, get_folder_path
         desk = get_folder_path(FOLDERID.Desktop)[0]
@@ -116,7 +116,7 @@ class jupyterDB:
                     fileBaseName = os.path.basename(f)
                     print(fileBaseName, end=",")
                     vals [fileBaseName] = self.read(f)
-                
+
                 class Temp:
                     def __init__(self, container):
                         self.container = container
@@ -139,6 +139,7 @@ class jupyterDB:
                                 return lastkey
                             i += self.sizeInfo[key]
                             lastkey = key
+                        return lastkey
                 return Temp (vals)
             def read(self, filename , where = 'all'):
                 if(where == 'all'):
@@ -298,7 +299,6 @@ class jupyterDB:
         class SetUp:
             def home():
                 content = SetUp._text(jupyterDB.startUp().Ops().home().getContent())
-                SetUp._both()
                 exec(content)
 
             def _text(arr):
@@ -306,7 +306,6 @@ class jupyterDB:
 
             def office():
                 content = SetUp._text(jupyterDB.startUp().Ops().office().getContent())
-                SetUp._both()
                 exec(content)
 
             def both():
@@ -337,7 +336,7 @@ class jupyterDB:
                         elif type(lineNrRange) == str:
                             a, b = list(map(int, lineNrRange.split(":")))
                             if b < 0 and len(val) > 0:
-                                b = (b % len(val)) + 1 
+                                b = (b % len(val)) + 1
                             val = val[:a-1] + val[b:]
                         super().add([], val, True)
                     def display(self):
@@ -404,3 +403,16 @@ class jupyterDB:
         if jupyterDB._dbdbs is None:
             jupyterDB._dbdbs = Main.gui_for_db(DatabaseOfDatabases())
         return jupyterDB._dbdbs
+
+    def debug_a_file(path = ".debugger"):
+        from TimeDB import TimeDB
+        from RegexDB import RegexDB
+        from FileDatabase import File
+        from OpsDB import OpsDB
+        file = RegexDB.replace("[\.| |,]", TimeDB.getTimeStamp(), lambda x: "") + ".py"
+        vscode = r"D:\Stuffs\Microsoft VS Code\Code.exe"    
+        if not os.path.exists(path):
+            os.makedirs(path)
+        file_path = os.sep.join([path, file])
+        File.createFile(file_path)
+        OpsDB.cmd().onthread(commands=[f'"{vscode}" "{file_path}"'])

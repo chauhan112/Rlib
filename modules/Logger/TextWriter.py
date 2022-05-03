@@ -7,6 +7,37 @@ class IParser:
     def write(self):
         raise NotImplementedError("abstract method")
 
+class IContentParser:
+    def parse(self, txt):
+        raise NotImplementedError("abstract method")
+
+class OverwritableSameKeyContentParser(IContentParser):
+    def parse(self, txt):
+        from WordDB import WordDB
+        elementList = WordDB.regexSplit("===+", txt)
+        res = {}
+        for ele in elementList:
+            if ele.strip() == "":
+                continue
+            head, content = WordDB.regexSplit("\-\-\-\-+", ele)
+            res[head.strip()] = content.strip()
+        return res
+
+class DuplicatableSameKeyContentParser(IContentParser):
+    def parse(self, txt):
+        from WordDB import WordDB
+        elementList = WordDB.regexSplit("===+", txt)
+        res = {}
+        for i, ele in enumerate(elementList):
+            if ele.strip() == "":
+                continue
+            head, content = WordDB.regexSplit("\-\-\-\-+", ele)
+            head = head.strip()
+            if head in res:
+                head += "-" + str(i)
+            res[head] = content.strip()
+        return res
+
 class YamlParser(IParser):
     def __init__(self, filePath):
         self.path = filePath
@@ -23,19 +54,11 @@ class YamlParser(IParser):
 
 class TextParser(IParser):
     def __init__(self, filePath):
-        self.path  = filePath        
+        self.path  = filePath
+        self.set_content_parser(OverwritableSameKeyContentParser())
         self.content = self.read()
     def read(self):
-        from WordDB import WordDB
-        content = File.getFileContent(self.path)
-        elementList = WordDB.regexSplit("===+", content)
-        res = {}
-        for ele in elementList:
-            if ele.strip() == "":
-                continue
-            head, content = WordDB.regexSplit("\-\-\-\-+", ele)
-            res[head.strip()] = content.strip()
-        return res
+        return self._parser.parse(File.getFileContent(self.path))
     def write(self):
         txt = ""
         for ke in self.content:
@@ -44,11 +67,13 @@ class TextParser(IParser):
         txt = txt.strip("=")
         txt = txt.strip()
         File.overWrite(self.path, txt)
+    def set_content_parser(self, parser: IContentParser):
+        self._parser = parser
 
-class GWriter(IDumperWriter):
-    def __init__(self, parser:IParser):
+class TextWriter(IDumperWriter):
+    def set_parser(self, parser:IParser):
         self.parser = parser
-        
+
     def add(self, key, value, overwrite = False):
         if key in self.parser.content:
             if not overwrite:
@@ -56,7 +81,7 @@ class GWriter(IDumperWriter):
                 return
         self.parser.content[key.strip()] = value
         self.parser.write()
-        
+
     def read(self, key):
         if key in self.parser.content:
             return self.parser.content[key]
@@ -67,17 +92,3 @@ class GWriter(IDumperWriter):
         self.parser.write()
     def readAll(self):
         return self.parser.read()
-    
-class TextWriter(GWriter):
-    def __init__(self, filePath):
-        if not os.path.exists(filePath):
-            File.createFile(filePath)
-        self.path = filePath
-        super().__init__(TextParser(self.path))
-
-class YamlWriter(GWriter):
-    def __init__(self, path):
-        if not os.path.exists(path):
-            File.createFile(path)
-        self.path = path
-        super().__init__(YamlParser(self.path))

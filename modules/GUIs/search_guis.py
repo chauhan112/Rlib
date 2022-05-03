@@ -338,7 +338,6 @@ from archives.locally_temporal.Math import MathTheoryAndExercises
 class ISubSearch:
     def execute(self):
         pass
-
 class GSubSearchWithParent(ISubSearch):
     def set_parent(self, parent):
         self._parent = parent
@@ -391,7 +390,6 @@ class DBSub(GSubSearchWithParent):
         self._sw.set_database(self._lazy_db.get_db(self._gsub._funcs_wid.value))
         with self._gsub._out:
             display(self._sw.get())
-
 class DataScienceSearchGUI(GSubSearchWithParent):
     def __init__(self):
         from DataStorageSystem import UrlsTable
@@ -411,7 +409,6 @@ class DataScienceSearchGUI(GSubSearchWithParent):
         self._gsub.set_options(list(self._ops.keys()))
         self._lazy_db = LazyInstantiate()
         self._lazy_db.set_ops_map(self._ops)
-
     def execute(self):
         self._gsub.execute()
     def _clicked(self, btn):
@@ -473,7 +470,6 @@ class StochastikSearchGUI(MathSearchGUI):
             'exercises': MathTheoryAndExercises.stochastik().exercises().questions,
             'solutions': MathTheoryAndExercises.stochastik().exercises().answers,
         }
-
 class MLSearchGUI(MathSearchGUI):
     def _set_ops(self):
         from archives.locally_temporal.MachineLearningManager import MachineLearningManager
@@ -499,7 +495,6 @@ class BachelorSubjectSearchGUI(IAbout, IDatabaseGUI):
         self._make_layout()
         for val in self._ops_map.values():
             val.set_parent(self)
-
     def _make_layout(self):
         self._gnrb = GenerateNRowsBox(3)
         self._gnrb.get_child(0).add_widget(widgets.Dropdown(options=list(self._ops_map.keys()),
@@ -512,7 +507,6 @@ class BachelorSubjectSearchGUI(IAbout, IDatabaseGUI):
     def display(self):
         display(self._gnrb.get())
         return self._gnrb.get()
-
     def display_info(self):
         return " ".join(self._ops_map.keys())
     def _ok_clicked(self, btn):
@@ -523,7 +517,6 @@ class BachelorSubjectSearchGUI(IAbout, IDatabaseGUI):
                 self._ops_map[sub].execute()
             else:
                 print('not implemented yet')
-
 class CodesGodownSearch:
     def cpp():
         from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch

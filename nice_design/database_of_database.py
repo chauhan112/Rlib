@@ -8,6 +8,7 @@ from SearchSystem import DicSearch
 from Database import Database
 from nice_design.interfaces import IDatabaseGUI, IAbout
 from TreeDB import ForestDB
+from modules.Logger.ideas import IdeasSearchEngine
 from PickleCRUDDB import PickleSearchEngine
 
 class DefaultDatabaseGUI(IAbout, IDatabaseGUI):
@@ -42,7 +43,8 @@ class DatabaseOfDatabases:
             'telegram channels': (lambda : TelegramChannels(True),'search in the telegram exported channels'),
             'qt code library': (CodesGodownSearch.cpp,'search in cpp code library qt'),
             'bachelor': (BachelorSubjectSearchGUI, 'search in bachelor subjects content'),
-            'js code godown': (CodesGodownSearch.js, "search in the all js files from code godown")
+            'js code godown': (CodesGodownSearch.js, "search in the all js files from code godown"),
+            'ideas': (IdeasSearchEngine, "search in logged ideas")
         }
         self._info_index = 1
         self._db_index = 0

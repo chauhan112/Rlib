@@ -205,7 +205,9 @@ class Database:
         from IPython.display import display
         pyfiles = Path.filesWithExtension("py", getPath())
         StaticDisplayerManager.display('total modules file number', len(pyfiles))
-        return Database.dbSearch(engine(pyfiles, nCols=5), keyWord)
+        fcse = engine(pyfiles, nCols=5)
+        fcse.set_tooltip(lambda x: x[0])
+        return Database.dbSearch(fcse, keyWord)
     def dicDB(dic, displayer = print):
         db = DicSearchEngine(dic)
         db.setCallback(lambda key, val: displayer(val))

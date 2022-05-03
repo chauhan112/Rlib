@@ -349,5 +349,7 @@ class MakeAnimation(IOps):
         imageio.mimsave(self._output_name, images, duration=self._duration)
     def set_duration_between_frames(self, duration):
         self._duration = duration
-    def set_output_filename(self, name):
+    def set_output_filename(self, name: str):
+        if not name.endswith(".gif"):
+            name += ".gif"
         self._output_name = name

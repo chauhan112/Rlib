@@ -1,6 +1,4 @@
 class ISearchSystem:
-    def __init__(self, container):
-        self.container = container
     def wordSearch(self, word, case = False):
         raise NotImplementedError("ISearchSystem.word")
     def pattern(self, patt):

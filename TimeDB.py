@@ -233,9 +233,12 @@ class Scheduler:
         return Temp
 
 class TimeDB:
-    def weekday(date = None):
+    def weekday(date:tuple = None):
+        """
+        date = tuple(yr, month, day)
+        weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        """
         import calendar
-        # weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         weekdays = calendar.day_name
         if(date is None):
             return weekdays[datetime.datetime.now().weekday()]
