@@ -118,8 +118,9 @@ class Graph2NodeTreeMakerBreadthFirstSearch(IOps):
             n.extra_info.depth = 0
         return self._node_map[key]
 class Main:
-    def explore(exp: IExplorer, title = "title"):
+    def explore(exp: IExplorer, title = "title", displayit=True):
         wied = WidgetsIpyExplorerDisplayer(title)
         wied.set_explorer(exp)
-        wied.display()
+        if displayit:
+            wied.display()
         return wied

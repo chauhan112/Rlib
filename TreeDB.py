@@ -22,25 +22,40 @@ class TreeDB:
             def soup(self):
                 return self._soup
             def text(self):
-                return htmlDB.htmlDecode(self._soup.prettify()) 
+                return htmlDB.htmlDecode(self._soup.prettify())
             def display(self):
                 from IPython.display import display
                 display(ModuleDB.colorPrint("html", self.text()))
             def originalText(self):
                 return self._content
+            def soup_without_xml_part(self):
+                return htmlDB.getParsedData(self._content)
             def quote(self, content):
                 return urllib.parse.quote(content).replace("/", "%2F").replace("%28" , "(" ).replace("%29", ")")
             
-                
+
         tem = Temp(content)
         return tem
-    
+
     def openWebLink(link):
         from LibPath import computerName
         if (computerName() == "mobileTermux"):
             os.system(f'termux-open-url "{link}"')
         else:
             webbrowser.open(link)
+
+    def drawioPages(filePath):
+        from WordDB import WordDB
+        from RegexDB import RegexDB
+        from CompressDB import CompressDB
+        content = File.getFileContent(filePath)
+        beginRanges = WordDB.searchWordWithRegex("<diagram .*?>", content)
+        endRanges = WordDB.searchWordWithRegex("</diagram>", content)
+        res = {}
+        for (a,b), (c,_) in zip(beginRanges, endRanges):
+            res[RegexDB.regexSearch('id=".*"',content[a:b])[0]] = TreeDB.decodeContent(
+                CompressDB.content().decode_base64_and_inflate(content[b:c])).text()
+        return res
 
     def forest():
         class Temp:
@@ -53,7 +68,7 @@ class TreeDB:
                                 files = Path.filesWithExtension("drawio", forestPath)
                                 dic = {f.replace(forestPath, "").strip(os.sep): f for f in files}
                                 return dic
-                            
+
                             def basename():
                                 dic = Te.loc()
                                 newDic = {os.path.basename(key): dic[key] for key in dic}
@@ -80,22 +95,9 @@ class TreeDB:
                 return WidgetsDB.getGrid(7, [WidgetsDB.button(name=x, callbackFunc=copy, tooltip=x) for x in k])
             def cache():
                 class Tools:
-                    def drawioPages(filePath):
-                        from WordDB import WordDB
-                        from RegexDB import RegexDB
-                        from CompressDB import CompressDB
-                        content = File.getFileContent(filePath)
-                        beginRanges = WordDB.searchWordWithRegex("<diagram .*?>", content)
-                        endRanges = WordDB.searchWordWithRegex("</diagram>", content)
-                        res = {}
-                        for (a,b), (c,_) in zip(beginRanges, endRanges):
-                            res[RegexDB.regexSearch('id=".*"',content[a:b])[0]] = TreeDB.decodeContent(
-                                CompressDB.content().decode_base64_and_inflate(content[b:c])).text()
-                        return res
-
                     def getAllWordInXml(xmlString):
                         from RegexDB import RegexDB
-                        tmp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAheadAndBehind(">", "</", ".*"),x)[0], 
+                        tmp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAheadAndBehind(">", "</", ".*"),x)[0],
                             RegexDB.regexSearch("<span .*?</span>", xmlString)))
                         tmp += RegexDB.regexSearch(RegexDB.lookAheadAndBehind('value="', '"', ".*?"), xmlString)
                         tmp = list(set(tmp))
@@ -104,7 +106,7 @@ class TreeDB:
                 files = Path.filesWithExtension("drawio", Temp.path())
                 parsedDic = {}
                 for path in files:
-                    p = Tools.drawioPages(path)
+                    p = TreeDB.drawioPages(path)
                     parsedDic[path] = {}
                     for page in p:
                         parsedDic[path][page] = Tools.getAllWordInXml(p[page])
@@ -121,7 +123,7 @@ class TreeDB:
                     found = "index"
                 else:
                     found = founds[0]
-                
+
                 path = files[found]
                 File.openFile(path)
             def ops():
@@ -136,7 +138,7 @@ class TreeDB:
                         SerializationDB.pickleOut(k, LibsDB.picklePath(pickleFile))
                         print("Total number of trees in the forest : " + str(len(k)))
                         print("Content size : " + str(len(content)))
-                        
+
                     def updateKey(self, oldname, newName):
                         con = self._reader()
                         con[newName] = con.pop(oldname)
@@ -150,7 +152,9 @@ class TreeDB:
                         return k
                 return Temp()
         return Temp
-        
+
+    def explorer(content):
+        pass
 class ForestDB:
     def getForestPath():
         import socket
@@ -172,15 +176,15 @@ class ForestDB:
                 if(ComparerDB.has(word ," ".join(re[file][page]), case= False, reg =reg)):
                     founds.append((file, page))
                     break
-        
+
         pathConverter = lambda p: p.replace(RegexDB.regexSearch(".*?Forest", p)[0],ForestDB.getForestPath())
-        names = [(os.path.basename(x).split(".")[0], 
-                    lambda n, x=x: File.openFile(file=pathConverter(x)), 
+        names = [(os.path.basename(x).split(".")[0],
+                    lambda n, x=x: File.openFile(file=pathConverter(x)),
                     RegexDB.regexSearch(RegexDB.lookAheadAndBehind("name=\"", '"', ".*"), y)[0]
                  ) for x,y in founds]
         widgt = [WidgetsDB.button(x, y, z) for x, y, z in names]
         return WidgetsDB.getGrid(7, widgt)
-        
+
 class TreeCRUD:
     def waterFall(small = 1, copy = 1):
         key = "big waterfall"
@@ -194,19 +198,19 @@ class TreeCRUD:
     def _replaceWithTimeStamp(key):
         manger = TreeCRUD.getObj(key)
         return TreeCRUD._replaceTimeStamp(manger)
-        
+
     def _replaceTimeStamp(content, deltaDay = 0):
         from TimeDB import TimeDB
         from htmlDB import htmlDB
         import re
-        return re.sub('(Sun|Mon|Tues|Wednes|Thurs|Fri|Satur)day%2C%20\\d+\\.\\d+\\.\\d+', 
+        return re.sub('(Sun|Mon|Tues|Wednes|Thurs|Fri|Satur)day%2C%20\\d+\\.\\d+\\.\\d+',
             htmlDB.urlEncode(TimeDB.getTimeStamp(deltaDay)), content)
 
     def addObject(key, val):
         content = TreeCRUD._loadOps()
         content[key] = val
         SerializationDB.pickleOut(content, TreeCRUD.getPicklePath())
-        
+
     def _loadOps():
         file = TreeCRUD.getPicklePath()
         return SerializationDB.readPickle(file)
@@ -215,10 +219,10 @@ class TreeCRUD:
         content = TreeCRUD._loadOps()
         del content[key]
         SerializationDB.pickleOut(content, TreeCRUD.getPicklePath())
-    
+
     def getPicklePath():
         return LibsDB.picklePath("TreeCRUD")
-    
+
     def textWithBlueBackground(txt = 'txt'):
         from htmlDB import htmlDB
         from ClipboardDB import ClipboardDB
@@ -226,12 +230,12 @@ class TreeCRUD:
 
     def getObj(key):
         return TreeCRUD._loadOps()[key]
-    
+
     def copyDB(word = None):
         from Database import Database
         from ClipboardDB import ClipboardDB
         content = SerializationDB.readPickle(TreeCRUD.getPicklePath())
-        def f(x):            
+        def f(x):
             ClipboardDB.copy2clipboard(x)
             print("copied")
         db = Database.dicDB(content, displayer=f)
@@ -250,7 +254,7 @@ class TreeSearch(DicSearch):
 class TreeSearchEngine(SearchEngine):
     def __init__(self, content):
         super().__init__(content, TreeSearch)
-        
+
     def callback(self , key):
         val = self.searchSys.container[key.description]
         val = TreeCRUD._replaceTimeStamp(val)
@@ -282,7 +286,7 @@ class DirNode(IElement):
         return '_'.join([a.name()[:3] for a in self.nodes])
     def priority_value(self):
         return sum([a.priority_value() for a in self.nodes])
-    
+
 class Priority_tree(IOps, GDataSetable):
     def execute(self):
         data = self.data

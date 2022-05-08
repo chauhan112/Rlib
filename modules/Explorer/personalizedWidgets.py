@@ -153,6 +153,8 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer):
         self._wid = None
         self._exp = None
         self.set_location_func(self._update_loc)
+        self.set_on_file_selected(lambda x: x)
+        self.set_on_folder_selected(lambda x: x)
     def set_explorer(self, explorer: IExplorer):
         self._exp = explorer
         self._mexp = MetaExplorer(self._exp)
@@ -196,16 +198,17 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer):
         self._wid.components.selection.options = ExplorerUtils.dirsWithIcon(folders) + files
         self._wid.components.selection.observe(self._on_dirlist_select, names = 'value')
     def _on_dirlist_select(self, change):
+        self._wid.components.outputDisplay.clear_output()
         if(change['new'][0] == ExplorerUtils.dirIcon()):
             value = change['new'].replace(ExplorerUtils.dirIcon(), '').strip()
             self._mexp.cd(value)
             self._wid.components.text.value = ''
             self._wid.components.dropdown.value = self._loc_func(value)
             self._fill_values()
+            self._on_fold_func(value)
         else:
             self._wid.components.text.value = change['new']
-            # clicked on file
-        self._wid.components.outputDisplay.clear_output()
+            self._on_file_func(change['new'])
     def _update_loc(self, selected: str):
         value = self._wid.components.dropdown.value
         vals = value.split("/")
@@ -215,6 +218,10 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer):
         return txt
     def set_file_displayers(self, disp):
         self._displayer = disp
+    def set_on_file_selected(self, func):
+        self._on_file_func = func
+    def set_on_folder_selected(self, func):
+        self._on_fold_func = func
 class SearchWidget(IRWidget):
     def __init__(self):
         self._gnrb = GenerateNRowsBox(2)

@@ -75,7 +75,10 @@ class jupyterDB:
     def createJupyterNotebook(name):
         from NotebookDB import NotebookDB
         cells = SerializationDB.readPickle(LibsDB.picklePath("jupyterDB.pkl"))['createNotebook']
-        NotebookDB.createNotebookWithCells(name, cells)
+        content = NotebookDB.notebookJsonContentsWithCells(cells)
+        if not name.endswith(".ipynb"):
+            name  += '.ipynb'
+        File.createFile(name, content)
         jupyterDB.localIpyLink(name)
 
     def libSize():

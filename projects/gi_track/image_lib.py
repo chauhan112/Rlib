@@ -3,14 +3,17 @@ import numpy as np
 from PIL import Image
 from OpsDB import IOps
 import pandas as pd
-from ImageProcessing import MatplotImage, CVImage, IImage
+from ImageProcessing import IImage
 import cv2, os
 from Path import Path
 from RegexDB import RegexDB, NameDicExp
 
 class IImageReader:
     def get_data(self):
-        pass
+        raise NotImplementedError("implement this func")
+    def set_image(self, path: str):
+        raise NotImplementedError("implement this func")
+    
 class PILReader(IImageReader):
     def set_image(self, path):
         self._path = path
