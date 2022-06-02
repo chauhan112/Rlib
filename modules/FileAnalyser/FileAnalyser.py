@@ -276,10 +276,7 @@ class NumberFillerStrategy(IFillerStrategy):
 class ICreator:
     def create(self):
         pass
-    def set_creator_class(self, cls):
-        pass
-    def set_setproperty_func(self, func):
-        pass
+
 class Creator(ICreator):
     def __init__(self):
         self.set_creator_class(GNode)
@@ -326,10 +323,12 @@ class Files2NodeGraph(IOps):
         if not name.endswith(".pkl"):
             name += '.pkl'
         SerializationDB.pickleOut({'nodes': self._node_map, 'root': self._root}, name)
+    def set_path(self, folder_path: str):
+        from Path import Path
+        self.set_files(Path.getFiles(folder_path, True))
 class DynamicNodeExplorer(NodeTreeExplorer):
-    def __init__(self, root):
-        self._root = root
-        super().__init__(root)
+    def __init__(self, root=None):
+        self.set_root(root)
         self.set_displayer_func(lambda x: x.value)
         self._current_map = {}
     def cd(self, key):
@@ -366,7 +365,9 @@ class DynamicNodeExplorer(NodeTreeExplorer):
             name += '.pkl'
         SerializationDB.pickleOut(self._root, name)
     def load(self, pkl):
-        self._root = SerializationDB.readPickle(pkl)
+        self.set_root(SerializationDB.readPickle(pkl))
+    def set_root(self, root: GNode):
+        self._root = root
         self._pos.clear()
         self._pos.append(self._root)
         
@@ -410,7 +411,7 @@ class FileAnalyse:
                 from modules.mobileCode.GenericExplorer import Main
                 Temp._run(root)
         return Temp
-    def zip_file(path):
+    def zip_file(path): # from cmd, terminal
         from ZiptoolDB import ZiptoolDB
         from DataStructure import MaxDepthInverseCalculator
         from modules.mobileCode.GenericExplorer import NumberView, NoInfoView, DepthView, Main

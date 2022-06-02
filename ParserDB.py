@@ -4,7 +4,7 @@ class ParserDB:
     def parseBlock(contentInfos):
         txt = ''
         lastLvl = None
-        for value,lineNr, lvl in ListDB.sort2dArrayBasedOnIndex(contentInfos, 1):
+        for value,lineNr, lvl in sorted(contentInfos, key=lambda arr: arr[1]):
             if(lastLvl is not None):
                 if(lvl > lastLvl):
                     txt += ":"

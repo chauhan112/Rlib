@@ -196,3 +196,6 @@ class FilesDependency(GDependency):
             for func in res[f]['funcs']:
                 imports_only[f].update(sanitize(res[f]['funcs'][func]['imports']))
         return imports_only
+
+class Main:
+    pass

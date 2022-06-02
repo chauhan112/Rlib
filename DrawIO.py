@@ -29,10 +29,11 @@ class IParser:
 
 class DrawIOExplorer(IExplorerDisplayer):
     def __init__(self):
+        from modules.Explorer.personalizedWidgets import WidgetsIpyExplorerDisplayer
         self.set_file_click_func(self._file_func)
         self.set_folder_click_func(self._folder_click)
         self._exp = None
-        self._exp_ds = Main.explore(self._exp, 'Drawio explorer',False)
+        self._exp_ds = WidgetsIpyExplorerDisplayer('Drawio explorer')
         self._trr = TreeMakerFromMxCells()
 
     def set_content(self, content):
@@ -48,6 +49,7 @@ class DrawIOExplorer(IExplorerDisplayer):
         self._trr.set_file(file)
 
     def display(self):
+        from modules.Explorer.DictionaryExplorer import NodeTreeExplorer
         self._root, self._tree_dic = self._trr.execute()
         self._exp = NodeTreeExplorer(self._root)
         self._exp_ds.set_explorer(self._exp)
@@ -63,11 +65,13 @@ class DrawIOExplorer(IExplorerDisplayer):
 
     def _file_func(self, x, model=None):
         from IPython.display import display
+        from ModuleDB import ModuleDB
         self._exp_ds._wid.components.outputDisplay.clear_output()
         with self._exp_ds._wid.components.outputDisplay:
             display(ModuleDB.colorPrint("html", self._tree_dic[x].extra_info.value))
 
     def _folder_click(self, x, model=None):
+        from ModuleDB import ModuleDB
         self._exp_ds._wid.components.outputDisplay.clear_output()
         with self._exp_ds._wid.components.outputDisplay:
             if x in self._tree_dic:
@@ -104,25 +108,29 @@ class TreeMakerFromMxCells(IOps):
         soup = d_co.soup_without_xml_part()
         self.set_cells(soup.find_all("mxcell"))
     def set_file(self, file:str):
+        from modules.FileAnalyser.FileAnalyser import GNode
         self._cells_dict = {}
         self._path = file
         pages = TreeDB.drawioPages(file)
         m_root = GNode("root")
         for p in pages:
             content = pages[p]
-            self.set_content(content)
-            root, _ = self._execute()
+            d_co = TreeDB.decodeContent(content)
+            soup = d_co.soup_without_xml_part()
+            self.set_cells(soup.find_all("mxcell"))
             p = self.get_node(p)
-            p.children = root.children
+            p.children = self._root.children
             m_root.children.append(p)
         self._root = m_root
 class StatusLoggerParser(IParser):
     def __init__(self):
         self._res = {}
         self._cells_dict = {}
+        self._extr = ExtractGeometryInfo()
     def _parse(self) -> dict:
         res = {}
-        p_val = self._extract_content(self._cells)
+        self._extr.set_cells(self._cells)
+        p_val = self._extr.execute()
         vals =[(x['content'], (float(x['geo']['x']), float(x['geo']['y']))) for x in filter(lambda x: len(
             set(x['geo'].keys()).intersection(set(['x','y']))) == 2, p_val)]
         s_vals = sorted(vals, key=lambda x: x[1])
@@ -180,9 +188,13 @@ class StatusLoggerParser(IParser):
             res[page] = self._res.copy()
         self._res = res
 
-    def _extract_content(self,cells):
+class ExtractGeometryInfo(IOps):
+    def set_cells(self, cells):
+        self._cells = cells
+
+    def execute(self):
         pars = []
-        for cle in cells:
+        for cle in self._cells:
             attrs = cle.attrs
             if 'style' in attrs:
                 if attrs['style'][:5]=="text;":
@@ -252,41 +264,88 @@ class DrawIO:
             self._setMaxes(w.geometry)
             ids += 1
 
-class DrawIOGeometry:
-    def __init__(self, x= 0, y= 0, h= 20, w =20):
-        self.x= x
-        self.y = y
-        self.h =h
-        self.w = w
+class SortHorizontallyAndSplitIntoColumns(IOps):
+    def __init__(self, arr: list[tuple] =None, cols_nr: int=None):
+        self.set_values(arr)
+        self.set_nr_of_cols(cols_nr)
+    def set_nr_of_cols(self, nr: int):
+        self._cols_nr = nr
+    def set_values(self, arr: list[tuple]):
+        self._arr = arr
+    def execute(self):
+        res = []
+        size = len(self._arr)//self._cols_nr
+        for i in range(self._cols_nr):
+            res.append(self._arr[i*size: (i+1)* size])
+        return res
+    def set_dic(self, p_val: list[dict]):
+        """
+        p: elements in p_val are of type dict{'content', 'geo':{x, y, height, width}}
+            check result of ExtractGeometryInfo class
+        """
+        vals =[(x['content'], (float(x['geo']['x']), float(x['geo']['y']))) for x in filter(lambda x: len(
+            set(x['geo'].keys()).intersection(set(['x','y']))) == 2, p_val)]
+        self._arr = s_vals = sorted(vals, key=lambda x: x[1])
 
-    def string(self):
-        return f'<mxGeometry as="geometry" height="{self.h}" width="{self.w}" x="{self.x}" y="{self.y}"/>'
-
-def lineOne(left='..', middle= "..", right= "..", y = 0):
-    words = [DrawIOWord(left, geometry=DrawIOGeometry(x = 0, y=y), align="right"),
-     DrawIOWord(middle, geometry=DrawIOGeometry(x = 80, y=y)),
-     DrawIOWord(right, geometry=DrawIOGeometry(x = 230, y=y))]
-    return DrawIO(words)
-
-
-def dailyScrum():
-    pass
-
-def waterFallContainer():
-    pass
-
-def container(iid = 2, parent = 1):
-    drawIO = DrawIO([])
-    inc = 0
-    for i in range(10):
-        drawIO.merge(lineOne(y = inc))
-        inc += 22
-    contain = f"""<mxCell connectable="0" id="{iid}" parent="{parent}" style="group;strokeColor=#000000;"""\
-                f"""opacity=30;" value="" vertex="1"><mxGeometry as="geometry" height="{drawIO.maxX+2}" """ \
-                f"""width="{drawIO.maxY+2}" x="0" y="0"/></mxCell>"""
-    s = iid +1
-    for w in drawIO.words:
-        w.parentId = iid
-        w._id = s
-        s += 1
-    jupyterDB.clip().copy(urllib.parse.quote(drawIO._string(contain)))
+class SortVerticallyAndExtract(IOps):
+    def set_values(self, arr: list[tuple]):
+        self._arr = arr
+    def execute(self):
+        arr = self._arr
+        arr = sorted(arr, key=lambda x: x[1][1])
+        arr = [e[0] for e in arr]
+        new_arr = []
+        for ele in arr:
+            if ele.strip() == "..":
+                new_arr.append([ele])
+            else:
+                new_arr.append(TreeDB.decodeContent(ele).soup_without_xml_part().strings)
+        return ['\n'.join(val) for val in new_arr]
+class DailyScrumParser(IParser):
+    def parse(self):
+        results = {}
+        for page in pages:
+            results[page] = []
+            exp.cd(page)
+            p, el = exp.dirList()
+            assert len(p) == 1 and len(el) == 0
+            exp.cd(p[0])
+            pp, els = exp.dirList()
+            assert len(els) == 0
+            for day_scrum in pp:
+                exp.cd(day_scrum)
+                sec, header = exp.dirList()
+                assert len(sec) == 2 and len(header) == 1
+                ssec = sorted(sec, key=lambda x: int(trr.get_node(x).extra_info.value.mxgeometry['y']))
+                upper, lower = ssec
+                res = []
+                for s in ssec:
+                    exp.cd(s)
+                    subsec, logs = exp.dirList()
+                    assert len(subsec) == 0
+                    res.append(self._make_result(logs))
+                    exp.goBack()
+                top, bottom = res
+                # not ccomplete yet
+                
+    def _make_result(self, keys):
+        res = {}
+        mxcelss = [self._tree._cells_dict[x].extra_info.value for x in keys]
+        egi = ExtractGeometryInfo()
+        egi.set_cells(mxcelss)
+        vals_geo = egi.execute()
+        shasic = SortHorizontallyAndSplitIntoColumns()
+        shasic.set_dic(vals_geo)
+        shasic.set_nr_of_cols(4)
+        cols = shasic.execute()
+        key = cols[1]
+        d_time = cols[2]
+        s_time = cols[3]
+        svae = SortVerticallyAndExtract()
+        svae.set_values(key)
+        res['name'] = svae.execute()
+        svae.set_values(d_time)
+        res['given duration'] = svae.execute()
+        svae.set_values(s_time)
+        res['start time'] = svae.execute()
+        return res

@@ -22,7 +22,14 @@ class CodeDumperDB:
         return p
 
     def inputLinesFromDumper(dic):
-        return ListDB.listFromDic(dic)
+        k = dic
+        vals = []
+        for key in k:
+            if(type(k[key]) == dict):
+                return CodeDumperDB.inputLinesFromDumper(k[key])
+            elif(type(k[key]) == list):
+                vals += k[key]
+        return vals
     
     def name(nDaysEarlier = 0):
         from TimeDB import TimeDB

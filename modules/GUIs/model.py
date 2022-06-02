@@ -1,8 +1,6 @@
 class KeyManager:
-    def __init__(self, keys):
-        self.keys = keys
-        self.currentIndex = 0
-        self.currentPageIndex = 1
+    def __init__(self, keys:list=None):
+        self.set_keys(keys)
         self.nrPerPage = 20
     
     def setCurrentPageIndex(self, val):
@@ -28,3 +26,6 @@ class KeyManager:
     
     def set_limit_per_page(self, val):
         self.nrPerPage = val
+    def set_keys(self, keys):
+        self.keys = keys
+        self.currentPageIndex = 1

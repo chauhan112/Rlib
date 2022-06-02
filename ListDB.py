@@ -3,11 +3,9 @@ from ComparerDB import ComparerDB
 class ListDB:
     def sortDicBasedOnValue(dic):
         return { k: v for k, v in sorted(dic.items(), key=lambda item: item[1]) }
-
-    def sort2dArrayBasedOnIndex(arr, index):
-        return sorted(arr, key=lambda arr: arr[index])
-
-
+    def sorted_keys(arr):
+        import numpy as np
+        return np.argsort(arr)
     def reshape(arr, shape):
         from functools import reduce
         from operator import mul
@@ -33,22 +31,6 @@ class ListDB:
     def listFilter(func, arr):
         return list(filter(func, arr))
 
-    def filterOutResult(filterByWords, result):
-        ignoringTables = set([])
-        result = set(result)
-        for t in result:
-            for a in filterByWords:
-                if( a.lower() in t.lower()):
-                    ignoringTables.add(t)
-        return list(result.difference(ignoringTables))
-
-    def dictFilter(func, dic):
-        newDic = {}
-        for key in dic:
-            if(func(dic[key])):
-                newDic[key] = dic[key]
-        return newDic
-
     def flatten(arr):
         newArr = []
         for row in arr:
@@ -63,15 +45,6 @@ class ListDB:
         for key in dic:
             res.append([key, dic[key]])
         return res
-
-    def listFromDic(k):
-        vals = []
-        for key in k:
-            if(type(k[key]) == dict):
-                return ListDB.listFromDic(k[key])
-            elif(type(k[key]) == list):
-                vals += k[key]
-        return vals
 
     def keepUnique(redundantElementsList, orderImportant = False):
         if(orderImportant):

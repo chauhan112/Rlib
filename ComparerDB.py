@@ -30,18 +30,19 @@ class ComparerDB:
                 else:
                     res.append(j)
         return res
-    def pickle_search(data, compareFunc, loc=[], searchInKey=False):
-        founds = []
+    def pickle_search(data, compareFunc, loc=[], searchInKey=False, founds =None):
+        if founds is None:
+            founds = []
         if type(data) == dict:
             for key in data:
                 if searchInKey and compareFunc(key):
                     founds.append((loc + [key], data[key]))
-                founds += ComparerDB.pickle_search(data[key], compareFunc, loc + [key], searchInKey)
+                ComparerDB.pickle_search(data[key], compareFunc, loc + [key], searchInKey, founds)
         elif type(data) in [list, set]:
             for i, val in enumerate(data):
-                founds += ComparerDB.pickle_search(val, compareFunc, loc + [i], searchInKey)
+                ComparerDB.pickle_search(val, compareFunc, loc + [i], searchInKey, founds)
         else:
-            if compareFunc(data):
+            if compareFunc(data) and (loc, data) not in founds :
                 founds.append((loc, data))
         return founds
     def default_compare(word, con):

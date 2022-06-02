@@ -21,7 +21,7 @@ class DNEWithCdAtIndex(IExplorer):
             print("index out error")
             return
         key = list(self.dynamic_exp._current_map.keys())[index]
-        self.cd(key)
+        self.dynamic_exp.cd(key)
 
     def dirList(self):
         return self.dynamic_exp.dirList()
@@ -109,7 +109,7 @@ class LoadFromFile(GCommand):
         return f"{self.idd} -> load from file: load f"
 
 class Main:
-    def explorer(path = None, root = None, display = True) -> IExplorerDisplayer:
+    def os_explorer(path: str = None, root: GNode = None, display = True) -> IExplorerDisplayer:
         from modules.mobileCode.tree_ops import CmdExplorerDisplayer, ListElement,  \
             Alwaysrun, Goback, ElementSelected
         from modules.FileAnalyser.FileAnalyser import FileAnalyser

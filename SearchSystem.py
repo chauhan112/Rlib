@@ -38,8 +38,10 @@ class DicSearch(ContainerSetable):
     
 class SearchEngine:
     def __init__(self,content,  searchSys, nCols = 6):
-        from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
         self.searchSys = searchSys(content)
+        self._make_layout(nCols)
+    def _make_layout(self, nCols):
+        from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
         self.nCols = nCols + 1 
         self._displayer_engine = JupyterResultDisplayer()
         self._displayer_engine.set_displayer_way(DisplayNElement())
@@ -85,7 +87,37 @@ class DicSearchEngine(SearchEngine):
         
     def setCallback(self, funcWith2Params):
         self._runCallback = funcWith2Params
+class NestedDicSearch(ISearch):
+    def search(self, word, case=False, reg=False):
+        self._word = word
+        res = ComparerDB.pickle_search(self._dic, self._default_compare_func, searchInKey=True)
+        return res
+    def set_container(self, dic: dict):
+        self._dic = dic
+    def _default_compare_func(self, con):
+        if type(con) == str and type(self._word) == str:
+            return self._word in con
+        return self._word == con
 
+class NestedDicSearchEngine(SearchEngine):
+    def __init__(self, dic=None):
+        self._make_layout(6)
+        self.set_search_sys(NestedDicSearch())
+        self.set_container(dic)
+        self.set_callback_func(self._print_content)
+    def set_search_sys(self, searchSys: ISearch):
+        self.searchSys = searchSys
+    def _callback(self, result):
+        self._func(result)
+    def set_callback_func(self, fucn):
+        self._func = fucn
+    def set_container(self, container):
+        self.searchSys.set_container(container)
+    def buttonName(self, ele):
+        key, val = ele
+        return "/".join(key)
+    def _print_content(self, ele):
+        print(ele)
 class MultilineStringSearch(ISearchSystem, ContainerSetable):
     def __init__(self, content, allRes = False):
         self.allRes = allRes

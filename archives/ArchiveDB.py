@@ -605,3 +605,35 @@ class PdfSearchGUI(IDatabaseGUI, IAbout):
         with out:
             self._sw.set_database(Database.pdfDB(files))
             display(self._sw.get())
+
+class DrawIOGeometry:
+    def __init__(self, x= 0, y= 0, h= 20, w =20):
+        self.x= x
+        self.y = y
+        self.h =h
+        self.w = w
+
+    def string(self):
+        return f'<mxGeometry as="geometry" height="{self.h}" width="{self.w}" x="{self.x}" y="{self.y}"/>'
+
+def lineOne(left='..', middle= "..", right= "..", y = 0):
+    words = [DrawIOWord(left, geometry=DrawIOGeometry(x = 0, y=y), align="right"),
+     DrawIOWord(middle, geometry=DrawIOGeometry(x = 80, y=y)),
+     DrawIOWord(right, geometry=DrawIOGeometry(x = 230, y=y))]
+    return DrawIO(words)
+
+def container(iid = 2, parent = 1):
+    drawIO = DrawIO([])
+    inc = 0
+    for i in range(10):
+        drawIO.merge(lineOne(y = inc))
+        inc += 22
+    contain = f"""<mxCell connectable="0" id="{iid}" parent="{parent}" style="group;strokeColor=#000000;"""\
+                f"""opacity=30;" value="" vertex="1"><mxGeometry as="geometry" height="{drawIO.maxX+2}" """ \
+                f"""width="{drawIO.maxY+2}" x="0" y="0"/></mxCell>"""
+    s = iid +1
+    for w in drawIO.words:
+        w.parentId = iid
+        w._id = s
+        s += 1
+    jupyterDB.clip().copy(urllib.parse.quote(drawIO._string(contain)))

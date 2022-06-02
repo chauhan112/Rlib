@@ -188,7 +188,7 @@ class Uses(IElement, IReturnable, GDataSetable):
             if isinstance(ele, ast.Call):
                 res += UsesFromCall(ele).get()
         return list(set(res))
-        
+
 class GUsesElement(IElement):
     def __init__(self, data):
         self.data = data
@@ -272,3 +272,14 @@ class ReturnAst(GUsesElement, IReturnable):
         usy = Uses()
         usy.setData(self.data.value)
         return usy.get()
+
+class Main:
+    def parse(content: str =None, file_path: str=None):
+        from FileDatabase import File
+        if content is None:
+            content = File.getFileContent(file_path)
+        p = ast.parse(content)
+        cnb = CommonNamedBody()
+        cnb.setData(p)
+        return cnb
+    

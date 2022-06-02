@@ -112,7 +112,7 @@ class OpsListRunner(IRunnable):
             exp.dicExp.cd("..")
             return
         from ListDB import ListDB
-        content = ListDB.dicOps().get(exp.dicExp.content, exp.dicExp.currentPath + [cdVal])
+        content = ListDB.dicOps().get(exp.dicExp._content, exp.dicExp.currentPath + [cdVal])
         if (type(content) == dict):
             exp.dicExp.cd(cdVal)
         else:

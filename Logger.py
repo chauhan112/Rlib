@@ -6,7 +6,20 @@ from Path import Path
 
 def downLoadFile(url, path):
     pass
-    
+class ISuggestionAlgorithm:
+    def __init__(self, data = None):
+        self.data = data
+        self._result = []
+
+    def setData(self, data):
+        self.data = data
+
+    def logics(self):
+        raise IOError("overload this function")
+
+    def getResults(self):
+        self.logics()
+        return self._result
 class FoodLogger:
     def __init__(self):
         self.outPklFile = PickleCRUD('LifeLogs')
@@ -14,14 +27,14 @@ class FoodLogger:
         self.dumpingPath = Path.joinPath(resourcePath(), 'recycleBin\\eatingDelete.pkl')
         self.recyleBin = {}
         raise IOError("needs testing")
-    
+
     def logEating(self,name, time, content = "",date = 0):
         date = TimeDB.getTimeStamp(date)
         if(date not in self.outPklFile.data[self.category]):
             self.outPklFile.data[self.category][date] = {}
         self.outPklFile.data[self.category][date][time] = {'name':name, 'content': content}
         self.outPklFile._write(self.outPklFile.data)
-    
+
     def showLog(self,date = 0):
         date = TimeDB.getTimeStamp(date)
         return self.outPklFile.data[self.category][date]
@@ -31,46 +44,31 @@ class FoodLogger:
                           'pos': pos}
         ListDB.dicOps().delete(self.outPklFile.data, pos)
         SerializationDB.pickleOut(self.recyleBin, self.dumpingPath)
-    
+
     def _restore(self):
         if(self.recyleBin is None):
             print("nothing to restore")
             return
         ListDB.dicOps().add(self.outPklFile.data, self.recyleBin['pos'], self.recyleBin['data'])
-    
+
     def _restoreFromFile(self, path = None):
         if(path is None):
             path = self.dumpingPath
         self.recyleBin = SerializationDB.readPickle(path)
         self._restore()
-        
+
 class FoodBuyingSuggestion:
     def __init__(self, algorithm = ISuggestionAlgorithm()):
         self.algorithm = algorithm
-        
+
     def suggest(self):
         pass
-    
+
     def logBoughtStuff(self, namesWithPrice = {}):
         """namesWithPrice = {'potatoes' : {'total price': 2.15, 'quantity': 1 pkg},
         'brinjal': {'total price': ** , 'quantity' :3}}"""
         pass
-      
-class ISuggestionAlgorithm:
-    def __init__(self, data = None):
-        self.data = data
-        self._result = []
-        
-    def setData(self, data):
-        self.data = data
-    
-    def logics(self):
-        raise IOError("overload this function")
-    
-    def getResults(self):
-        self.logics()
-        return self._result
-        
+
 class EatingExplorationSuggestion(ISuggestionAlgorithm):
     def logics(self):
         import random
@@ -86,10 +84,10 @@ class UsageEstimationSuggestion(ISuggestionAlgorithm):
     def __init__(self, data = None, extraData = None):
         super().__init__(data)
         self.extraInfo = extraData
-        
+
     def logics(self):
         """codes which use last purchase date and use it predict the finish date"""
-    
+
 
 class NumberOfWidgetsLogger:
     storageID = "102fba78bb724d518a3ab79c7d854db7"
@@ -103,7 +101,7 @@ class NumberOfWidgetsLogger:
         (y,m,d), (hr, mi, ss) = TimeDB.today()
         pkl = NumberOfWidgetsLogger._read()
         pkl.add([self.noteBookId, f'{y}_{m}_{d} hour:{hr}'], len(self.anInstance.widgets))
-        
+
     def _read():
         from StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(NumberOfWidgetsLogger.storageID)
@@ -116,17 +114,17 @@ class ForestTreeLogger:
     def _path(self):
         from Path import FrequentPaths
         return FrequentPaths.pathAsDic()['forest']
-        
+
     def fileNodes(self):
         from Path import Path
         files = Path.filesWithExtension("drawio", self.forestPath)
         relLoc = {tuple(x.replace(self.forestPath, "").strip(os.sep).split(os.sep)): x for x in files}
         return relLoc
-    
+
     def _read():
         from StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(ForestTreeLogger.storageId)
-    
+
     def log(self):
         from TimeDB import TimeDB
         from FileDatabase import File
@@ -136,9 +134,58 @@ class ForestTreeLogger:
         for f in filesLoc:
             pkl.add([f, day], File.size(filesLoc[f]))
 
-class Logger:
+class CodeLogger:
+    logger = None
     def __init__(self):
-        pass
+        self._timer = None
+        self._logged_times = []
+        self.set_timer_interval(10*60) # 10 min
+
+    def log(self):
+        from jupyterDB import jupyterDB
+        from TimeDB import TimeDB
+        self._logged_times.append(TimeDB.today())
+        jupyterDB.codeDumper().summarize(jupyterDB._params['_ih'])
+
+    def start_auto_log(self):
+        from TimeDB import TimeDB
+        if self._timer is None:
+            self._timer = TimeDB.setTimer().regularlyUpdateTime(self._interval, self.log)
+
+    def set_timer_interval(self, interval: int):
+        """interval in seconds"""
+        self._interval = interval
+
+    def get_instance():
+        if CodeLogger.logger is None:
+            CodeLogger.logger = CodeLogger()
+        return CodeLogger.logger
+
+class GenericLogger:
+    logger = None
+    def __init__(self):
+        self._timer = None
+        self._logged_times = []
+        self.set_timer_interval(10*60) # 10 min
+        self._funcs = []
         
     def log(self):
-        pass
+        for func in self._funcs:
+            func()
+    
+    def start_auto_log(self):
+        from TimeDB import TimeDB
+        if self._timer is None:
+            self._timer = TimeDB.setTimer().regularlyUpdateTime(self._interval, self.log)
+    
+    def set_timer_interval(self, interval: int):
+        """interval in seconds"""
+        self._interval = interval
+    
+    def get_instance():
+        if GenericLogger.logger is None:
+            GenericLogger.logger = CodeLogger()
+        return GenericLogger.logger
+    def add_log_func(self, func):
+        """func is without parameters"""
+        self._funcs.append(func)
