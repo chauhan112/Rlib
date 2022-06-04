@@ -134,33 +134,6 @@ class ForestTreeLogger:
         for f in filesLoc:
             pkl.add([f, day], File.size(filesLoc[f]))
 
-class CodeLogger:
-    logger = None
-    def __init__(self):
-        self._timer = None
-        self._logged_times = []
-        self.set_timer_interval(10*60) # 10 min
-
-    def log(self):
-        from jupyterDB import jupyterDB
-        from TimeDB import TimeDB
-        self._logged_times.append(TimeDB.today())
-        jupyterDB.codeDumper().summarize(jupyterDB._params['_ih'])
-
-    def start_auto_log(self):
-        from TimeDB import TimeDB
-        if self._timer is None:
-            self._timer = TimeDB.setTimer().regularlyUpdateTime(self._interval, self.log)
-
-    def set_timer_interval(self, interval: int):
-        """interval in seconds"""
-        self._interval = interval
-
-    def get_instance():
-        if CodeLogger.logger is None:
-            CodeLogger.logger = CodeLogger()
-        return CodeLogger.logger
-
 class GenericLogger:
     logger = None
     def __init__(self):
@@ -172,7 +145,8 @@ class GenericLogger:
     def log(self):
         for func in self._funcs:
             func()
-    
+        from TimeDB import TimeDB
+        self._logged_times.append(TimeDB.today())
     def start_auto_log(self):
         from TimeDB import TimeDB
         if self._timer is None:
@@ -184,8 +158,11 @@ class GenericLogger:
     
     def get_instance():
         if GenericLogger.logger is None:
-            GenericLogger.logger = CodeLogger()
+            GenericLogger.logger = GenericLogger()
         return GenericLogger.logger
     def add_log_func(self, func):
         """func is without parameters"""
         self._funcs.append(func)
+    def code_logger():
+        from jupyterDB import jupyterDB
+        jupyterDB.codeDumper().summarize(jupyterDB._params['_ih'])

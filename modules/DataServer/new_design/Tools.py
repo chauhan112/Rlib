@@ -1,7 +1,6 @@
 class IUnique:
     def get_id(self):
         pass
-    
 class IFile:
     def get_file_info(self) -> dict:
         pass
@@ -13,7 +12,6 @@ class IFile:
         pass
     def get_extension(self) -> str:
         pass
-
 class IMessage:
     def get_content(self):
         pass
@@ -21,30 +19,25 @@ class IMessage:
         pass
     def get_files(self) -> list[IFile]:
         pass
-
 class GMessage(IMessage, IUnique):
     def get_id(self):
         from CryptsDB import CryptsDB
         return CryptsDB.generateUniqueId()
     def get_files(self):
         return []
-    
 class ILocation:
     def get_path(self):
         pass
-    
 class NameContact(IUnique):
     def __init__(self, name: str):
         self._name = name
     def get_id(self):
         return self._name
-    
 class INode:
     def send_message(self, msg: GMessage, to: NameContact):
         pass
     def get_all_messages(self) -> list:
         pass
-    
 class IPortal:
     def send_message(self, msg: GMessage, to: NameContact, von: NameContact):
         pass
@@ -52,8 +45,6 @@ class IPortal:
         pass
     def delete_messages(self, contact: IContact):
         pass
-
-
 class TextMsg(GMessage):
     def __init__(self, txt):
         self.set_content(txt)
@@ -61,7 +52,6 @@ class TextMsg(GMessage):
         return self._txt
     def set_content(self, txt: str):
         self._txt = txt
-
 class GNode(INode, IUnique):
     def __init__(self, idd: NameContact):
         self.set_contact_id(idd)
@@ -77,11 +67,7 @@ class GNode(INode, IUnique):
         self._portal.delete_messages(self._id)
     def get_id(self):
         return self._id
-        
-    
-
 from modules.DataServer.Tools import Tools
-
 class GFile(IFile):
     def set_info(self, info):
         self._info = info
@@ -124,7 +110,6 @@ class FilePathPortal(IPortal):
         self._files_path = os.sep.join([self._path, "files"])
         if not os.path.exists(self._files_path):
             os.makedirs(self._files_path)
-        
     def send_message(self, msg: GMessage, to: NameContact, von:NameContact):
         content = SerializationDB.readPickle(self._messages_path)
         if to.get_id() not in content:
@@ -133,21 +118,18 @@ class FilePathPortal(IPortal):
         SerializationDB.pickleOut(content, self._messages_path)
         for f in msg.get_files():
             self._move_file(f)
-            
     def _msg_instance(self, msg: GMessage, con: NameContact):
-        return {'data': msg.get_content(), 
+        return {'data': msg.get_content(),
                 'id': msg.get_id(),
-                "from": con.get_id(), 
-                "time-stamp":  Tools.detailedTimeStamp(), 
+                "from": con.get_id(),
+                "time-stamp":  Tools.detailedTimeStamp(),
                 "files": [f.get_id() for f in msg.get_files()]}
-    
     def get_all_messages(self, node: NameContact):
         content = SerializationDB.readPickle(self._messages_path)
         messages = []
         for msg in content[node.get_id()]:
             messages.append(self.load_message(msg))
         return messages
-    
     def load_message(self, msg):
         files_content = SerializationDB.readPickle(self._files_dic_path)
         ins_msg = CustomMessage()
@@ -160,7 +142,6 @@ class FilePathPortal(IPortal):
             files.append(fls)
         ins_msg.set_files(files)
         return ins_msg
-    
     def delete_messages(self, node: NameContact):
         content = SerializationDB.readPickle(self._messages_path)
         files_content = SerializationDB.readPickle(self._files_dic_path)
@@ -174,7 +155,6 @@ class FilePathPortal(IPortal):
         del content[node.get_id()]
         SerializationDB.pickleOut(content, self._messages_path)
         SerializationDB.pickleOut(files_content, self._files_dic_path)
-            
     def _move_file(self, file: IFile):
         content = SerializationDB.readPickle(self._files_dic_path)
         path = file.get_path()
@@ -187,4 +167,3 @@ class FilePathPortal(IPortal):
             content[idd] = file.get_file_info()
             content[idd]['path'] = new_path
             SerializationDB.pickleOut(content, self._files_dic_path)
-        

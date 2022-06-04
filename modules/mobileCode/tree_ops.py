@@ -236,9 +236,7 @@ class TreeNodeExplorer(IExplorer):
             self._map_keys[c.value] = c
         return [node], []
     def _modify_func(self, old: MTreeable, new: MTreeable):
-        new.extra_info.depth = old.extra_info.depth
-        new.extra_info.number = old.extra_info.number
-        new.extra_info.value = old.extra_info.value
+        new.extra_info.__dict__ = old.extra_info.__dict__
         return new
 class ChangeLayerNr(GCommand):
     def callback(self, parent):
@@ -321,9 +319,19 @@ class FileModel:
 class ModelNeedable:
     def set_file_model(self, model: FileModel):
         self._model = model
+class NodeOnChangeApply:
+    def __init__(self, **infos):
+        self._infos = infos
+    def apply(self):
+        from DataStructure import MaxDepthInverseCalculator
+        MaxDepthInverseCalculator(self._infos['root']).execute()
+        FillNumber(self._infos['root']).execute()
+        if 'model' in self._infos:
+            SyncNodeWithFile(self._infos['root'], self._infos['model'].get_current_file()).execute()
+        self._infos['root'].extra_info.index = 0
+        EnumerateNodes().fill(self._infos['root'])
 class AddNew(GCommand, ModelNeedable):
     def callback(self, parent):
-        from DataStructure import MaxDepthInverseCalculator
         exp = parent.get_explorer()
         node = exp._pos[-1]
         if len(self.params) > 1:
@@ -337,14 +345,11 @@ class AddNew(GCommand, ModelNeedable):
                     found = True
             if not found:
                 node.children.append(new_node)
-        MaxDepthInverseCalculator(exp._root).execute()
-        FillNumber(exp._root).execute()
-        SyncNodeWithFile(exp._root, self._model.get_current_file()).execute()
+        NodeOnChangeApply(root = exp._root, model=self._model).apply()
     def get_help(self):
         return f"{self.idd} -> add new node: add valname"
 class DeleteNode(GCommand, ModelNeedable):
     def callback(self, parent):
-        from DataStructure import MaxDepthInverseCalculator
         exp = parent.get_explorer()
         if len(self.params) > 0:
             indices = [int(v) for v in self.params[1:]]
@@ -363,9 +368,7 @@ class DeleteNode(GCommand, ModelNeedable):
             ch = MTreeable("root")
             ch.children += temp
             SyncNodeWithFile(ch, self._model.get_recycle_path()).execute()
-        MaxDepthInverseCalculator(exp._root).execute()
-        FillNumber(exp._root).execute()
-        SyncNodeWithFile(exp._root, self._model.get_current_file()).execute()
+        NodeOnChangeApply(root = exp._root, model=self._model).apply()
     def get_help(self):
         return f"{self.idd} -> delete a node: del 0 1 2"
 class Cut(DeleteNode):
@@ -373,7 +376,6 @@ class Cut(DeleteNode):
         return f"{self.idd} -> cut nodes for pasting: cut 0 1 2"
 class Paste(GCommand, ModelNeedable):
     def callback(self, parent):
-        from DataStructure import MaxDepthInverseCalculator
         exp = parent.get_explorer()
         content = SerializationDB.readPickle(self._model.get_recycle_path())
         self._creator.set_dic(content)
@@ -386,9 +388,7 @@ class Paste(GCommand, ModelNeedable):
                 current.children.append(ch)
             else:
                 print(val + " already exists")
-        MaxDepthInverseCalculator(exp._root).execute()
-        FillNumber(exp._root).execute()
-        SyncNodeWithFile(exp._root, self._model.get_current_file()).execute()
+        NodeOnChangeApply(root = exp._root, model=self._model).apply()
     def set_graph_creator(self, creator: Dic2Graph):
         self._creator = creator
     def get_help(self):
@@ -432,6 +432,13 @@ class FillNumber(IOps):
         filler.set_graph_root(self._root)
         filler.set_filling_strategy(NumberFillerStrategy())
         filler.fill()
+from modules.FileAnalyser.FileAnalyser import IFillerStrategy
+class EnumerateNodes(IFillerStrategy):
+    def fill(self, node: MTreeable):
+        children = node.children
+        for i, ch in enumerate(children):
+            ch.extra_info.index = i
+            self.fill(ch)
 class ListFiles(GCommand, ModelNeedable):
     def callback(self, parent):
         dirname = os.path.dirname(self._model.get_current_file())
@@ -456,10 +463,8 @@ class LoadFile(GCommand, ModelNeedable):
         exp._pos.clear()
         self._creator.set_dic(SerializationDB.readPickle(file))
         root = self._creator.execute()['root']
-        from DataStructure import MaxDepthInverseCalculator
-        MaxDepthInverseCalculator(root).execute()
-        FillNumber(root).execute()
         exp.set_root(root)
+        NodeOnChangeApply(root = exp._root).apply()
         self._model.set_current_tree(file)
         self._model.add_new_file(file)
     def _get_file(self):
@@ -524,6 +529,12 @@ class SaveAsCommand(GCommand, ModelNeedable):
             print("file already exists")
     def get_help(self):
         return f"{self.idd} -> save file as new: save filename.pkl"
+class EnumerateElements(GCommand):
+    def callback(self, parent):
+        model = NameDisplayModel.get_instance()
+        model.set_display_info_func(lambda x: f"{x.extra_info.index}-{x.extra_info.value}")
+    def get_help(self):
+        return f"{self.idd} -> show depth information"
 class Main:
     def run_tree_ops_at(path):
         from modules.FileAnalyser.FileAnalyser import Creator
@@ -537,9 +548,7 @@ class Main:
         dg.set_node_creator(cr)
         gr = dg.execute()
         root = gr['root']
-        from DataStructure import MaxDepthInverseCalculator
-        MaxDepthInverseCalculator(root).execute()
-        FillNumber(root).execute()
+        NodeOnChangeApply(root = root).apply()
         ced = CmdExplorerDisplayer()
         ele = ElementSelected()
         l = LayeredTreeRenderer()
@@ -565,6 +574,7 @@ class Main:
         ced.set_command(paste_cmd)
         ced.set_command(NoInfo("no"))
         ced.set_command(DepthInfo("depth"))
+        ced.set_command(EnumerateElements("enum"))
         ced.set_command(NumberOfChildrenInfo("number"))
         name_cmd = NameCommand("name")
         name_cmd.set_file_model(fm)

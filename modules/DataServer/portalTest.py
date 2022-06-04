@@ -26,3 +26,6 @@ def pathPortalTest():
     print(p2.receiveMessage(c2))
     import os
     os.system(f'rm -rf {commonPath}')
+# from LibPath import insertPath
+# insertPath()
+# pathPortalTest()
