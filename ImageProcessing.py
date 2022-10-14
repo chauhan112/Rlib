@@ -126,7 +126,7 @@ class ImageProcessing:
                     def display(self):
                         return SVG(self.svg)
                     def save(self, name):
-                        File.createFile(name, self.svg())
+                        File.overWrite(name, self.svg)
                 s = svgtme(wordcloud)
                 display(s.display())
                 return s

@@ -270,7 +270,7 @@ class GAnimationFromImages(IAnimation):
         self._images= images
 
     def set_duration_between_frames(self, interval: float):
-        self.set_fps(int(1/interval))
+        self.set_fps(int(1 / interval))
 
     def set_fps(self, fps: int):
         self._fps = fps
@@ -295,7 +295,6 @@ class AnimationMakerFromImageReader(GAnimationFromImages):
         if self._images_data is None:
             self._read_data()
         fig = plt.figure(figsize=(8,8))
-
         plt.axis('off')
         im = plt.imshow(self._images_data[0])
         plt.title(f"Animation of images", fontweight="bold")

@@ -129,7 +129,11 @@ class ChangeModel:
     def update(self):
         self._files = self._files_lister.get_files()
         self._files_info = self._cp.calculate(self._files)
-
+    def remove_path_prefix(self, f):
+        loc = f.replace("\\", "/").split("/")
+        n = len(self._files_lister._root_dir.replace("\\", "/").split("/"))
+        return "/".join(loc[n:])
+    
 class MyFileObserver(IObserver):
     def __init__(self):
         self.set_time_interval(2)
