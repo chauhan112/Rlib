@@ -49,3 +49,22 @@ class ComparerDB:
         if type(con) == str and type(word) == str:
             return word in con
         return word == con
+
+class SearchInDictionary:
+    def __init__(self,):
+        self.set_search_func(self._default_search)
+        self.set_search_in_key_only(False)
+    def set_search_in_key_only(self, ke):
+        self._in_key_only = ke
+    def set_dic(self, dic):
+        self._data = dic
+    def set_search_func(self, func):
+        self._func = func
+    def _default_search(self, word, container):
+        if type(container) == str and type(word) == str:
+            return ComparerDB.has(word, container,self._case, self._reg)
+        return word == container
+    def search(self, word, case=False, reg= False):
+        self._reg = reg
+        self._case = case
+        return ComparerDB.pickle_search(res, lambda x: self._func(word, x),searchInKey=self._in_key_only,)
