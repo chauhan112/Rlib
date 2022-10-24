@@ -195,19 +195,22 @@ class Database:
         from SearchSystem import PdfSearchEngine
         return PdfSearchEngine(files)
     def resourceDB():
-        from Path import Path
+        from Path import Pathobject
         files = Path.getFiles(resourcePath(), walk = True)
         return Database.pathDB(files)
-    def moduleDB(keyWord = None, engine = FilesContentSearchEngine):
+    def moduleDB(keyWord = None, engine = None):
         from LibPath import getPath
+        from SearchSystem import FilesContentSearchEngine
         from StaticDisplayerManager import StaticDisplayerManager
         from Path import Path
         from IPython.display import display
         pyfiles = Path.filesWithExtension("py", getPath())
         StaticDisplayerManager.display('total modules file number', len(pyfiles))
-        fcse = engine(pyfiles, nCols=5)
-        fcse.set_tooltip(lambda x: x[0])
-        return Database.dbSearch(fcse, keyWord)
+        if engine is None:
+            engine = FilesContentSearchEngine(nCols=5)
+            engine.set_tooltip(lambda x: x[0])
+        engine.set_content(pyfiles)
+        return Database.dbSearch(engine, keyWord)
     def dicDB(dic, displayer = print):
         db = DicSearchEngine(dic)
         db.setCallback(lambda key, val: displayer(val))

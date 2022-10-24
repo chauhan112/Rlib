@@ -37,41 +37,48 @@ class DicSearch(ContainerSetable):
         return res
     
 class SearchEngine:
-    def __init__(self,content,  searchSys, nCols = 6):
-        self.searchSys = searchSys(content)
+    def __init__(self,content =None,  searchSys = None, nCols=6):
+        if searchSys is not None:
+            self.set_search_sys(searchSys)
+        if content is not None:
+            self.set_content(content)
         self._make_layout(nCols)
     def _make_layout(self, nCols):
         from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
-        self.nCols = nCols + 1 
+        self.nCols = nCols + 1
         self._displayer_engine = JupyterResultDisplayer()
         self._displayer_engine.set_displayer_way(DisplayNElement())
         self._displayer_engine.set_callback(self._callback)
         self.set_tooltip(self.buttonName)
-        
+
     def displayer(self, result):
         from modules.SearchSystem.modular import GDisplayableResult
         res = [GDisplayableResult(self.buttonName(ele), self._tooltip_func(ele), ele) for ele in result]
         self._displayer_engine.set_result(res)
         return self._displayer_engine.display()
-    
+
     def _callback(self, result):
         raise NotImplementedError("Overload this function")
 
     def search(self, word, case = False, reg = False):
         result = self.searchSys.search(word, case, reg)
         self.displayer(result)
-    
+
     def buttonName(self, item):
         return item
-    
+
     def set_tooltip(self, func):
         self._tooltip_func = func
-       
+
     def displayItem(self,key, name, callbackFunc, tooltip=None):
         from WidgetsDB import WidgetsDB
         b = WidgetsDB.mButton(name, key, callbackFunc)
         b.tooltip = tooltip
         return b
+    def set_content(self, content):
+        self.searchSys = self._searchSys(content)
+    def set_search_sys(self, searchSys):
+        self._searchSys = searchSys
 
 
 class DicSearchEngine(SearchEngine):
@@ -161,37 +168,41 @@ class FilesContentSearch(ISearchSystem, ContainerSetable):
         return founds
     def getContent(self,path):
         return File.getFileContent(path).splitlines()
-    
+
 class FilesContentSearchEngine(SearchEngine):
-    def __init__(self, filepaths, engine = FilesContentSearch, nCols = 6, callBackFunc = None):
-        super().__init__(filepaths, engine, nCols)
+    def __init__(self, filepaths=None, engine = FilesContentSearch, nCols = 6, callBackFunc = None):
+        super().__init__(nCols = nCols)
+        self.set_search_sys(FilesContentSearch)
+        if filepaths is not None:
+            self.set_content(filepaths)
         self.set_callback(self._openApp)
         if callBackFunc is not None:
             self.set_callback(callBackFunc)
 
     def buttonName(self, item):
         return os.path.basename(item[0])
-    
+
     def toolTip(self, item):
         return str(item[1])
-    
+
     def displayItem(self,key, name, callbackFunc, tooltip=None):
         import ipywidgets as widgets
         from IPython.display import display
         s = super().displayItem(key, name, callbackFunc, tooltip)
         return widgets.HBox([s, widgets.Label(str(key[1]))])
-    
+
     def _callback(self, resItem):
         self._runCallback(resItem[0], resItem[1])
-    
+
     def _openApp(self, path, lineNr):
         from FileDatabase import NotepadAppTextOpener
         app = NotepadAppTextOpener()
         app.setData(lineNr)
         app.openIt(path)
-    
+
     def set_callback(self, func):
         self._runCallback = func
+
     
 class StringListSearchEngine(SearchEngine):
     def __init__(self, stringLisrt):
