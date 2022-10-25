@@ -67,4 +67,4 @@ class SearchInDictionary:
     def search(self, word, case=False, reg= False):
         self._reg = reg
         self._case = case
-        return ComparerDB.pickle_search(res, lambda x: self._func(word, x),searchInKey=self._in_key_only,)
+        return ComparerDB.pickle_search(self._data, lambda x: self._func(word, x),searchInKey=self._in_key_only,)
