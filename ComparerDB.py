@@ -1,4 +1,5 @@
 from WordDB import WordDB
+import re
 class ComparerDB:
     def inCompare(leftIn, right, case = False):
         if(not case):
@@ -9,7 +10,7 @@ class ComparerDB:
         return WordDB.regexMatchFound(regex, word)
     def has(word, content, case = False, reg = False):
         if(reg):
-            return ComparerDB.regexSearch(word, content)
+            return re.search(word,content) != None
         return ComparerDB.inCompare(word, content, case)
     def hasExtension(file, exts):
         if(type(exts) == str):

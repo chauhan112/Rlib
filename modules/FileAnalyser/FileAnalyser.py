@@ -305,7 +305,7 @@ class Files2NodeGraph(IOps):
         child = parent
         while True:
             parent = os.path.dirname(child)
-            if parent == "" or child == self._common_part:
+            if parent == "" or child.strip(os.sep) == self._common_part:
                 break
             n = self._get_node(parent)
             n.children.add(self._get_node(child))
@@ -328,6 +328,7 @@ class Files2NodeGraph(IOps):
         self.set_files(Path.getFiles(folder_path, True))
 class DynamicNodeExplorer(NodeTreeExplorer):
     def __init__(self, root=None):
+        self._pos = []
         self.set_root(root)
         self.set_displayer_func(lambda x: x.value)
         self._current_map = {}
@@ -397,7 +398,7 @@ class FileAnalyse:
             def _run(root):
                 from modules.mobileCode.GenericExplorer import Main, NumberView, DepthView, SizeView, \
                     SaveInfo, NoInfoView, LoadFromFile
-                run_at_last_command, displayer = Main.explorer(root = root, display=False)
+                run_at_last_command, displayer = Main.os_explorer(root = root, display=False)
                 displayer.set_command(NumberView('number'))
                 displayer.set_command(DepthView("depth"))
                 displayer.set_command(SizeView('size'))
