@@ -14,15 +14,17 @@ class ISearch:
         raise NotImplementedError("abstract method")
 class ContainerSetable:
     def set_container(self, container):
-        self.container = container
-        
+        self.container = container      
 class DicSearch(ContainerSetable):
     def __init__(self, container):
         self.set_container(container)
-        
+        self.set_search_in_type("all")
     def search(self, word, case = False, reg = False):
+        if self._type == "key":
+            return self.key(word, case, reg)
+        elif self._type == "value":
+            return self.value(word, case, reg)
         return self._gSearch(lambda key: ComparerDB.has(word, key, case, reg) or ComparerDB.has(word, self.container[key], case, reg))
-    
     def key(self, word, case = False, reg = False):
         return self._gSearch(lambda key: ComparerDB.has(word, key, case, reg))
     
@@ -35,6 +37,8 @@ class DicSearch(ContainerSetable):
             if(func(key)):
                 res.append(key)
         return res
+    def set_search_in_type(self, typ):
+        self._type = typ
     
 class SearchEngine:
     def __init__(self,content =None,  searchSys = None, nCols=6):
@@ -56,7 +60,14 @@ class SearchEngine:
         res = [GDisplayableResult(self.buttonName(ele), self._tooltip_func(ele), ele) for ele in result]
         self._displayer_engine.set_result(res)
         return self._displayer_engine.display()
-
+        
+    def get_search_result_layout(self,word, case = False, reg = False):
+        result = self.searchSys.search(word, case, reg)
+        from modules.SearchSystem.modular import GDisplayableResult
+        res = [GDisplayableResult(self.buttonName(ele), self._tooltip_func(ele), ele) for ele in result]
+        self._displayer_engine.set_result(res)
+        return self._displayer_engine.get_result_layout()
+        
     def _callback(self, result):
         raise NotImplementedError("Overload this function")
 
@@ -80,7 +91,7 @@ class SearchEngine:
     def set_search_sys(self, searchSys):
         self._searchSys = searchSys
 
-
+    
 class DicSearchEngine(SearchEngine):
     def __init__(self, content, nCols = 6, engine= DicSearch):
         super().__init__(content, engine, nCols)

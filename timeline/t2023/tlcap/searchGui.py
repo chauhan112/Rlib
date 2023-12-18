@@ -88,6 +88,9 @@ class ExpView:
     def display(self):
         from IPython.display import display
         display(self.gnrb.get())
+    @property
+    def layout(self):
+        return self.gnrb.get()
 class ExpController:
     def set_view(self, view: ExpView):
         self._ui = view
@@ -125,9 +128,9 @@ class ExpController:
         self._space = space
         
 class Main:
-    def displayContentSearcher():
+    def displayContentSearcher(folder = "json"):
         uic = UIController()
-        uic.set_model(FilesModel("json"))
+        uic.set_model(FilesModel(folder))
         uic.set_ui(SearView())
         uic.setup()
         uic._ui.filterWid.value =TimeDB.getTimeStamp().split(", ")[-1].replace(".", "")

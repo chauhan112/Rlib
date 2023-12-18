@@ -46,28 +46,27 @@ class PickleOpsWidget:
         self._gobackPath = widgets.Button(icon="fa-arrow-circle-left", layout={"width":"auto"})
         self._filesList = widgets.Dropdown(options=[], layout=widgets.Layout(width ="50%"))
         self.opsSec = OpsWid()
-        self._opsrow = widgets.HBox([widgets.Label("ops:", layout={"width":"10%"}), self.opsSec._opsOption,
+        self._opsrow = widgets.HBox([widgets.Label("ops:", layout={"width":"30px"}), self.opsSec._opsOption,
                                      self.opsSec._opsContentArea], justify_content='space-between')
         self._opsrow.layout.display = "none" # "flex"
         self.output = WidgetsDB.outArea(False)
         
         
     def _createMainLayout(self):
-        return widgets.HBox([widgets.Box([widgets.Box([widgets.Label("File:", layout=widgets.Layout(width ="30%")), 
+        return widgets.HBox([widgets.Box([widgets.Box([widgets.Label("File:", layout=widgets.Layout(width ="30px")), 
                                          self._filesList, self.opsSec._mode]),
-                 widgets.Box([widgets.Label("Loc:", layout=widgets.Layout(width ="30%")),self._path,
+                 widgets.Box([widgets.Label("Loc:", layout=widgets.Layout(width ="30px")),self._path,
                               self._lastKey,self._gobackPath]),
-                 widgets.Box([widgets.Label("keys:", layout=widgets.Layout(width ="30%")),self._keysSect]),
+                 widgets.Box([widgets.Label("keys:", layout=widgets.Layout(width ="30px")),self._keysSect]),
                  self._opsrow] , layout=widgets.Layout(  display='flex',  flex_flow='column',  
-                                                       border='solid 2px BurlyWood', align_items='stretch',
-                width='50%', min_width ="50%"
+                                                       border='solid 2px BurlyWood', align_items='stretch', width="100%", min_height="200px", padding="3px"
             )), self.output.out])
 
 class PickleExpController:
-    def __init__(self, file = None):
+    def __init__(self, file = None, displayIt = True):
         from jupyterDB import jupyterDB
         self._options = jupyterDB.pickle().listDir()
-        self.set_view(PickleOpsWidget(file))
+        self.set_view(PickleOpsWidget(file, displayIt=displayIt))
         self.set_model(PickleOpsModel())
         self.maxNumberOfKeysPerPage = 20
         self._setCallbacks()
@@ -188,7 +187,8 @@ class PickleOpsController:
         self.parent = parentCont
         self.view = self.parent.view.opsSec
         self._setCallbacks()
-        self.view._opsOption.options = [("..",NothingDoOps(self)),("add", CreateOps(self)), 
+        self._create_ops = CreateOps(self)
+        self.view._opsOption.options = [("..",NothingDoOps(self)),("add", self._create_ops), 
                                         ("delete", DeleteOps(self)), ("update", UpdateOps(self)) ]
         
     def _setCallbacks(self):
@@ -262,7 +262,7 @@ class CreateOps(OpContInterface):
             out.add2Output(widgets.HTML(f"<font face='comic sans ms' color ='Thistle'>key already exist</font>"))
             return
         if(self.parent.view._isVar.value):
-            val = globals()[val]
+            val = self._param[val]
         self.confirmingFunc = lambda : self.parent.parent.model.add(key, val)
         super().confirmOrOk(False) 
     def confirm(self, btn):
@@ -270,7 +270,8 @@ class CreateOps(OpContInterface):
         super().confirmOrOk(True)
         self.confirmingFunc = None
         self.parent.parent.sync()
-        
+    def set_globals(self, param):
+        self._param = param
 class DeleteOps(OpContInterface):
     def getGui(self):
         super().confirmOrOk(True)
@@ -320,17 +321,20 @@ class PickleOpsModel:
         self._loc = []
         self.content = {}
         self.filePath = None
+        self._sync = True
         
     def loadFileFromDB(self, fileName):
         from jupyterDB import jupyterDB
         self._loc = []
         self.content = jupyterDB.pickle().read(fileName)
         self.filePath = jupyterDB.pickle().path(fileName)
+        self._sync = True
     
     def loadFile(self, filepath):
         self.content = SerializationDB.readPickle(filepath)
         self._loc = []
         self.filePath = filepath
+        self._sync = True
         
     def getKeys(self):
         val = ListDB.dicOps().get(self.content, self._loc)
@@ -355,7 +359,8 @@ class PickleOpsModel:
     def add(self, key, val):
         from SerializationDB import SerializationDB
         ListDB.dicOps().add(self.content,self._loc + [key], val)
-        SerializationDB.pickleOut(self.content, self.filePath)
+        if self._sync:
+            SerializationDB.pickleOut(self.content, self.filePath)
     def alreadyExists(self, key):
         try:
             ListDB.dicOps().get(self.content, self._loc + [key])
@@ -364,5 +369,12 @@ class PickleOpsModel:
         return True
     def delete(self, key):
         ListDB.dicOps().delete(self.content, self._loc + [key])
-        SerializationDB.pickleOut(self.content, self.filePath)
+        if self._sync:
+            SerializationDB.pickleOut(self.content, self.filePath)
+    def set_dictionary(self, dic):
+        self.content = dic
+        self._sync = False
+    def set_base_location(self, loc):
+        self._loc = loc
+        self._baseloc = loc
     

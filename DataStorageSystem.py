@@ -1,4 +1,3 @@
-
 from ListDB import ListDB
 from SerializationDB import SerializationDB
 from FileDatabase import File
@@ -169,10 +168,12 @@ class AdvanceOps:
     def search(self, word="", case = False, reg = False):
         db = self._getDB()
         db.search(word, case, reg)
-    
     def _getDB(self): 
         raise IOError("not implemented yet")
-
+    def get_search_result_layout(self, word, case = False, reg = False):
+        db = self._getDB()
+        return db.get_search_result_layout(word, case, reg)
+        
 class FilePathTable(CRUD, AdvanceOps):
     def __init__(self, childOption = [], dbPklFile = None):
         super().__init__("filePaths", dbPklFile)

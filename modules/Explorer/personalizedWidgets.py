@@ -248,7 +248,31 @@ class SearchWidget(IRWidget):
         self._db = db
     def get(self):
         return self._gnrb.get()
-        
+class CustomOutput:
+    def __init__(self):
+        self._layout = None
+        self.set_base_layout(VRBox())
+    def set_base_layout(self, base):
+        self._base_container = base
+    def display(self,layout, clear= False, ipy= False):
+        if clear:
+            self.clear()
+        if not ipy:
+            with self._out:
+                display(layout)
+            return
+        self._base_container.add_widget(layout)
+    def get_layout(self):
+        import ipywidgets as widgets
+        if self._layout is None:
+            self._out = widgets.Output(layout=widgets.Layout(width='auto', max_height="800px", overflow='auto'))
+            self._layout = widgets.VBox([self._base_container.get(), self._out])
+        return self._layout
+    def get_out(self):
+        return self._out
+    def clear(self):
+        self._base_container.clear()
+        self._out.clear_output()
 class Main:
     def explore(exp: IExplorer, title = "title"):
         wied = WidgetsIpyExplorerDisplayer(title)
@@ -259,3 +283,4 @@ class Main:
         sw = SearchWidget()
         sw.set_database(db)
         return sw.get()
+

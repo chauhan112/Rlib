@@ -1,8 +1,0 @@
-LICENSE
-README.md
-setup.py
-LibPath/__init__.py
-LibPath_raja.egg-info/PKG-INFO
-LibPath_raja.egg-info/SOURCES.txt
-LibPath_raja.egg-info/dependency_links.txt
-LibPath_raja.egg-info/top_level.txt

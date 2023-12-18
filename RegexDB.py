@@ -26,10 +26,6 @@ class RegexDB:
         return f"(?<={ahead}){regex}(?={behind})"
     def isThereRegexMatch(regex, content):
         return WordDB.regexMatchFound(regex, content)
-    def regexs(val=None):
-        file = os.sep.join([LibsDB.picklePath(), "regexDB.pkl"])
-        regexes = SerializationDB.readPickle(file)
-        return Database.dbSearch(Database.dicDB(regexes), val)
     def replace(regex,text, replacingFunc):
         founds = WordDB.searchWordWithRegex(regex, text)
         newText = ''

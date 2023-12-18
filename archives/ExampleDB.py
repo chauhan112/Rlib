@@ -6,23 +6,6 @@ from FileDatabase import File
 from LibPath import *
 
 class ExampleDB:
-    def parsingNumerikContent(content = None):
-        numerikContent = yaml.safe_load(File.getFileContent(resourcePath() +"examplesDB.yaml"))['numerik'].split("\n")
-        if(content is not None):
-            numerikContent = content
-        content = list(filter(lambda l: WordDB.searchWordWithRegex("^[0-9]+" , l.strip()), numerikContent))
-        content = [(val, i) for i, val in enumerate(content)]
-
-        mapFunction = lambda l: len(WordDB.searchWordWithRegex("[0-9]+\.", l[0]))
-
-        g= OpsDB.grouper(mapFunction, content)
-        newG = []
-        for key in g:
-            for val,i in g[key]:
-                newG.append(("".join([val[i-1:j] for i, j in WordDB.searchWordWithRegex("[a-zA-Z]+", val)]).strip(),
-                i, key))
-        return ExampleDB.mergeDic(ParserDB.parseBlock(newG))
-
     def parsingPhilosophyContent():
         content = yaml.safe_load(File.getFileContent(resourcePath() +"examplesDB.yaml"))['philosophy'].strip().split("\n")
         content = list(filter(lambda l: WordDB.searchWordWithRegex("^[0-9]+" , l.strip()), content))
@@ -35,11 +18,6 @@ class ExampleDB:
             k.append((" ".join([cont[i:j] for i, j in WordDB.searchWordWithRegex(exp2, cont)]), index,
                     len([cont[i:j] for i, j in WordDB.searchWordWithRegex(exp1, cont)][-1].split("."))))
         return ExampleDB.mergeDic(ParserDB.parseBlock(k))
-    def mergeDic(dicList):
-        newDic = {}
-        for chapter in dicList:
-            newDic.update(chapter)
-        return newDic
 
     def invalidCode_startUnzipProcess(homeworkPath, zipFile):
         zipFile = homeworkPath + os.sep + os.path.basename(zipFile)

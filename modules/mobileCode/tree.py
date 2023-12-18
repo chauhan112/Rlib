@@ -52,33 +52,43 @@ class ITreeable:
     def is_dir(self):
         pass
 class DicTree(ITreeable):
-    def __init__(self, dic, name ="root"):
+    def __init__(self, dic, name ="root", index =None):
         self.dic = dic
         self.name = str(name)
+        self._indx = index
+        self.set_name_func(self._def_name_func)
     def iterdir(self):
         ele = []
         if type(self.dic) == dict:
-            for key in self.dic:
+            for index, key in enumerate(self.dic):
                 if type(self.dic[key]) in [list, dict]:
-                    ele.append(DicTree(self.dic[key], key))
+                    ele.append(DicTree(self.dic[key], key, index))
                 else:
-                    ele.append(DicTree(key, key))
+                    ele.append(DicTree(key, key, None))
         elif type(self.dic) == list:
-            for val in self.dic:
-                ele.append(DicTree(val, val))
+            for index, val in enumerate(self.dic):
+                ele.append(DicTree(val, val, index))
         return ele
     def is_dir(self):
         return type(self.dic) in [list, dict]
+    def set_name_func(self, func):
+        self._func = func
+    def _def_name_func(self, param):
+        return param.name
+    def get_name(self):
+        return self._func(self)
 class TreeFromStackOverflow(IOps):
     def __init__(self, dic, parent="root"):
         self.parent = parent
+        self.set_dictionary(dic)
+    def set_dictionary(self, dic):
         self.data = dic
-        self.tree = self.getTree(DicTree(self.data))
+        self.dicExpl = DicTree(dic)
     def execute(self):
         print(self.parent)
         for val in self.tree:
             print(val)
-    def getTree(self, dic):
+    def getTree(self, exp=None):
         space =  '    '
         branch = '│   '
         # pointers:
@@ -98,7 +108,8 @@ class TreeFromStackOverflow(IOps):
                     extension = branch if pointer == tee else space
                     # i.e. space because last, └── , above so no more |
                     yield from tree(path, prefix=prefix+extension)
-        return tree(dic)
+        return tree(exp)
+        
 class LayerDicList(DicList):
     def __init__(self, layer):
         self._layer_nr = layer

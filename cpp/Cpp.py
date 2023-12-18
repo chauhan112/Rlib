@@ -143,39 +143,7 @@ public:
         variableLines = list(map(lambda x: x.strip().strip(";"), variableLines))
         variableLines = list(filter(lambda x: len(x) > 3, variableLines))
         return variableLines
-    
-    def syntax(word = None):
-        from LibsDB import LibsDB
-        from IPython.display import display
-        from ModuleDB import ModuleDB
-        from SerializationDB import SerializationDB
-        from Database import Database
-        from SearchSystem import DicSearchEngine
-        class CppCodeDisplayerSearcher(DicSearchEngine):
-            def _callback(self, item):
-                display(ModuleDB.colorPrint("cpp", self.searchSys.container[item]))
-        class CppSyntax:
-            def __init__(self):
-                self.mainContent = self._read()
-            def search(self, word = None):
-                return Database.dbSearch(CppCodeDisplayerSearcher(self.mainContent['cpp']), word)
-            def addCode(self,key, val, overwrite= False):
-                if(not overwrite):
-                    if(key in self.mainContent['cpp']):
-                        print("key already exists")
-                        return 
-                self.mainContent['cpp'][key] = val
-                self._write()
-            def _read(self):
-                return SerializationDB.readPickle(LibsDB.picklePath("cpp"))
-            def _write(self):
-                SerializationDB.pickleOut(self.mainContent, LibsDB.picklePath("cpp"))
-            def delete(self, key):
-                del self.mainContent['cpp'][key]
-                self._write()
-        db = CppSyntax()
-        return db
-        
+           
     def runCppCode(content = None):
         if(content is None):
             print("Give cell number to run or content")

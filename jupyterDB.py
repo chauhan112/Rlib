@@ -75,7 +75,7 @@ class jupyterDB:
 
     def createJupyterNotebook(name):
         from NotebookDB import NotebookDB
-        cells = SerializationDB.readPickle(LibsDB.picklePath("jupyterDB.pkl"))['createNotebook']
+        cells = SerializationDB.readPickle(LibsDB.picklePath("oldInfos.pkl"))['jupyterDB']['createNotebook']
         content = NotebookDB.notebookJsonContentsWithCells(cells)
         if not name.endswith(".ipynb"):
             name  += '.ipynb'
@@ -85,11 +85,22 @@ class jupyterDB:
     def libSize():
         pyFiles = Path.filesWithExtension("py", getPath())
         si = Path.getSize(pyFiles)
+        def compare(timeA, timeB):
+            a, b = conv(timeA), conv(timeB)
+            delta = abs(a -b)
+            return delta
+        def conv(timeStr):
+            a, b, c= timeStr.split()
+            d,m,y = list(map(int, b.split(".")))
+            h, mi, se = list(map(int, c.split(":")))
+            t = (y*365 + m* 31 + d) * 24* 60 * 60  + h * 60*60 + mi * 60 + se
+            return t
         from TimeDB import TimeDB
         timeStamp = TimeDB.getTimeStamp() + " " +  ":".join([str(i) for i in TimeDB.today()[1]])
         k = jupyterDB.pickle().read("logs")
-        k['libSize'] += [(timeStamp, si)]
-        jupyterDB.pickle().write(k, 'logs')
+        if compare(k['libSize'][-1][0], timeStamp) > 6*60*60:
+            k['libSize'] += [(timeStamp, si)]
+            jupyterDB.pickle().write(k, 'logs')
         print(si)
 
     def codeDumper():
@@ -408,16 +419,21 @@ class jupyterDB:
             jupyterDB._dbdbs = Main.gui_for_db(DatabaseOfDatabases())
         return jupyterDB._dbdbs
 
-    def debug_a_file(path = ".debugger"):
+    def debug_a_file(path = ".debugger", inNotebook=False):
         from TimeDB import TimeDB
         from RegexDB import RegexDB
         from FileDatabase import File
         from OpsDB import OpsDB
         from timeline.t2023.programs import  ProgramManager
-        file = RegexDB.replace("[\.| |,]", TimeDB.getTimeStamp(), lambda x: "") + ".py"
+        file = RegexDB.replace("[\.| |,]", TimeDB.getTimeStamp(), lambda x: "")
         vscode = ProgramManager.getApp("vs code")
         if not os.path.exists(path):
             os.makedirs(path)
         file_path = os.sep.join([path, file])
-        File.createFile(file_path)
+        if not inNotebook:
+            file_path += '.py'
+            File.createFile(file_path)
+        else:
+            file_path += ".ipynb"
+            jupyterDB.createJupyterNotebook(file_path)
         OpsDB.cmd().onthread(commands=[f'{vscode} "{file_path}"'])

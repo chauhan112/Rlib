@@ -371,7 +371,6 @@ class DynamicNodeExplorer(NodeTreeExplorer):
         self._root = root
         self._pos.clear()
         self._pos.append(self._root)
-        
 class FileAnalyse:
     def size():
         class Temp:

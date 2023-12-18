@@ -8,6 +8,7 @@ from OpsDB import OpsDB
 from Path import Path
 from Database import Database
 import os
+from LibsDB import LibsDB
 class IOps:
     def callback(self):
         pass
@@ -313,10 +314,6 @@ class SyntaxSearchGUI(IAbout, IDatabaseGUI):
         self._ops_map['nodejs'] = Nodejs.syntax
         from NumericalAnalysis import NumericalAnalysis
         self._ops_map['sympy'] = NumericalAnalysis.sympySyntax
-        from cpp.Cpp import Cpp
-        self._ops_map['cpp'] = Cpp.syntax
-        from UbuntuDB import UbuntuDB
-        self._ops_map['ubuntu'] = UbuntuDB.commands
         from RegexDB import RegexDB
         self._ops_map['regexs'] = RegexDB.regexs
     def _callback(self, btn):
@@ -521,15 +518,17 @@ class CodesGodownSearch:
     def cpp():
         from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
         pmfs = PickleManyFilesSearch()
-        pmfs.set_pickle(r"D:\TimeLine\global\codes\cpp_codes.pkl")
+        pmfs.set_pickle(os.sep.join([LibsDB.cloudPath(), "Global", "code", "Code Godown", "cpp_codes.pkl"]))
         return pmfs
     def py():
         from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
         pmfs = PickleManyFilesSearch()
-        pmfs.set_pickle(r"D:\TimeLine\global\codes\py_files.pkl")
+        file = os.sep.join([LibsDB.cloudPath(), "Global", "code", "Code Godown", "py_files.pkl"])
+        pmfs.set_pickle(file)
         return pmfs
     def js():
         from modules.SearchSystem.pickles_containing_files import PickleManyFilesSearch
         pmfs = PickleManyFilesSearch()
-        pmfs.set_pickle(r"D:\TimeLine\global\codes\js_codes.pkl")
+        file = os.sep.join([LibsDB.cloudPath(), "Global", "code", "Code Godown", "js_codes.pkl"])
+        pmfs.set_pickle(file)
         return pmfs

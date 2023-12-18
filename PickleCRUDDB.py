@@ -113,7 +113,9 @@ class AdvancePickleSearch(PickleSearch):
         return founds
 class PickleSearchEngine(SearchEngine):
     def __init__(self):
-        super().__init__(None, PickleSearch)
+        self.searchSys = PickleSearch()
+        self._make_layout(6)#_displayer_engine
+        self.set_tooltip(self.toolTip)
     def buttonName(self, item):
         return os.path.basename(item[0])
     def toolTip(self, item):
@@ -163,7 +165,7 @@ class ICRUD:
 from ListDB import ListDB
 class PickleCRUDOps(ICRUD):
     def __init__(self):
-        self._content = {}
+        self._content = None
         self.set_base_location([])
         self.set_always_sync(False)
     def set_always_sync(self, sync: bool):
@@ -174,6 +176,8 @@ class PickleCRUDOps(ICRUD):
     def _write_to_file(self, file:str):
         SerializationDB.pickleOut(self._content, file)
     def _read_from_file(self, file:str):
+        if self._content is not None:
+            return 
         self._content = SerializationDB.readPickle(file)
         return self._content
     def add(self, key:str, value, overwrite=False):

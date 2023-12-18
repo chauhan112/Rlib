@@ -1,5 +1,41 @@
 import ipywidgets as widgets
 import os
+import os
+
+class TimelineDB:
+    def getMonthPath(monthNr, year = None):
+        from TimeDB import TimeDB
+        months = ['1. jan',
+             '2. feb',
+             '3. mar',
+             '4. apr',
+             '5. may',
+             '6. jun',
+             '7. jul',
+             '8. aug',
+             '9. sep',
+             '10. oct',
+             '11. nov',
+             '12. dec']
+        m = ''
+        if(type(monthNr) == int):
+            m = months[monthNr]
+        elif(type(monthNr)==str):
+            fil = list(filter(lambda x: monthNr.lower() in x, months))
+            if(len(fil)== 1):
+                m = fil[0]
+            else:
+                raise IOError("not unique letters combination")
+        else:
+            raise IOError("Invalid type. Only str or int is allowed 0 for jan")
+        if year is None:
+            year = TimeDB.today()[0][0]
+        return os.sep.join([TimelineDB.getYearPath(year), m])
+
+    def getYearPath(year):
+        from LibsDB import LibsDB
+        return os.sep.join([LibsDB.cloudPath().replace("\\", os.sep),'timeline', str(year)])
+    
 class TimerSetView:
     def __init__(self):
         self.layout = None
@@ -57,14 +93,15 @@ class Confirmer:
         self._params = params
     def display(self):
         from IPython.display import display
+        display(self.get_layout())
+    def get_layout(self):
         if self._layout is not None:
             self._layout.layout.display = None
-            display(self._layout)
-            return
+            return self._layout
         self._layout = widgets.Button(description="ok")
         self._layout.layout.width = "auto"
         self._layout.on_click(self._clicked)
-        display(self._layout)
+        return self._layout
     def _clicked(self, btnInfo):
         self._layout.layout.display ="none"
         if self._params is not None:
@@ -77,7 +114,6 @@ class Tools:
         from SerializationDB import SerializationDB
         from TimeDB import TimeDB
         from Path import Path
-        from TimelineDB import TimelineDB
         m = TimeDB.month() - 2
         y = None
         if m < 0:
@@ -89,3 +125,4 @@ class Tools:
         for k in vals:
             val = vals[k]
             rlib.it.add(k, val)
+

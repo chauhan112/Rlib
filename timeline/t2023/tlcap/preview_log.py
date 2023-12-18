@@ -5,6 +5,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
 import datetime
@@ -99,7 +101,7 @@ class PreviewApplication(IStep):
         start = time.time()
         print("previewing "+ self._name)
         w = Waiter(self._driver)
-        self._driver.find_element(By.ID, 'text_input_search').clear_field()
+        self._driver.find_element(By.ID, 'text_input_search').clear()
         self._driver.find_element(By.ID, 'text_input_search').send_keys(self._name)
         actions = ActionChains(self._driver)
         actions.send_keys(Keys.ENTER)
@@ -160,13 +162,48 @@ class PreviewAutomater:
     def get_driver(self):
         if self._driver is None:
             if self._options is not None:
-                self._driver = webdriver.Chrome(options=self._options)
+                self._driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self._options)
             else:
-                self._driver = webdriver.Chrome()
+                self._driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
             self._driver.get(self._link)
             self._driver.maximize_window()
             self._driver.implicitly_wait(5)
         return self._driver
+class OpenModule(IStep):
+    def __init__(self, driver=None):
+        self._driver = driver
+    def set_name(self, name):
+        self.set_names([name])
+    def _run(self, name):
+        if len(self._driver.window_handles) != 0:
+            self._driver.switch_to.window(self._driver.window_handles[0])
+        print("opening "+ name)
+        w = Waiter(self._driver)
+        self._driver.find_element(By.ID, 'text_input_search').clear()
+        self._driver.find_element(By.ID, 'text_input_search').send_keys(name)
+        actions = ActionChains(self._driver)
+        actions.send_keys(Keys.ENTER)
+        actions.perform()
+
+        w.set_waiting_time(3*60)
+        w.set_wait_id(f"card_title_label_{name}")
+        w.run()
+        time.sleep(1) 
+        a = ActionChains(self._driver)
+        m = self._driver.find_element(By.ID, f"card_title_label_{name}")
+        a.move_to_element(m).perform()
+        w.set_waiting_time(60)
+        w.set_wait_id(f"button_edit_in_lcap_pro_{name}")
+        w.run()
+        time.sleep(1)
+        n = self._driver.find_element(By.ID, f"button_edit_in_lcap_pro_{name}")
+        a.move_to_element(n).click().perform()
+        time.sleep(2)
+    def run(self):
+        for nam in self._names:
+            self._run(nam)
+    def set_names(self, names):
+        self._names = names
 class Main:
     def previewApplication(name, run_in_background= False, saveImage=False, preview_pic_location="preview", portal=PLAY_GROUND98,
             username="chauh-ra", password="chauh-ra"):

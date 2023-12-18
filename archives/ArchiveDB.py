@@ -256,6 +256,38 @@ class ArchiveDB:
         Cache.writeVal('lastIndex', Cache.readVal('index'))
         Cache.writeVal("value", a)
         return a
+    def syntax(word = None):
+        from LibsDB import LibsDB
+        from IPython.display import display
+        from ModuleDB import ModuleDB
+        from SerializationDB import SerializationDB
+        from Database import Database
+        from SearchSystem import DicSearchEngine
+        class CppCodeDisplayerSearcher(DicSearchEngine):
+            def _callback(self, item):
+                display(ModuleDB.colorPrint("cpp", self.searchSys.container[item]))
+        class CppSyntax:
+            def __init__(self):
+                self.mainContent = self._read()
+            def search(self, word = None):
+                return Database.dbSearch(CppCodeDisplayerSearcher(self.mainContent['cpp']), word)
+            def addCode(self,key, val, overwrite= False):
+                if(not overwrite):
+                    if(key in self.mainContent['cpp']):
+                        print("key already exists")
+                        return 
+                self.mainContent['cpp'][key] = val
+                self._write()
+            def _read(self):
+                return SerializationDB.readPickle(LibsDB.picklePath("cpp"))
+            def _write(self):
+                SerializationDB.pickleOut(self.mainContent, LibsDB.picklePath("cpp"))
+            def delete(self, key):
+                del self.mainContent['cpp'][key]
+                self._write()
+        db = CppSyntax()
+        return db
+        
 import ipywidgets as widgets
 class StartUpOpsEditor:
     def __init__(self):
@@ -670,3 +702,301 @@ def container(iid = 2, parent = 1):
         w._id = s
         s += 1
     jupyterDB.clip().copy(urllib.parse.quote(drawIO._string(contain)))
+    
+class FoodLogger:
+    def __init__(self):
+        self.outPklFile = PickleCRUD('LifeLogs')
+        self.category = 'eating'
+        self.dumpingPath = Path.joinPath(resourcePath(), 'recycleBin\\eatingDelete.pkl')
+        self.recyleBin = {}
+        raise IOError("needs testing")
+
+    def logEating(self,name, time, content = "",date = 0):
+        date = TimeDB.getTimeStamp(date)
+        if(date not in self.outPklFile.data[self.category]):
+            self.outPklFile.data[self.category][date] = {}
+        self.outPklFile.data[self.category][date][time] = {'name':name, 'content': content}
+        self.outPklFile._write(self.outPklFile.data)
+
+    def showLog(self,date = 0):
+        date = TimeDB.getTimeStamp(date)
+        return self.outPklFile.data[self.category][date]
+
+    def delete(self, pos = []):
+        self.recyleBin = {'data':ListDB.dicOps().get(self.outPklFile.data, pos),
+                          'pos': pos}
+        ListDB.dicOps().delete(self.outPklFile.data, pos)
+        SerializationDB.pickleOut(self.recyleBin, self.dumpingPath)
+
+    def _restore(self):
+        if(self.recyleBin is None):
+            print("nothing to restore")
+            return
+        ListDB.dicOps().add(self.outPklFile.data, self.recyleBin['pos'], self.recyleBin['data'])
+
+    def _restoreFromFile(self, path = None):
+        if(path is None):
+            path = self.dumpingPath
+        self.recyleBin = SerializationDB.readPickle(path)
+        self._restore()
+class TreeRenderer:
+    def __init__(self):
+        self.set_node_creator(self._default_node_creator)
+    def _name_func(self, dicIns):
+        return dicIns.name
+    def _default_node_creator(self, val, index):
+        dt = DicTree(val, index)
+        dt.set_name_func()
+        return dt
+    def set_dictionary(self, dic):
+        self.data = dic
+        self.dicExpl = DicTree(dic)
+    def getAsText(self):
+        return self._rendered(self.dicExpl)
+    def _rendered(self, root):
+        space =  '    '
+        branch = '│   '
+        tee =    '├── '
+        last =   '└── '
+        def tree(dir_path , prefix: str=''):
+            contents = list(dir_path.iterdir())
+            pointers = [tee] * (len(contents) - 1) + [last]
+            for pointer, path in zip(pointers, contents):
+                yield prefix + pointer + path.get_name()
+                if path.is_dir():
+                    extension = branch if pointer == tee else space
+                    yield from tree(path, prefix=prefix+extension)
+        return "\n".join(tree(root))
+    def set_node_creator(self, node_creator):
+        self._node_creator = node_creator
+    def set_tree_root(self, root):
+        self.dicExpl = root
+class Dic2GraphImproved:
+    def __init__(self):
+        self._node_map = {}
+        self.ROOT_LABEL = "root"
+        self._path = [self.ROOT_LABEL]
+        self.set_node_creator_func(self._default_node_creator)
+    def _default_node_creator(self, val):
+        ns = NameSpace()
+        ns.value = val
+        ns.children = []
+        return ns
+    def set_dic(self, dic):
+        self._dic = dic
+    def convert(self):
+        self._path.clear()
+        self._node_map.clear()
+        self._path.append(self.ROOT_LABEL)
+        self._get_node(self._path)
+        self._execute(self._dic)
+        return self._node_map[tuple([self.ROOT_LABEL, ])]
+    def _execute(self, val):
+        for key in val:
+            value = val[key]
+            node = self._get_node(self._path)
+            node.children.append(self._get_node(self._path + [key]))
+            self._path.append(key)
+            if type(value) == dict:
+                self._execute(value)
+            self._path.pop()
+    def _get_node(self, loc: list[str]):
+        val = tuple(loc)
+        if val not in self._node_map:
+            node = self._creator(val)
+            self._node_map[val] = node
+        return self._node_map[val]
+    def set_node_creator_func(self, node_creator):
+        self._creator = node_creator
+class LoggerRenderer:
+    def __init__(self):
+        self._key_view_map = {}
+        self.set_adder_func(self._default_log_func)
+        self._rendered = None
+    def _default_log_func(self, btn, *param):
+        vals = {}
+        for ke in self._key_view_map:
+            wid = self._key_view_map[ke]
+            if type(wid) != tuple:
+                vals[ke] = wid.value
+            elif self._structure[ke][StringEnums.TYPE]== SupportedTypes.MultipleSelect.name:
+                vals[ke] = wid[1]._model
+            elif self._structure[ke][StringEnums.TYPE]== SupportedTypes.KeyValuesPair.name:
+                vals[ke] = wid[1]._basic._model.content
+            else:
+                raise IOError("Unknown parameter detected")
+        cotnent = self._model.read(self._name)
+        cotnent["data"].append(vals)
+        self._model.add(self._name, cotnent, True)
+    def set_adder_func(self, func):
+        self._on_log_func = func
+    def set_model(self, name, model):
+        self._name = name
+        self._model = model
+        self._structure = model.read(name)['structure']
+    def render(self):
+        if self._rendered:
+            return self._rendered
+        res = []
+        for key in self._structure:
+            typ = self._structure[key][StringEnums.TYPE]
+            if typ == SupportedTypes.Text.name:
+                wid = widgets.Text(description=key)
+                res.append(wid)
+                self._key_view_map[key] = wid
+            elif typ == SupportedTypes.LargeText.name:
+                wid = widgets.Textarea(description=key, layout={"width":"auto", "max_width":"800px"})
+                res.append(wid)
+                self._key_view_map[key] = wid
+            elif typ in [SupportedTypes.Checkbox.name, SupportedTypes.Boolean.name]:
+                wid = widgets.Checkbox(description=key, layout={"width":"auto"})
+                res.append(wid)
+                self._key_view_map[key] = wid
+            elif typ == SupportedTypes.Options.name:
+                options = []
+                if StringEnums.OPTIONS in self._structure[key][StringEnums.INFO]:
+                    options = self._structure[key][StringEnums.INFO][StringEnums.OPTIONS]
+                wid = widgets.Dropdown(options=options,description=key)
+                res.append(wid)
+                self._key_view_map[key] = wid
+            elif typ == SupportedTypes.MultipleSelect.name:
+                ly, cont = ViewsCollection.get_list_maker()
+                obj = widgets.HBox([widgets.Label(key, layout={"width":"80px", "justify_content":"flex-end", "margin":"0px 8px 0px 0px"}), ly])
+                res.append(obj)
+                self._key_view_map[key] = (obj, cont)
+            elif typ in [SupportedTypes.DateTime.name, SupportedTypes.Date.name]:
+                infos = self._structure[key][StringEnums.INFO]
+                ui = self._get_date_time_wid(typ, autoFill = StringEnums.AUTO in infos)
+                ui.description = key
+                if StringEnums.DISABLED in infos:
+                    ui.disabled = infos[StringEnums.DISABLED]
+                res.append(ui)
+                self._key_view_map[key] = ui
+            elif typ == SupportedTypes.Time.name:
+                now = datetime.datetime.now()
+                infos = self._structure[key][StringEnums.INFO]
+                ui = widgets.TimePicker(description= key)
+                if StringEnums.AUTO in infos:
+                    ui.value = datetime.time(now.hour, now.minute)
+                if StringEnums.DISABLED in infos:
+                    ui.disabled = infos[StringEnums.DISABLED]
+                res.append(ui)
+                self._key_view_map[key] = ui
+            elif typ == SupportedTypes.KeyValuesPair.name:
+                ly, cnt = KeyValueAdderView.keyValueCrud({})
+                obj = widgets.HBox([widgets.Label(key, layout={"width":"80px", "justify_content":"flex-end", "margin":"0px 8px 0px 0px"}), ly])
+                res.append(obj)
+                self._key_view_map[key] = (obj, cnt)
+            else:
+                print(self._structure[key][StringEnums.TYPE])
+        btn = widgets.Button(description="log")
+        btn.on_click(self._on_log_func)
+        res.append(btn)
+        self._rendered = widgets.VBox(res)
+        return self._rendered
+    def _get_date_time_wid(self, typ, autoFill = False):
+        now = datetime.datetime.now()
+        if typ == SupportedTypes.DateTime.name:
+            x = widgets.NaiveDatetimePicker()
+        else:
+            x = widgets.DatePicker()
+        if autoFill:
+            x.value = now
+        return x
+    def creator():
+        return LoggerRenderer()
+class DisplayAndEditor:
+    def __init__(self):
+        self._ops_map =  {}
+        self._renderer = None
+        self._out = CustomOutput()
+    def _set_description(self, wid, des, typ):
+        if typ in [SupportedTypes.KeyValuesPair.name, SupportedTypes.MultipleSelect.name]:
+            wid._description.value = des
+        else:
+            wid.description = des
+    def _update_values(self):
+        for key in self._renderer._structure:
+            typ = self._renderer._structure[key][StringEnums.TYPE]
+            infos = self._renderer._structure[key][StringEnums.INFO]
+            wid = self._ops_map[(key, typ)]["wid"]
+            sbc, extra_lay = self._ops_map[(key, typ)]["data"]
+            wid.set_info(infos)
+            wid.process_info()
+            wid.set_value(self._data[key])
+            sbc.layout._key = key
+            if extra_lay:
+                new_val = self._get_readable_lay(key)
+                extra_lay.value = new_val.value
+    def get_visualizer(self):
+        if self._renderer is None:
+            self._renderer = NewRenderer.creator()
+            self._renderer.set_scope(self._bsc._scope)
+            self._renderer._structure = self._bsc._model.read(self._bsc.controllers.ldcc._cur_btn.description)["structure"]
+        res = []
+        for key in self._renderer._structure:
+            typ = self._renderer._structure[key][StringEnums.TYPE]
+            infos = self._renderer._structure[key][StringEnums.INFO]
+            wid = self._renderer._creator_map[typ](description=key)
+            wid.set_info(infos)
+            wid.process_info()
+            wid.set_value(self._data[key])
+            lay = wid.layout()
+            lay.disabled = True
+            lay.layout.width ="auto"
+            extra_lay = self._get_readable_lay(key)
+            sbc = SingleButtonController(icon="edit", layout={"width":"auto"}, button_style="success")
+            sbc.layout._key = key
+            sbc.set_clicked_func(self._btn_clicked)
+            self._set_editable_status(infos, sbc.layout)
+            if extra_lay:
+                HideableWidget.hideIt(lay)
+                row_lay = widgets.HBox([sbc.layout, lay, extra_lay])
+            else:
+                row_lay = widgets.HBox([sbc.layout, lay])
+            res.append(row_lay)
+            self._renderer._key_view_map[key] = wid
+            self._ops_map[(key, typ)] = {'layout': row_lay, 'editable_view': lay, 'data': [sbc, extra_lay], "wid": wid}
+        res.append(self._out.get_layout())
+        return widgets.VBox(res)
+    def _btn_clicked(self, btm):
+        if btm.button_style != "danger":
+            btm.button_style = "danger"
+        else:
+            btm.button_style = "success"
+        typ = self._renderer._structure[btm._key][StringEnums.TYPE]
+        ly_info = self._ops_map[(btm._key, typ)]
+        if typ in [SupportedTypes.KeyValuesPair.name, SupportedTypes.MultipleSelect.name]:
+            if btm.button_style == "success":
+                HideableWidget.hideIt(ly_info["editable_view"])
+                _, extra_lay = ly_info["data"]
+                HideableWidget.showIt(extra_lay)
+            else:
+                HideableWidget.showIt(ly_info["editable_view"])
+                _, extra_lay = ly_info["data"]
+                HideableWidget.hideIt(extra_lay)
+        else:
+            if btm.button_style == "success":
+                lay = ly_info['editable_view']
+                lay.disabled = True
+            else:
+                lay = ly_info['editable_view']
+                lay.disabled = False
+    def _set_editable_status(self, infos, wid):
+        k = "disabled"
+        if k in infos:
+            wid.disabled = infos[k]
+    def _get_readable_lay(self, key):
+        forma = lambda x: f"""<font face='comic sans ms' color ='darkcyan'>{x}</font>"""
+        extra_lay = None
+        typ = self._renderer._structure[key][StringEnums.TYPE]
+        if typ in [SupportedTypes.KeyValuesPair.name, SupportedTypes.MultipleSelect.name]:
+            content = str(self._data[key])
+            if type(self._data[key]) == str:
+                content = "<br>".join(self._data[key].splitlines())
+            return widgets.HTML(forma(key) + ": " + content + "<br>")
+        return extra_lay
+    def set_basic_controller(self, bsc):
+        self._bsc = bsc
+    def set_data(self, data):
+        self._data = data

@@ -123,7 +123,7 @@ class WidgetsDB:
         selection = widgets.Select(rows=15, layout=widgets.Layout(width='auto', grid_area='dircontent'))
         text = widgets.Text(placeholder='output filename', layout=widgets.Layout(width='auto', grid_area='filename'))
         dropdown = widgets.Dropdown(description="", layout=widgets.Layout(grid_area='pathlist'))
-        outputDisplay = widgets.Output(layout=widgets.Layout(width='auto', grid_area='output'))
+        outputDisplay = widgets.Output(layout=widgets.Layout(width='auto', max_height="400px", overflow='auto'))
         title = widgets.HTML(value='title')
         return title, dropdown, text, selection, outputDisplay
 
@@ -136,7 +136,7 @@ class WidgetsDB:
 
         top = widgets.HBox(children=[dropdown, text], layout = widgets.Layout(width = 'auto'))
         topWithSelc = widgets.VBox([title,top, selection, footer], 
-                            layout = widgets.Layout(width = 'auto', max_width = "50%"))
+                            layout = widgets.Layout(width = 'auto', min_width = "484px", top="0px"))
         display(widgets.HBox([topWithSelc, outputDisplay]))
         return title, dropdown, text, selection, b1,b2, logOut, outputDisplay
         
@@ -146,8 +146,7 @@ class WidgetsDB:
         b1 = widgets.Button(description='copy path', layout=widgets.Layout(width='auto'))
         b2 = widgets.Button(description='open', layout=widgets.Layout(width='auto'))
         fileOps = widgets.HBox([b1,b2])
-        inputs = widgets.VBox([title,top, selection, fileOps], 
-                            layout = widgets.Layout(width = 'auto', max_width = "50%"))
+        inputs = widgets.VBox([title,top, selection, fileOps], layout = widgets.Layout(width = 'auto',min_width = "484px"))
         layout = widgets.HBox([inputs, outputDisplay])
         if displayLayout:
             display(layout)
@@ -212,3 +211,78 @@ class WidgetsDB:
         if(horizontal):
             return widgets.HBox(wList)
         return widgets.VBox(wList)
+    def hide(wid):
+        wid.layout.display = 'none'
+    def show(wid):
+        wid.layout.display = None
+
+class WidgetType:
+    Text     = "text"
+    TextArea = "textarea"
+    Dropdown = "dropdown"
+    Checkbox = "checkbox"
+    Filters  = "filter"
+    Date = "date"
+    DateTime = "datetime"
+    Button = "btn"
+class NewWidgetSet:
+    def _add_update(dic, **newdic):
+        dic.update(newdic)
+    def button(des, func = None,**kwargs):
+        NewWidgetSet._add_update(kwargs, description=des,layout = {"width": "auto"})
+        sbc = widgets.Button(**kwargs)
+        if func is not None:
+            sbc.on_click(func)
+        return sbc
+    def dropdown(**kwargs):
+        NewWidgetSet._add_update(kwargs, layout = {"width": "auto"})
+        return widgets.Dropdown( **kwargs)
+    def textarea(placeholder, **kwargs):
+        NewWidgetSet._add_update(kwargs, placeholder = placeholder, layout = {'width': "auto", 'height': "100px"})
+        return widgets.Textarea(**kwargs)
+    def date(label, **kwargs):
+        NewWidgetSet._add_update(kwargs, layout = {"width": "auto"}, description=label)
+        return widgets.DatePicker(**kwargs)
+    def datetime(label, **kwargs):
+        NewWidgetSet._add_update(kwargs, layout = {"width": "auto"}, description=label)
+        return widgets.NaiveDatetimePicker(**kwargs)
+    def tags(**kwargs):
+        NewWidgetSet._add_update(kwargs, allow_duplicates=False)
+        return widgets.TagsInput(**kwargs)
+    def text(place, **kwargs):
+        NewWidgetSet._add_update(kwargs, placeholder = place, layout={'width':"auto"})
+        return widgets.Text(**kwargs)
+    def checkbox(des, **kwargs):
+        NewWidgetSet._add_update(kwargs, description =des, indent=False, layout={'width':"auto"})
+        return widgets.Checkbox(**kwargs)
+    def make_layout(arr):
+        pass
+    def make_form(arr):
+        res = []
+        for row in arr:
+            roro = []
+            for vl in row:
+                roro.append(vl)
+            res.append(widgets.HBox(roro))
+        return widgets.VBox(res)
+    def make_wid(widType: WidgetType, **kwargs):
+        if widType ==  WidgetType.Checkbox:
+            return NewWidgetSet.checkbox(des= kwargs['description'], **kwargs)
+        elif widType ==  WidgetType.Text:
+            return NewWidgetSet.text(place = kwargs['placeholder'], **kwargs)
+        elif widType ==  WidgetType.TextArea:
+            return NewWidgetSet.textarea(placeholder = kwargs['placeholder'], **kwargs)
+        elif widType ==  WidgetType.Filters:
+            return NewWidgetSet.tags(**kwargs)
+        elif widType ==  WidgetType.Dropdown:
+            return NewWidgetSet.dropdown(**kwargs)
+        elif widType ==  WidgetType.Date:
+            return NewWidgetSet.date(label = kwargs['description'], **kwargs)
+        elif widType ==  WidgetType.DateTime:
+            return NewWidgetSet.datetime(label = kwargs['description'], **kwargs)
+        elif widType ==  WidgetType.Button:
+            fnucn = None
+            if "func" in kwargs:
+                fnucn = kwargs['func']
+            return NewWidgetSet.button(des = kwargs['description'], func=fnucn, **kwargs)
+        raise

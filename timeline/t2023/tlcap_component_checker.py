@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 import json, os
 from FileDatabase import File
+import ipywidgets as widgets
+from modules.Explorer.personalizedWidgets import GenerateNRowsBox
+from timeline.t2023.tlcap.app_deploy import AppDeployment
 class ViewType:
     Custom = "CUSTOM"
     LCAP = "BASE"
@@ -11,11 +14,9 @@ class ViewComponent:
     content: dict
     name: str
     idd: str
-
 class ContainerChildren:
     def set_data(self, dat):
         STATIC_ACCORDION
-
 class ViewExtractorForSingleUI:
     def set_component(self, view: ViewComponent):
         self._view = view
@@ -71,7 +72,6 @@ class ViewExtractorForSingleUI:
             res.append((el.typ, el.name))
             res += self._get_components(el)
         return res
-
 class ViewExtractorApp:
     def __init__(self):
         self._components = []
@@ -134,21 +134,16 @@ class Main:
         vea = ViewExtractorApp()
         vea.set_file(file)
         return vea.get_components()
-    def get_ui():
+    def get_ui(path="json"):
         from TimeDB import TimeDB
         uic = UICompSearcherController()
-        uic.set_model(FilesModel("json"))
+        uic.set_model(FilesModel(path))
         view =TLCapUIComponentsSearchView()
         view._make_layout()
         uic.set_ui(view)
         uic.setup()
-        view.display()
         uic._ui.filterWid.value =TimeDB.getTimeStamp().split(", ")[-1].replace(".", "")
         return uic
-
-
-import ipywidgets as widgets
-from modules.Explorer.personalizedWidgets import GenerateNRowsBox
 class FilesModel:
     def __init__(self, path):
         from Path import Path
@@ -170,12 +165,29 @@ class TLCapUIComponentsSearchView:
         nrb.add_widget(self.uiSearchFreqbtn)
         self.uiSearchBtn = widgets.Button(description= "get UIs", layout={'width':"auto"})
         nrb.add_widget(self.uiSearchBtn)
+        self.depPrinter = widgets.Button(description= "dependencies", layout={'width':"auto"})
+        nrb.add_widget(self.depPrinter)
+        self.configPrinter = widgets.Button(description= "Configs variables", layout={'width':"auto"})
+        nrb.add_widget(self.configPrinter)
+        self.configForPasting = widgets.Button(description= "pasting configs", layout={'width':"auto"})
+        nrb.add_widget(self.configForPasting)
+        self.copyFilePath = widgets.Button(description= "copyFilePath", layout={'width':"auto"})
+        nrb.add_widget(self.copyFilePath)
+        self.openModules = widgets.Button(description= "openImportedModules", layout={'width':"auto"})
+        nrb.add_widget(self.openModules)
     def display(self):
         if self.gnrb is None:
             self._make_layout()
         from IPython.display import display
         display(widgets.VBox([self.gnrb.get(), self.out]))
+    @property
+    def layout(self):
+        if self.gnrb is None:
+            self._make_layout()
+        return widgets.VBox([self.gnrb.get(), self.out])
 class UICompSearcherController:
+    def __init__(self):
+        self._depInstance = AppDeployment()
     def set_ui(self, ui_model: TLCapUIComponentsSearchView):
         self._ui = ui_model
     def set_model(self, model: FilesModel):
@@ -185,6 +197,30 @@ class UICompSearcherController:
         self._ui.filterWid.observe(self._on_filtered, ["value"])
         self._ui.uiSearchFreqbtn.on_click(self._find_ui_freq)
         self._ui.uiSearchBtn.on_click(self._find_ui)
+        self._ui.depPrinter.on_click(self._dep_print)
+        self._ui.configPrinter.on_click(self._config_print)
+        self._ui.configForPasting.on_click(self._config_to_paste)
+        self._ui.copyFilePath.on_click(self._copy_file_path)
+        self._ui.openModules.on_click(self._open_imported_modules)
+    def _copy_file_path(self, wid):
+        from ClipboardDB import ClipboardDB
+        ClipboardDB.copy2clipboard(os.path.abspath(self._ui.drop.value))
+        self._ui.out.clear_output()
+        with self._ui.out:
+            print("copied")
+    def _dep(self, func):
+        filepath = self._ui.drop.value
+        if filepath != self._depInstance._filepath:
+            self._depInstance.set_file(filepath)
+        self._ui.out.clear_output()
+        with self._ui.out:
+            func()
+    def _dep_print(self, wid):
+        self._dep(self._depInstance.printAllDependencies)
+    def _config_print(self, wid):
+        self._dep(self._depInstance.printAllConfigs)
+    def _config_to_paste(self, wid):
+        self._dep(self._depInstance.printConfigsForConfigEditing)
     def _on_filtered(self, wid):
         self._ui.drop.options = list(filter(lambda x: self._ui.filterWid.value in x[0],self._model._files))
     def _find_ui(self, btn):
@@ -195,3 +231,8 @@ class UICompSearcherController:
         self._ui.out.clear_output()
         with self._ui.out:
             display(Main.get_freq(self._ui.drop.value))
+    def _open_imported_modules(self, btn):
+        self._pa_viewer = None
+        def ins():
+            self._pa_viewer = self._depInstance.open_all_imported_modules()
+        self._dep(ins)

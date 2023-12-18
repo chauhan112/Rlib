@@ -45,7 +45,9 @@ class Path:
         if(path is None):
             path = os.getcwd()
         command = 'explorer "{}"'
-        if(SystemInfo.isLinux()):
+        if SystemInfo.getName() == "linux-ier9":
+            command = 'dolphin "{}"'
+        elif(SystemInfo.isLinux()):
             command = "xdg-open '{}'"
         os.system(command.format(path))
 

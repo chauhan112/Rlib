@@ -1,9 +1,9 @@
 from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement, GDisplayableResult
-from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget, SearchWidget
 import ipywidgets as widgets
 from nice_design.search import TelegramChannels
 from modules.GUIs.search_guis import CodeDumperSearchGUI, FileSearchGUI, SyntaxSearchGUI, BachelorSubjectSearchGUI,\
     CodesGodownSearch
+from modules.Explorer.personalizedWidgets import SearchWidget
 from SearchSystem import DicSearch
 from Database import Database
 from nice_design.interfaces import IDatabaseGUI, IAbout
@@ -73,3 +73,7 @@ class DatabaseOfDatabases:
                 db = dbg 
             self._db_map[key] = db
         return self._db_map[key]
+    def get_search_result_layout(self,word, case = False, reg = False):
+        res = self._search_sys.search(word, case, reg)
+        self._jrs.set_result([GDisplayableResult(n, self._dbs[n][self._info_index], n) for n in res])
+        return self._jrs.get_result_layout()

@@ -96,7 +96,6 @@ class WordDB:
         return re.split(regex, string)
 
     def getLink(value):
-        from WordDB import WordDB
         regex = r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
         if(ComparerDB.regexSearch(regex, value)):
             i,j = WordDB.searchWordWithRegex(regex, value)[0]

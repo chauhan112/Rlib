@@ -48,8 +48,9 @@ class ExplorerFileDisplayer:
         from NotebookDB import NotebookDB
         from ImageProcessing import ImageProcessing, ShowImage
         from ExplorerDB import ExplorerDB
-        standardContentFiles = ['java', 'txt', 'cpp', 'hpp', 'h', 'js', 'html', 'css', 'qml'
-            'docker', 'yaml', 'yml', "Dockerfile", "xml", 'kt']
+        from LibsDB import LibsDB
+        from SerializationDB import SerializationDB
+        standardContentFiles = SerializationDB.readPickle(LibsDB.picklePath("GeneralDB"))['files_to_read']
         for ext in standardContentFiles:
             extDic[ext] = DisplayInMd(ext)
         extDic['py'] = DisplayInMd('py', 'python')

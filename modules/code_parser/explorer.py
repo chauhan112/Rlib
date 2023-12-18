@@ -1,5 +1,8 @@
 from modules.Explorer.model import IExplorer
 import ast
+from ModuleDB import ModuleDB
+
+
 class AstExplorer(IExplorer):
     def __init__(self):
         self._cur_map = None
@@ -49,6 +52,11 @@ class MyAstAttributeExplorer(IExplorer):
     def set_model(self, model):
         self._model = model
         self._pos = [self._model]
+    def set_node(self, node):
+        from modules.code_parser.ast_parser import CommonNamedBody
+        cnb = CommonNamedBody()
+        cnb.setData(node)
+        self.set_model(cnb)
     def set_method_name(self, name: str):
         self._method =name
         if name == "get_imports":
@@ -82,13 +90,20 @@ class MyAstAttributeExplorer(IExplorer):
         return att.get_name()
 
 class Main:
-    def _file_select(a):
-        val = ae._pos[-1].__getattribute__(a)
-        out = exp._wid.components.outputDisplay
-        out.clear_output()
-        with out:
-            print(val)
     def ast_explorer(content: str=None, path: str=None):
+        def folder_selected(x):
+            out = exp._wid.components.outputDisplay
+            out.clear_output()
+            with out:
+                val = exp._exp._pos[-1]
+                display(ModuleDB.colorPrint("python", ast.unparse(val)))
+                exp._wid.components.text.value = str(type(val))
+        def file_selected(x):
+            val = exp._exp._pos[-1].__getattribute__(x)
+            out = exp._wid.components.outputDisplay
+            out.clear_output()
+            with out:
+                print(val)
         from modules.Explorer.DictionaryExplorer import Main as EMain
         ae = AstExplorer()
         if content is None:
@@ -96,12 +111,15 @@ class Main:
         else:
             ae.set_content(content)
         exp = EMain.explore(ae, displayit=False)
-        exp.set_on_file_selected(Main._file_select)
+        exp.set_on_folder_selected(folder_selected)
+        exp.set_on_file_selected(file_selected)
+        
         exp.display()
+        exp._wid.components.text.disabled = True
         return exp
     
     def my_ast_explorer(path):
-        ae = AstAttributeExplorer()
+        ae = MyAstAttributeExplorer()
         ae.set_file(path)
         from modules.Explorer.DictionaryExplorer import Main as EMain
         return EMain.explore(ae)

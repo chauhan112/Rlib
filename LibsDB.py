@@ -17,6 +17,15 @@ class LibsDB:
                 k += ".pkl"
         return k
     
+    def dbPath(val):
+        k = os.sep.join([resourcePath(), 'dbs'])
+        k = os.path.abspath(k)
+        if(val == ''):
+            return os.listdir(k)
+        if(val is not None):
+            k = os.sep.join([k, val])
+        return k
+    
     def runBasic(opcode = 0, *args):
         """
         # 0 -> get all sections

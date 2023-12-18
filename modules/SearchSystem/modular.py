@@ -126,6 +126,10 @@ class HideableWidget(IHideable, IRWidget):
         self._wid.layout.display = 'none'
     def get(self):
         return self._wid
+    def hideIt(wid):
+        wid.layout.display = 'none'
+    def showIt(wid):
+        wid.layout.display = None
 class DisplayNElement(IRWidget, INumberOfDisplayer):
     def __init__(self):
         self._key_mgr = None 
@@ -240,3 +244,9 @@ class JupyterResultDisplayer(IResultDisplayer):
         return lay
     def set_displayer_way(self, way :INumberOfDisplayer):
         self._way = way
+       
+    def get_result_layout(self):
+        self._way.set_elements(self._results)
+        self._way.set_callback_func(self._callback)
+        return self._way.get_layout()
+        

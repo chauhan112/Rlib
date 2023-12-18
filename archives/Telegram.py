@@ -1,6 +1,6 @@
 from Path import Path
 from archives.coronaUpdate import get_country_confirmed_infected, getMessage
-
+from OpsDB import IOps
 class IController:
     def __init__(self):
         self.replyMsg = ""

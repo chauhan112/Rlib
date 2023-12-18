@@ -3,7 +3,6 @@
 def codeSearch():
     key = "codeSearch"
     from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
-    from jupyterDB import jupyterDB
     from IPython.display import display
     if key in GNotebookLayoutController.instances:
         display(GNotebookLayoutController.instances[key])
@@ -29,3 +28,128 @@ def apps():
         ele.setData(dic[na])
         eles.append(ele)
     display(GNotebookLayoutController().get(eles))
+
+# pickle crud operations
+def picGui():
+    key = "pickleCRUD"
+    from timeline.t2023.pickleCrudUI import Main as Mnn
+    from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key])
+        return
+    cont = Mnn.pickleCrudGui(False)
+    cont.set_scope(globals())
+    GNotebookLayoutController.instances[key] = cont._view.layout
+    display(GNotebookLayoutController.instances[key])
+
+# overides the value of rlib it
+def overrideKey():
+    key = "overrideKey"
+    from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
+    from jupyterDB import jupyterDB
+    from IPython.display import display
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key])
+        return
+    from timeline.t2023.tools import Confirmer
+    cc = Confirmer()
+    from timeline.t2023.searchSystem import Main as SWP
+    from SearchSystem import DicSearch
+    from timeline.t2023.generic_logger.components import SingleButtonController
+    from timeline.t2023.advance_searcher import Main as SWAO
+    class Abc:
+        def _btn_maker(self, des, onclick):
+            btn = SingleButtonController(description=des, layout= {"width": "auto", "max_width": "150px"})
+            btn.set_clicked_func(onclick)
+            return btn.layout
+        def _cliek(self, wid):
+            item = wid.description
+            cc.set_callback_function(jupyterDB._params["rlib"].it.add)
+            cc.set_params(item)
+            self._s_cnt._view.btnOutput.display(cc.get_layout(), True, True)
+        def set_searcher(self, cnt):
+            self._s_cnt = cnt
+    abc = Abc()
+    see = SWP.searchWithPagination(DicSearch({k:"" for k in jupyterDB._params["rlib"].it._content.keys()}), abc._btn_maker, abc._cliek)
+    cnt = SWAO.search_with_advance_options(see)
+    abc.set_searcher(cnt)
+    GNotebookLayoutController.instances[key] = cnt._view.layout
+    display(GNotebookLayoutController.instances[key])
+
+# helps to reload a key
+def refreshKey():
+    key = "refreshKey"
+    from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
+    from jupyterDB import jupyterDB
+    from IPython.display import display
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key])
+        return
+    from timeline.t2023.searchSystem import Main as SWP
+    from SearchSystem import DicSearch
+    from timeline.t2023.generic_logger.components import SingleButtonController
+    from timeline.t2023.advance_searcher import Main as SWAO
+    class Abc:
+        def _btn_maker(self, des, onclick):
+            btn = SingleButtonController(description=des, layout= {"width": "auto", "max_width": "150px"})
+            btn.set_clicked_func(onclick)
+            return btn.layout
+        def _cliek(self, wid):
+            ley = wid.description
+            from PickleCRUDDB import PickleCRUDOps
+            pops = PickleCRUDOps()
+            pops.set_pickle_file(Path.filesWithExtension("pkl","_rajaDB")[-1])
+            pops.set_always_sync(True)
+            pops.set_base_location(['instruction-key-map'])
+            maps = pops.readAll()
+            key = maps[ley]
+            if key is None:
+                self._s_cnt._view.btnOutput.display("refresh for "+ ley +" is not defined", True)
+                return
+            try:
+                del GNotebookLayoutController.instances[key]
+            except:
+                pass
+        def set_searcher(self, cnt):
+            self._s_cnt = cnt
+    abc = Abc()
+    see = SWP.searchWithPagination(DicSearch({k:"" for k in jupyterDB._params["rlib"].it._content.keys()}), abc._btn_maker, abc._cliek)
+    cnt = SWAO.search_with_advance_options(see)
+    abc.set_searcher(cnt)
+    
+    GNotebookLayoutController.instances[key] = cnt._view.layout
+    display(GNotebookLayoutController.instances[key])
+
+# urls manager
+def urlsOps():
+    from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
+    from IPython.display import display
+    import ipywidgets as widgets
+    from UrlDB import UrlDB
+    from LibsDB import LibsDB
+    from modules.GUIs.urlCRUD import Main
+    key = "urls"
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key])
+        return
+    
+    db = UrlDB.db()
+    def searchResult(btn):
+        out.clear_output()
+        with out:
+            display(db.search(textWdi.value))
+    
+    tab_contents = ['Search', 'Crud Operation']
+    srchBtn = widgets.Button(description="search",layout={'width':"auto"})
+    textWdi = widgets.Text(placeholder="word to search")
+    srchBtn.on_click(searchResult)
+    out = widgets.Output()
+
+    tabs = {     
+        'search': widgets.VBox([widgets.HBox([textWdi, srchBtn]), out ]),
+        'crud': Main.url_crud_gui(LibsDB.picklePath("urlDB"), displayIt =False).display() }
+    tabWid = widgets.Tab()
+    tabWid.children = tuple(tabs.values())
+    tabWid.titles = [t for t in tab_contents]
+    GNotebookLayoutController.instances[key] = tabWid
+    display(GNotebookLayoutController.instances[key])

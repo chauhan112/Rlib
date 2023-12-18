@@ -5,14 +5,6 @@ from SerializationDB import SerializationDB
 from Database import Database
 
 class QtDB:        
-    def getFunctions(word = None):
-        functions = SerializationDB.readPickle(LibsDB.picklePath("cpp"))['functions']
-        return QtDB._dbSearcher(word, functions)
-
-    def syntax():
-        from cpp.Cpp import Cpp
-        return Cpp.syntax()
-    
     def _dbSearcher(word, dic):
         from IPython.display import display
         from ModuleDB import ModuleDB

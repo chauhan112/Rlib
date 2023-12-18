@@ -20,42 +20,6 @@ class ISuggestionAlgorithm:
     def getResults(self):
         self.logics()
         return self._result
-class FoodLogger:
-    def __init__(self):
-        self.outPklFile = PickleCRUD('LifeLogs')
-        self.category = 'eating'
-        self.dumpingPath = Path.joinPath(resourcePath(), 'recycleBin\\eatingDelete.pkl')
-        self.recyleBin = {}
-        raise IOError("needs testing")
-
-    def logEating(self,name, time, content = "",date = 0):
-        date = TimeDB.getTimeStamp(date)
-        if(date not in self.outPklFile.data[self.category]):
-            self.outPklFile.data[self.category][date] = {}
-        self.outPklFile.data[self.category][date][time] = {'name':name, 'content': content}
-        self.outPklFile._write(self.outPklFile.data)
-
-    def showLog(self,date = 0):
-        date = TimeDB.getTimeStamp(date)
-        return self.outPklFile.data[self.category][date]
-
-    def delete(self, pos = []):
-        self.recyleBin = {'data':ListDB.dicOps().get(self.outPklFile.data, pos),
-                          'pos': pos}
-        ListDB.dicOps().delete(self.outPklFile.data, pos)
-        SerializationDB.pickleOut(self.recyleBin, self.dumpingPath)
-
-    def _restore(self):
-        if(self.recyleBin is None):
-            print("nothing to restore")
-            return
-        ListDB.dicOps().add(self.outPklFile.data, self.recyleBin['pos'], self.recyleBin['data'])
-
-    def _restoreFromFile(self, path = None):
-        if(path is None):
-            path = self.dumpingPath
-        self.recyleBin = SerializationDB.readPickle(path)
-        self._restore()
 
 class FoodBuyingSuggestion:
     def __init__(self, algorithm = ISuggestionAlgorithm()):
