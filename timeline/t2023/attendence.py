@@ -166,9 +166,14 @@ class TimeCalculatorController:
         self._model = model
     def set_view(self, view: TimeCalculatorView):
         self._view = view
-    def set_up(self,):
+    def set_up(self):
         now = datetime.datetime.now()
-        self._view.startWid.value = datetime.date(now.year, now.month - 1, now.day)
+        yr = now.year
+        pmt = now.month - 1
+        if (now.month - 1) == 0:
+            yr = yr -1 
+            pmt = 12
+        self._view.startWid.value = datetime.date(yr, pmt, now.day)
         self._view.endWid.value = datetime.date(now.year, now.month, now.day)
         self._view.generate_exceptions.on_click(self._on_generate_func)
         self._view.calcBtn.on_click(self._calc)

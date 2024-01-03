@@ -45,7 +45,6 @@ class LinksManagerController:
         self._view.keysDrpWid.options = list(self._pcrud.readAll().keys())
         self._view.addAddBtn.on_click(self._btn_clicked)
         self._view.deleteConfirmBtn.on_click(self._delete_entry_confirmed)
-        HideableWidget.hideIt(self._view.addRowWid)
         HideableWidget.hideIt(self._view.deleteConfirmBtn)
     def _delete_entry_confirmed(self, btn):
         if self._delele_last_key is not None:
@@ -74,19 +73,17 @@ class LinksManagerController:
         self._searcher._engine.set_container(self._pcrud.readAll())
         HideableWidget.hideIt(self._view.deleteConfirmBtn)
         HideableWidget.hideIt(self._view.cout.get_layout())
-        HideableWidget.hideIt(self._view.addRowWid)
+        HideableWidget.showIt(self._view.addRowWid)
         if self._view.opsDrpWid.value == "search":
             HideableWidget.showIt(self._view.cout.get_layout())
             self._view.cout.clear()
             self._searcher._result_handler.set_btn_click_func(self._link_open)
-            HideableWidget.showIt(self._view.addRowWid)
             self._view.addIsVarWid.description = "reg"
             self._view.addValueWid.placeholder = "search word"
             self._view.addAddBtn.description = "search"
             self.set_add_btn_func(self._search_func)
             HideableWidget.hideIt(self._view.addKeyWid)
         elif self._view.opsDrpWid.value == "add":
-            HideableWidget.showIt(self._view.addRowWid)
             self._view.addIsVarWid.description = "is var"
             self._view.addValueWid.placeholder = "value"
             self._view.addValueWid.value = ""

@@ -10,6 +10,7 @@ class StringInfoEnums:
     LAST_COMMAND = "last command"
     OPS_LOC = "opsLoc"
     DEPTH = "depth"
+    ADD = "add"
 class NodeExplorer:
     def __init__(self):
         self._loc = []
@@ -173,14 +174,18 @@ class TreeOpsController:
             func(self)
         self.set_info(StringInfoEnums.LAST_COMMAND, opsKe)
     def set_up(self):
-        self._bsc._view.inpSection.observe(self._entered, "value")
+        self._bsc._view.inpSection.observe(self._bsc.controllers.views.input.wrapper_func, "value")
         self._bsc._view.inpSection.continuous_update = False
-    def _entered(self, wid):
+    def def_entered(self, wid):
         content = self._bsc._view.inpSection.value.strip()
+        if len(content) == 0:
+            return
+        self._history.append(content)
         x = content.split(" ")
         if x[0] in self._ops:
-            self._history.append(content)
             self.call(x[0])
+        elif len(x) != 0:
+            self.call(StringInfoEnums.ADD)
         self._bsc._view.inpSection.value = ""
     def get_user_input(self):
         return self._ufunc(self)
@@ -219,7 +224,6 @@ class ExtraInfoOps:
         cnt.set_info(StringInfoEnums.EXTRA_INFO, lambda i, x: x)
         SingleTreeOps.readAll(cnt)
     def lastNCommands(cnt):
-        cnt._history[-10:]
         cnt._bsc._view.txtArea.value = "\n".join(cnt._history[-10:])
     def operatorSelector(cnt):
         if StringInfoEnums.OPS_LOC not in cnt._infos:
@@ -248,12 +252,14 @@ class SingleTreeOps:
         if StringInfoEnums.DEPTH in cnt._infos:
             tr.set_depth_level(cnt._infos[StringInfoEnums.DEPTH])
     def addNode(cnt):
-        inp = cnt.get_user_input()
+        inp = cnt._bsc._view.inpSection.value.strip()
+        words = inp.split()
+        if words[0] == "add":
+            inp = cnt.get_user_input()
         name = inp.strip()
         if not cnt._bsc._model.alreadyExists( name ):
             cnt._bsc._model.add(name, {})
-        SingleTreeOps.readAll(cnt)
-        
+        SingleTreeOps.readAll(cnt)      
     def readAll(cnt):
         if StringInfoEnums.LOCATION not in cnt._infos:
             cnt._infos[StringInfoEnums.LOCATION] = []
@@ -426,8 +432,14 @@ class Main:
         tm = PickleOpsModel()
         tm.set_dictionary(dic)
         bsc.set_model(tm)
+        
+        bsc.controllers = NameSpace()
+        bsc.controllers.toc = toc
+        
+        Main.add_namespace(bsc)
+        
         toc.set_up()
-        toc.add_ops("add", SingleTreeOps.addNode, "add a new node")
+        toc.add_ops(StringInfoEnums.ADD, SingleTreeOps.addNode, "add a new node")
         toc.add_ops("del", SingleTreeOps.delNode, "delete an existing node")
         toc.add_ops("ls", SingleTreeOps.readAll, "show tree")
         toc.add_ops("cd", SingleTreeOps.cdToNode, "go to the node")
@@ -442,10 +454,16 @@ class Main:
         toc.add_ops("his", ExtraInfoOps.lastNCommands, "show last 10 history")
         toc.add_ops("md", ExtraInfoOps.depthCountInfo, "max depth")
         toc.add_ops("chno", ExtraInfoOps.childNrs, "number of childs")
-        bsc.controllers = NameSpace()
-        bsc.controllers.toc = toc
+        
         ExtraInfoOps.enumeratee(toc)
+        
         return bsc
+    def add_namespace(bsc):
+        bsc.controllers.views = NameSpace()
+        bsc.controllers.views.input = NameSpace()
+        bsc.controllers.views.input.wrapper_func = lambda wid: bsc.controllers.views.input.entered_func(wid)
+        bsc.controllers.views.input.default_entered_func = bsc.controllers.toc.def_entered
+        bsc.controllers.views.input.entered_func = bsc.controllers.views.input.default_entered_func
     def runWithFile(filepath):
         bsc = Main.runWithDic({})
         bsc._model.loadFile(filepath)
