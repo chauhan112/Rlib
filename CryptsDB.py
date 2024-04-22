@@ -1,6 +1,7 @@
 import random
 import string
 
+
 class CryptsDB:
     def generatePassWord(length = 10):
         password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -21,3 +22,12 @@ class CryptsDB:
     def decrypt(inpFile, outFile, password, size = 128 * 1024):
         import pyAesCrypt
         pyAesCrypt.decryptFile(inpFile, outFile, password, size)
+    
+    def generateRandomWord():
+        from wonderwords import RandomWord
+        w = RandomWord()
+        return w.word()
+    def generateRandomSentence():
+        from wonderwords import RandomSentence
+        s = RandomSentence()
+        return s.sentence()

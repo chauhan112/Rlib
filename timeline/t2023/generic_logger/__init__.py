@@ -12,9 +12,10 @@ from ComparerDB import ComparerDB
 from SerializationDB import SerializationDB
 from LibsDB import LibsDB
 from CryptsDB import CryptsDB
-from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, \
-    MultipleSelect, KeyValueInput, SingleButtonController
-from basic import BasicController, NameSpace
+from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
+from basic import BasicController, NameSpace, LoggerSystem
+
+from timeline.t2023.generic_logger.UIComponents import GLViewV2
 class IModifier:
     def set_basic_controller(self, bsc):
         pass
@@ -49,24 +50,24 @@ class CrudView:
     def __init__(self):
         design=widgets.HTML("""
             <style>
-                .widget-radio-box {
+                .RadioButtons div {
                     flex-flow: row wrap;
                     max-width: 90px;
                     overflow:auto;
                 }
-                .widget-radio-box input{
+                .RadioButtons input{
                     border-radius: 10px;
                     padding: 8px;
                     margin-right: 2px;
                 }
-                .widget-radio-box label{
+                .RadioButtons label{
                     width: 30px;
                     border-radius: 10px;
                     padding: 2px;
                     margin : 1px;
                     box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.1);
                 }
-                .widget-radio{
+                .RadioButtons{
                     width: auto;
                     min-width: 90px;
                 }
@@ -79,6 +80,7 @@ class CrudView:
                 }
             </style>""")
         self.wid = widgets.RadioButtons( options=['r', 'c', 'u', 'd'])
+        self.wid.add_class("RadioButtons")
         self.layout = widgets.HBox([self.wid, design])
         self.wid.observe(self._selected, names=["value"])
         self.set_select_func(self._default_on_selected)
@@ -290,6 +292,7 @@ class LoggerSearcherController:
         layo = self._searcher.search(word, reg =reg, case=case)
         self._bsc.views.glv.logSearch.couput.display(layo,True, True)
     def _btn_click_func(self, btn):
+        self._bsc.debug = btn
         self._clicked_func(btn, self)
     def _opIt(self, btn, *param):
         self._bsc.views.glv.out.display(self._bsc.views.ldcv.layout, True, True)
@@ -309,7 +312,7 @@ class LoggerSearcherController:
             st["status"] = "deleted"
             self._bsc._model.add(taskName, st, True)
             self._clicked = None
-    def _default_update_logger(self, btn, *param):
+    def _default_update_logger(self, btn, *param):  
         self._bsc.controllers.glc.reset()
         st = self._bsc._model.read(btn.description)
         self._bsc.views.glv.loggerInfo.nameWid.value = btn.description
@@ -482,7 +485,7 @@ class LoggerSearch(ISearch):
                 if ComparerDB.has(word, val[ke],case,reg):
                     res.append(i)
                     break
-        return res
+        return res[::-1]
     def set_indices_to_search(self, indices):
         self._indices2search = indices
     def set_search_type(self, search_type):
@@ -497,7 +500,7 @@ class LoggerSearch(ISearch):
         for i in container:
             val = self._data[i]
             for ke in tosearch:
-                if ke not in val and word == "":
+                if ke not in val:
                     res.append(i)
                     break
                 fieldContent = val[ke]
@@ -587,7 +590,6 @@ class LoggerDataCRUDController:
         self._bsc.views.ldcv.searchView.btn.set_clicked_func(self._search_btn_click)
         self._update_reader_data()
         self._bsc.views.ldcv.searchView.btn.layout.click()
-        self._update_reader_data()
     def _overwrite_data(self, btn, *param):
         nr = self._view_map[self._cur_btn.description]
         vals = {}
@@ -602,6 +604,7 @@ class LoggerDataCRUDController:
             cont = nr._key_view_map[ke]
             cont.clear()
         self._update_reader_data()
+        HideableWidget.hideIt(self._bsc.views.ldcv.out.get_layout())
     def set_data_reader(self, reader):
         self._reader = reader
     def set_basic_controller(self, basic_cont):
@@ -749,7 +752,8 @@ class DropdownFieldValueRestore:
 class Main:
     def generic_logger(filepath, scope=None, readPickleFile=True):
         bsc = BasicController()
-        glv = GLView()
+        bsc.logger = LoggerSystem()
+        glv = GLViewV2()
         bsc.views.glv = glv
         glc = GLController()
         glc.set_basic_controller(bsc)

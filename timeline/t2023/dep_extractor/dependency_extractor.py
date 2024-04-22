@@ -589,7 +589,7 @@ class DicOps:
         valT = dic
         lastKey = loc.pop()
         for x in loc:
-            if x not in valT:
+            if type(valT) == dict and x not in valT:
                 valT[x] = {}
             valT = valT[x]
         valT[lastKey] = val

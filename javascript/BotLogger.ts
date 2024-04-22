@@ -1,42 +1,68 @@
-enum BotStatus{
+// SCVisitor/pro-tool/Business Logic/ClientFlows/botSteps/botStatusLogger
+
+enum BotStatus {
     Started,
-    Completed, 
+    Completed,
     Abandoned
 }
 
-class BotInfoManager{
+class BotInfoManager {
     botStatus: any = {};
-    update_bot_status(botId: number, status: string){
-        if (!this.botStatus.hasOwnProperty(botId)){
-            this.botStatus[botId] = {status: status}
-        }else {
+    update_bot_started_count(botId: number){  
+
+        if (!this.botStatus.hasOwnProperty(botId)) {
+            this.botStatus[botId] = { startedCount: 1 }
+        } else {
+            this.botStatus[botId].startedCount = this.botStatus[botId].startedCount ? this.botStatus[botId].startedCount + 1 : 1
+        }
+
+    }
+
+    update_bot_completed_count(botId: number){
+
+        if (!this.botStatus.hasOwnProperty(botId)) {
+            this.botStatus[botId] = { completedCount: 1 }
+        } else {
+            this.botStatus[botId].completedCount = this.botStatus[botId].completedCount ? this.botStatus[botId].completedCount + 1 : 1
+        }
+        this.write_locally()
+    }
+
+    update_bot_status(botId: number, status: string) {
+        if (!this.botStatus.hasOwnProperty(botId)) {
+            this.botStatus[botId] = { status: status }
+
+        } else {
             this.botStatus[botId].status = status
         }
         this.write_locally()
     }
-    update_time(botId: number){
-        if (!this.botStatus.hasOwnProperty(botId)){
-            this.botStatus[botId] = {startedTime: new Date()}
-        }else {
+
+    update_time(botId: number) {
+        if (!this.botStatus.hasOwnProperty(botId)) {
+            this.botStatus[botId] = { startedTime: new Date() }
+        } else {
             this.botStatus[botId].startedTime = new Date()
         }
         this.write_locally()
     }
-    write_locally(){
+
+    write_locally() {
         localStorage.setItem('botStatus', JSON.stringify(this.botStatus))
     }
-    read_locally(){
+
+    read_locally() {
         let x = localStorage.getItem("botStatus")
-        if (!x){
+        if (!x) {
             this.botStatus = {}
-        }else {this.botStatus = JSON.parse(x) }
-        
+        } else { this.botStatus = JSON.parse(x) }
+
     }
-    get_status_with_botId(botId: number): BotStatus{
+    get_status_with_botId(botId: number): BotStatus {
         this.read_locally()
         return this.botStatus[botId].status
     }
-    get_all_ended_bots(){
+    get_all_ended_bots() {
         this.read_locally()
         let res = Object.keys(this.botStatus).filter(botId => this.botStatus[botId].status === BotStatus[BotStatus.Completed])
         let parsed: number[] = []
@@ -46,32 +72,32 @@ class BotInfoManager{
         }
         return parsed
     }
-    update_interacted_status(botId, value:boolean=true){
-        if (!this.botStatus.hasOwnProperty(botId)){
-            this.botStatus[botId] = {interacted: value}
-        }else this.botStatus[botId].interacted = value
+    update_interacted_status(botId, value: boolean = true) {
+        if (!this.botStatus.hasOwnProperty(botId)) {
+            this.botStatus[botId] = { interacted: value }
+        } else this.botStatus[botId].interacted = value
         this.write_locally()
     }
-    get_status(){
+    get_status() {
         this.read_locally()
         return this.botStatus
     }
-    logStepInfo(step, botId){
+    logStepInfo(step, botId) {
         this.write_locally_last_step_status("step", step)
         this.write_locally_last_step_status("botId", botId)
     }
-    private write_locally_last_step_status(key, value){
+    private write_locally_last_step_status(key, value) {
         let x = this.get_last_step_info()
-        if (!x){
+        if (!x) {
             x = {}
         }
         x[key] = value
         localStorage.setItem('lastBotStepInfo', JSON.stringify(x))
     }
-    
-    get_last_step_info(){
+
+    get_last_step_info() {
         let x = localStorage.getItem("lastBotStepInfo")
-        if (!x){
+        if (!x) {
             return x
         }
         return JSON.parse(x)
@@ -83,15 +109,15 @@ class BotInfoManager{
     getTime(key) {
         let val = this.get_last_step_info()
         if (val && val.hasOwnProperty(key))
-            return val[key] 
+            return val[key]
         return -1
     }
-    logTime(key, value){
+    logTime(key, value) {
         this.write_locally_last_step_status(key, value)
     }
 }
 
 
 console.log("bot status logger")
-$this.out = new BotInfoManager() 
+this.out = new BotInfoManager()
 

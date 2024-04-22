@@ -11,19 +11,35 @@ class AppDeployment:
         self._data = json.loads(content)
     def printAllDependencies(self):
         a = {}
-        self._res = {}
-        self._deps(self._data["result"], a)
+        collector = {}
+        self._deps2024(self._data["result"], a)
+        self._update_dependency_graph(a,collector)
         from timeline.t2023.treeOps import DynamicTreeRenderer
-        from ListDB import ListDB
         dtr = DynamicTreeRenderer()
         dtr.set_dic(a[("", '')])
-        dtr.set_depth_level(10)
+        collector["root"] =a[("", '')]
+        dtr.set_depth_level(100)
         def nm(i, x):
             return '-'.join(x)
-        def set_child_getter():
-            return list(map(lambda x: "-".join(x), ListDB.dicOps().get(dtr._model, dtr._loc).keys()))
+        def child_getter(x):
+            val = collector[x]
+            if type(val) in [list, set]:
+                return val
+            elif type(val) == dict:
+                return list(val.keys())
+            return []
+        def dir_checker(x):
+            return x in collector
         dtr.set_name_getter(nm)
+        dtr.set_children_getter(child_getter)
+        dtr.set_dir_checker(dir_checker)
         print(dtr.getAsText())
+    def _update_dependency_graph(self, data, collector):
+        for ke in data:
+            val = data[ke]
+            collector[ke] = val
+            self._update_dependency_graph( val, collector)
+
     def _printAllDependencies_previous(self):
         for obj in self._data["result"]["resolvedIncludes"]:
             print(obj["pk"]["name"] + "-" + obj["pk"]["label"])
@@ -50,12 +66,20 @@ class AppDeployment:
             self._printConfig(x)
     def printConfigsForConfigEditing(self):
         print("key, value")
-        self._attrConfig(self._data["result"])
+        printed =set()
+        self._attrConfig(self._data["result"], printed)
         for x in self._data["result"]["resolvedIncludes"]:
-            self._attrConfig(x)
-    def _attrConfig(self, dic):
+            self._attrConfig(x, printed)
+    def _attrConfig(self, dic, printed):
+        pkNameExists = lambda content: "pk" in content and "name" in content["pk"]
+        getnameIfexists = lambda content: content["pk"]["name"] if pkNameExists(content) else ""
+        if (pkNameExists(dic)):
+            printed.add( dic["pk"]["name"] )
         REG = "\d+\.\d+\.\d+\-[a-zA-Z0-9]+.*/"
-        mmpo  = {"STRING": "string", "INT":"number", "LONG": "number"}
+        mmpo  = {"STRING": "string", "INT":"number", "LONG": "number", "BOOL": "boolean"}
+        if "resolvedIncludes" in dic and getnameIfexists(dic)  not in printed: 
+            for x in dic["resolvedIncludes"]:
+                self._attrConfig(x, printed)
         if "configValues" in dic["resources"]:
             for x in dic["resources"]["configValues"]:
                 if "name" in dic:
@@ -109,6 +133,25 @@ class AppDeployment:
             res[(parentName, parentLabel)][(appName, label)] = {}
             if 'resolvedIncludes' in obj:
                 self._deps(obj, res[(parentName, parentLabel)], appName, label)
+    def _deps2024(self, objx, res = {}, parentName="", parentLabel=""):
+        for i, obj in enumerate(objx['includes']):
+            appName = obj["includedName"]
+            if "includedLabel" not in obj:
+                break
+            label = obj["includedLabel"]
+            if (parentName, parentLabel) not in res:
+                res[(parentName, parentLabel)] = {}
+            res[(parentName, parentLabel)][(appName, label)] = {}
+            
+        for i, obj in enumerate(objx['resolvedIncludes']):
+            appName = obj["pk"]["name"]
+            label = obj["pk"]["label"]
+            if (parentName, parentLabel) not in res:
+                res[(parentName, parentLabel)] = {}
+            if (appName, label) not in res[(parentName, parentLabel)]:
+                res[(parentName, parentLabel)][(appName, label)] = {}
+            if 'resolvedIncludes' in obj:
+                self._deps2024(obj, res[(parentName, parentLabel)], appName, label)
     def _dic_iterator(self, dic, collectorFunc, loc = []):
         if type(dic) == dict:
             for ke in dic:

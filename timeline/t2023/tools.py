@@ -1,22 +1,24 @@
 import ipywidgets as widgets
 import os
-import os
+import calendar
+import datetime
 
 class TimelineDB:
-    def getMonthPath(monthNr, year = None):
+    def getMonthPath(monthNr, year = None, months = None):
         from TimeDB import TimeDB
-        months = ['1. jan',
-             '2. feb',
-             '3. mar',
-             '4. apr',
-             '5. may',
-             '6. jun',
-             '7. jul',
-             '8. aug',
-             '9. sep',
-             '10. oct',
-             '11. nov',
-             '12. dec']
+        if months is None:
+            months = ['1. jan',
+                 '2. feb',
+                 '3. mar',
+                 '4. apr',
+                 '5. may',
+                 '6. jun',
+                 '7. jul',
+                 '8. aug',
+                 '9. sep',
+                 '10. oct',
+                 '11. nov',
+                 '12. dec']
         m = ''
         if(type(monthNr) == int):
             m = months[monthNr]
@@ -110,19 +112,31 @@ class Confirmer:
             self._func()
 class Tools:
     def migrateRlibItValues(rlib):
-        import datetime
         from SerializationDB import SerializationDB
         from TimeDB import TimeDB
         from Path import Path
         m = TimeDB.month() - 2
+        months = list(calendar.month_name)[1:]
+        short_months_with_indices = [ "0" + str(i+1) + "_" + val[:3] if len(str(i+1)) == 1 else str(i+1) + "_" + val[:3] for i, val in enumerate(months)]
         y = None
         if m < 0:
             y = datetime.datetime.now().year - 1
             m = -1 % 12 # last month of last year (december)
-        base = TimelineDB.getMonthPath(m, y)
+        base = TimelineDB.getMonthPath(m, y, short_months_with_indices)
         file = Path.filesWithExtension("pkl", os.sep.join([base, "_rajaDB"]))[0]
         vals = SerializationDB.readPickle(file)['instructions']
         for k in vals:
             val = vals[k]
             rlib.it.add(k, val)
+    def make_new_dirs_and_ipynbs():
+        months = list(calendar.month_name)[1:]
+        short_months_with_indices = [ "0" + str(i+1) + "_" + val[:3] if len(str(i+1)) == 1 else str(i+1) + "_" + val[:3] for i, val in enumerate(months)]
+        year_loc = os.path.dirname(os.path.abspath(".")) # '/home/chauh-ra/MEGA/cloud/timeline/2024'
 
+        month_fullpaths = [year_loc + os.sep + mth for mth in short_months_with_indices]
+        for dirpath in month_fullpaths:
+            if not os.path.exists(dirpath):
+                os.makedirs(dirpath)
+            spaceIpynb = dirpath + os.sep + "space"
+            jupyterDB.createJupyterNotebook(spaceIpynb)
+       

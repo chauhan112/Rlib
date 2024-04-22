@@ -162,6 +162,16 @@ class DropdownInput(IPyWidget):
 class KeyValueInput(GComponent):
     def __init__(self, **kwargs):
         ly, self._controller = KeyValueAdderView.keyValueCrud({})
+        self._controller._basic._view.opsView.valueTextareaWidg.layout.width =""
+        self._controller._basic._view.opsView.valueTextareaWidg.add_class("w-100")
+        self._controller._basic._view.opsView.valueTextareaWidg.add_class("textarea-h-150px")
+        self._controller._basic._view.opsRow.add_class("grid")
+        self._controller._basic._view.opsRow.add_class("grid-column-repeat-auto-7")
+        self._controller._basic._view.opsView.value._hbox.add_class("order-1")
+        self._controller._basic._view.opsView.value._hbox.add_class("span-all-columns")
+        self._controller._basic._view.opsView.value._hbox.add_class("w-100")
+        self._controller._basic._view.opsView.valueWidg.layout.width =""
+        self._controller._basic._view.opsView.valueWidg.add_class("w-100")
         self._description = widgets.Label(kwargs["description"], 
             layout={"width":"80px", "justify_content":"flex-end", "margin":"0px 8px 0px 0px"})
         self.set_widget(widgets.HBox([self._description, ly]))

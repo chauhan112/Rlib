@@ -7,7 +7,8 @@ from SearchSystem import MultilineStringSearch
 from timeline.t2023.searchSystem import Main as SearchWithPagination
 from CryptsDB import CryptsDB
 import ipywidgets as widgets
-
+from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
+from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 class NewLoggerNewWay:
     def generic_logger_default_state(self):
         self.app.controllers.utils.hideUi(self.app.views.groups.crud.create.layout)
@@ -47,7 +48,7 @@ class NewLoggerNewWay:
         if len(self.app.model.fields_lookup._fields) == 0:
             self.app.controllers.utils.showInfo_create_logger("please give at least one field name", True)
             return
-        self.app.model.tableOps.add(val, self.app.model.fields_lookup._fields)
+        self.app.controllers.modelWrapper.create_table(val, self.app.model.fields_lookup._fields)
         self.app.model.view_model.logger.updated_structure = True
         self.app.model.fields_lookup.reset()
         self.app.views.groups.crud.create.fields_props.listWid.children = self.app.model.fields_lookup.get_layout()
@@ -57,7 +58,6 @@ class NewLoggerNewWay:
         key = fields.textWid.value.strip()
         typ = fields.typeOfWid.value
         options = fields.moreInfo.utils.get_value()
-
         if key == "":
             self.app.controllers.utils.showInfo_create_logger("give key name",isWarning=True)
             return
@@ -135,31 +135,28 @@ class NewLoggerNewWay:
     def search_maker(maker, callback_func, searchEngine):
         return SearchWithPagination.searchWithPagination(searchEngine, maker, callback_func)
     def searching(self, btn):
-        vals = self.app.model.tableOps.readAll()
-        self.app.controllers.searcher.logger.search_engine.set_container(list(vals.keys()))
+        self.app.controllers.searcher.logger.search_engine.set_container(self.app.controllers.modelWrapper.read_table_names())
         wid =self.app.views.groups.search.generic
         word = wid.textWid.value
         ly = self.app.controllers.searcher.logger.searcher.search(word, wid.isRegWid.value, wid.isCase.value)
         self.app.views.groups.search.generic.couput.display(ly, True, True)
     def delete_logger(self, btn):
         name = btn._key
-        self.app.model.tableOps.delete(name)
+        self.app.controllers.modelWrapper.delete_table_name(name)
         self.app.controllers.utils.hideUi(btn)
     def update_logger(self, btn):
         table_name = btn._key
         self.app.controllers.utils.hideUi(self.app.views.groups.search.generic.layout)
         self.app.controllers.utils.showUi(self.app.views.groups.crud.create.layout)
-        abc = self.app.model.tableOps.read(table_name)
-
+        abc = app.controllers.modelWrapper.read_structure(table_name)
         if table_name == self.app.views.groups.crud.create.logger_name_text.value and len(self.app.model.fields_lookup._fields) != 0:
             self.app.views.groups.crud.create.fields_props.listWid.children = self.app.model.fields_lookup.get_layout()
             return
         self.app.views.groups.crud.create.logger_name_text.value = table_name
-        s = self.app.model.strings.structure
-        for prp in abc[s]:
-            yp = abc[s][prp]["type"]
-            info = abc[s][prp]["info"]
-            order = abc[s][prp]["order"]
+        for prp in abc:
+            yp = abc[prp]["type"]
+            info = abc[prp]["info"]
+            order = abc[prp]["order"]
             ly = self.app.model.fields_lookup.add_field(prp, yp, info, order)
             self.app.controllers.utils.hideUi(ly.displayInfoWid)
         self.app.views.groups.crud.create.fields_props.listWid.children = self.app.model.fields_lookup.get_layout()
@@ -174,51 +171,109 @@ class NewLoggerNewWay:
     def delete_logger_confirmer(self, ads):
         self.app.views.btn.layout.description = "confirm"
         self.app.views.btn.set_clicked_func(self.app.controllers.ops.confirmer.def_func)
-
         self.app.controllers.ops.confirmer.out = self.app.views.glv.out
         self.app.controllers.ops.confirmer.btn = ads
         self.app.controllers.ops.confirmer.func = self.app.controllers.ins.nlnw.delete_logger
-
         self.app.controllers.ops.confirmer.out.display(self.app.views.btn.layout, True, True)
-class ModelFunc:
+class ModelFuncsDictionary:
     def __init__(self):
-        self._logger = {}
-        self.strings = NameSpace()
-        self.strings.structure = "structure"
-        self.strings.uuid = "uuid"
-        self.strings.key_index = "key-index"
-        self.strings.data = "data"
-
-    def add(self, tablename, struc):
-        if tablename not in self._logger:
-            val = {self.strings.uuid: CryptsDB.generateUniqueId(), self.strings.data: {}}
-        else:
-            val = self._logger[tablename]
-        val[self.strings.structure] = struc
-        self._logger[tablename] = val
-    def readAll(self):
-        return self._logger
-    def read(self, name):
-        return self._logger[name]
-    def delete(self, name):
-        del self._logger[name]
-    def add_data(self, tableName, data):
-        tableContent = self.read(tableName)
-        if self.strings.key_index not in tableContent:
-            tableContent[self.strings.key_index] = 0
-
-        key = tableContent[self.strings.key_index]
-
-        if self.strings.data not in tableContent:
-            tableContent[self.strings.key_index] = {}
-        tableContent[self.strings.data][key] = data
-        tableContent[self.strings.key_index] = key + 1
-
-    def delete_data(self, idd):
-        tableContent = self.read(tableName)
-        del tableContent[self.strings.data][idd]
-    def read_all_data(self, table_name):
-        return self._logger[table_name][self.strings.data]
+        self.set_model(DictionaryCRUD())
+    def set_model(self, model):
+        self.model = model
+    def set_app(self, app):
+        self.app = app
+    def loggerData_create(self, tableName, key, value):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_create(key, value, loc=self.app.model.constants.lists.loc_tables_data + [uuid])
+    def loggerData_delete(self, tableName, key):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_delete(key, loc=self.app.model.constants.lists.loc_tables_data + [uuid])
+    def loggerData_update(self, tableName, key, new_val):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_update(key, new_val, loc=self.app.model.constants.lists.loc_tables_data + [uuid])
+    def loggerData_read(self, tableName, key):
+        uuid = self.logger_get_uuid(tableName)
+        return self.global_meta_read(key, loc=self.app.model.constants.lists.loc_tables_data + [uuid])
+    def loggerData_readAll(self, tableName):
+        uuid = self.logger_get_uuid(tableName)
+        return self.global_meta_read(uuid, loc=self.app.model.constants.lists.loc_tables_data)
+    def metaInfo_create(self, tableName, key, value):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_create(key, value, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def metaInfo_delete(self, tableName, key):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_delete(key, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def metaInfo_update(self, tableName, key, old_value, new_value):
+        uuid = self.logger_get_uuid(tableName)
+        self.global_meta_update(key, new_value, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def metaInfo_read(self, tableName, key):
+        uuid = self.logger_get_uuid(tableName)
+        return self.global_meta_read(key, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def metaInfo_readAll(self, tableName):
+        uuid = self.logger_get_uuid(tableName)
+        return self.global_meta_read(name, uuid, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def metaInfo_exists(self,tableName, key):
+        uuid = self.logger_get_uuid(tableName)
+        return self.global_meta_exists(key, loc=self.app.model.constants.lists.loc_tables + [uuid])
+    def logger_create(self, name):
+        if not self.logger_exists(name):
+            uuid = CryptsDB.generateUniqueId()
+            self.global_meta_create(name, uuid, loc=self.app.model.constants.lists.loc_tables2uuid)
+            self.global_meta_create(uuid, {"name": name}, loc=self.app.model.constants.lists.loc_tables)
+    def logger_delete(self, name):
+        if self.logger_exists(name):
+            uuid = self.global_meta_read(name, loc=self.app.model.constants.lists.loc_tables2uuid)
+            self.global_meta_delete(uuid, loc=self.app.model.constants.lists.loc_tables)
+            self.global_meta_delete(name, loc=self.app.model.constants.lists.loc_tables2uuid)
+    def logger_update(self, old_name, newname):
+        oldExists = self.logger_exists(old_name)
+        newDoesNotExist = not self.logger_exists(newname)
+        if oldExists and newDoesNotExist:
+            uuid = self.global_meta_read(old_name, loc=self.app.model.constants.lists.loc_tables2uuid)
+            tableInfos = self.global_meta_read(uuid, loc=self.app.model.constants.lists.loc_tables)
+            tableInfos["name"]= newname
+            self.global_meta_delete(old_name, loc=self.app.model.constants.lists.loc_tables2uuid)
+            self.global_meta_update(uuid, tableInfos, loc=self.app.model.constants.lists.loc_tables)
+            self.global_meta_create(newname, uuid, loc=self.app.model.constants.lists.loc_tables2uuid)
+    def logger_exists(self, name):
+        return self.global_meta_exists(name, loc=self.app.model.constants.lists.loc_tables2uuid)
+    def logger_get_uuid(self, name):
+        return self.global_meta_read(name, loc=self.app.model.constants.lists.loc_tables2uuid)
+    def logger_read(self, name):
+        uuid = self.global_meta_read(name, loc=self.app.model.constants.lists.loc_tables2uuid)
+        return self.global_meta_read(uuid, loc=self.app.model.constants.lists.loc_tables)
+    def logger_readAll(self):
+        return self.global_meta_readAll(loc=self.app.model.constants.lists.loc_tables)
+    def global_meta_create(self, key, value,loc = None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        self.model.write(key, value)
+    def global_meta_delete(self, key, loc=None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        self.model.delete(key)
+    def global_meta_update(self, key, value, loc =None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        self.model.write(key, value, True)
+    def global_meta_read(self, key, loc = None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        return self.model.read(key)
+    def global_meta_exists(self, key, loc = None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        return self.model.exists(key)
+    def global_meta_readAll(self, loc = None):
+        if loc is None:
+            loc = []
+        self.model.set_baseloc(loc)
+        return self.model.readAll()
 class InProcess:
     def __init__(self):
         self.clear()
@@ -276,7 +331,7 @@ class LoggerDataOps:
         self.app.model.view_model.logger_data.check_box_prev_state = opstype
     def search_clicked_data(self, btn):
         self.app.controllers.ldcv.update_data()
-        self.app.controllers.btn_name_decider.set_structure(self.app.controllers.ldcv.read_structure())
+        self.app.controllers.btn_name_decider.set_structure(self.app.controllers.modelWrapper.read_structure())
         self.app.controllers.searcher.data.engine.set_indices_to_search(self.app.controllers.btn_name_decider._indicesForName)
         word = self.app.views.ldcv.searchView.textWid.value.strip()
         reg = False
@@ -288,13 +343,13 @@ class LoggerDataOps:
         elif ops == "reg":
             reg = True
         layo = self.app.controllers.searcher.data.searcher.search(word, reg =reg, case=case)
-
         self.app.views.ldcv.searchView.couput.display(layo, True, True)
     def logged_btn_func(self, *params):
         nr = self.app.model.view_model.create_state[self.app.model.view_model.currentLogger]
         data = self.app.controllers.ldcv.data_from_rendered(nr)
         self.app.controllers.ldcv.data_reset(nr)
-        self.app.model.tableOps.add_data(self.app.model.view_model.currentLogger, data)
+        self.app.controllers.modelWrapper.logger_data_add(data)
+        self.app.model.view_model.data_curr_state_key += 1
     def data_from_rendered(nr):
         data = {}
         for ke in nr._key_view_map:
@@ -312,7 +367,7 @@ class LoggerDataOps:
         btn.layout._key = des
         return btn.layout
     def read_data(self, key):
-        data = self.app.model.tableOps.read_all_data(self.app.model.view_model.currentLogger)
+        data = self.app.controllers.modelWrapper.logger_data_readAll()
         return data[key]
     def data_btn_clicked(self, btn):
         self.app.model.view_model.current_data_btn =  btn
@@ -327,26 +382,20 @@ class LoggerDataOps:
             self.app.controllers.ldcv.data_update_radio_selected(btn)
     def data_btn_clicked_wrapper(self, btn):
         self.app.controllers.searcher.data.btn_clicked(btn)
-    def read_structure(self):
-        return self.app.model.tableOps.read(self.app.model.view_model.currentLogger)[self.app.model.strings.structure]
     def update_data(self):
         if self.app.model.view_model.data_prev_state_key != self.app.model.view_model.data_curr_state_key:
-            self.app.controllers.searcher.data.engine.set_container(self.app.model.tableOps.read_all_data(self.app.model.view_model.currentLogger))
+            self.app.controllers.searcher.data.engine.set_container(self.app.controllers.modelWrapper.logger_data_readAll())
             self.app.model.view_model.data_prev_state_key += 1
             self.app.model.view_model.data_curr_state_key = self.app.model.view_model.data_prev_state_key
     def delete_it(self, btn):
-        self.app.controllers.ops.data.delete(btn._key)
+        self.app.controllers.modelWrapper.logger_data_delete(btn._key)
         self.app.controllers.utils.hideUi(btn)
-    def delete_data(self, idd):
-        del self.app.model.tableOps.read(self.app.model.view_model.currentLogger)[self.app.model.strings.data][idd]
-    def update_value(self, idd, new_val):
-        infos = self.app.model.tableOps.read(self.app.model.view_model.currentLogger)
-        infos[self.app.model.strings.data][idd] = new_val
+        self.app.model.view_model.data_curr_state_key += 1
     def update_btn_clicked(self, btn):
         values = self.app.controllers.ldcv.data_from_rendered(self.app.model.view_model.create_state[self.app.model.view_model.currentLogger])
         idd = self.app.model.view_model.current_data_btn._key
         self.app.controllers.btn_name_decider.set_info(values, idd)
-        self.app.controllers.ops.data.update(idd, values)
+        self.app.controllers.modelWrapper.logger_data_update(idd, values)
         self.app.views.ldcv.out.clear()
         self.app.model.view_model.current_data_btn.description = self.app.controllers.btn_name_decider.get_name()
     def update_callback_on_data_btn_clicked(self, btn):
@@ -356,7 +405,6 @@ class LoggerDataOps:
             nr.render()
         else:
             nr = self.app.model.view_model.create_state[self.app.model.view_model.currentLogger]
-
         vals  = self.app.controllers.ldcv.read_data(btn._key)
         self.app.controllers.ldcv.update_view_state(nr, vals)
         fields = nr._rendered.children[:-1]
@@ -372,27 +420,226 @@ class LoggerDataOps:
                 field_view.set_value(values[k])
             else:
                 field_view.clear()
+    def log_button_callback_func_wrapper(self, btn, *params):
+        self.app.controllers.ldcv.generic_data_logger(btn)
     def create_renderer(self, table_name):
         nr = NewRenderer()
-        nr._structure = self.app.model.tableOps.read(table_name)[self.app.model.strings.structure]
+        nr._structure = self.app.controllers.modelWrapper.read_structure(table_name)
         nr._scope = self.app.model.scope
         self.app.model.view_model.create_state[table_name] = nr
-        nr.set_adder_func(self.app.controllers.ldcv.generic_data_logger)
+        nr.set_adder_func(self.app.controllers.ldcv.wrappers.log_button)
         return nr
     def newRequire(self):
         return self.app.model.view_model.logger.updated_structure or self.app.model.view_model.currentLogger not in self.app.model.view_model.create_state
     def set_app(self, app):
         self.app = app
-
     def delete_data_confirmer(self,btn):
         self.app.controllers.ops.confirmer.out = self.app.views.ldcv.out
         self.app.controllers.ops.confirmer.btn = btn
         self.app.controllers.ops.confirmer.func = self.app.controllers.ins.ldo.delete_it
-
         self.app.views.btn.layout.description = "confirm"
         self.app.views.btn.set_clicked_func(self.app.controllers.ops.confirmer.def_func)
-
         self.app.controllers.ops.confirmer.out.display(self.app.views.btn.layout, True, True)
+class ControllerModel:
+    def read_structure(self, tableName = None):
+        if tableName is None:
+            tableName = self.app.controllers.modelWrapper.get_table_name()
+        return self.app.model.tableOps.metaInfo_read(tableName, self.app.model.constants.strings.structure)
+    def add_attribute(self, fieldName, value):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.app.model.tableOps.metaInfo_create(tableName, fieldName, value)
+    def read_field(self, fieldName):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        return self.app.model.tableOps.metaInfo_read(tableName, fieldName)
+    def get_table_name(self):
+        return self.app.model.view_model.currentLogger
+    def delete_attribute(self, fieldName):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.app.model.tableOps.metaInfo_delete(tableName, fieldName)
+    def create_table(self, name, fields):
+        if self.app.model.tableOps.logger_exists(name):
+            self.app.controllers.modelWrapper.update_structure(name, fields)
+            return
+        self.app.model.tableOps.logger_create(name)
+        self.app.model.tableOps.metaInfo_create(name, self.app.model.constants.strings.structure, fields)
+    def update_structure(self, name, fields):
+        self.app.model.tableOps.metaInfo_update(name, self.app.model.constants.strings.structure, fields)
+    def table_exists(self, name):
+        return self.app.model.tableOps.logger_exists(name)
+    def read_table_names(self):
+        tables = self.app.model.tableOps.logger_readAll()
+        res = []
+        for uuid in tables:
+            res.append(tables[uuid]["name"])
+        return res
+    def delete_table_name(self, table_name):
+        self.app.model.tableOps.logger_delete(table_name)
+    def logger_data_add(self, data):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        if not self.app.model.tableOps.metaInfo_exists(tableName, self.app.model.constants.strings.key_index):
+            self.app.model.tableOps.metaInfo_create(tableName, self.app.model.constants.strings.key_index, 0)
+        idd = self.app.model.tableOps.metaInfo_read(tableName, self.app.model.constants.strings.key_index)
+        self.app.model.tableOps.loggerData_create(tableName, idd, data)
+    def logger_data_read(self, idd):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        return self.app.model.tableOps.loggerData_read(tableName, idd)
+    def logger_data_delete(self, idd):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.app.model.tableOps.loggerData_delete(tableName, idd)
+    def logger_data_update(self, idd, new_val):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.app.model.tableOps.loggerData_update(tableName, idd, new_val)
+    def logger_data_readAll(self):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        return self.app.model.tableOps.loggerData_readAll(tableName)
+    def set_app(self, app):
+        self.app = app
+class SqliteTableCRUD:
+    def __init__(self):
+        self._dic_ops = DictionaryCRUD()
+    def set_model(self, model):
+        self.model = model
+    def set_table_name(self, tableName):
+        self.table_name = tableName
+    def create(self, key, value,loc = None):
+        self.model.set_table_name(self.table_name)
+        if loc is None:
+            self.model.override(key, value)
+            return
+        newLoc = loc + [key]
+        content = self.model.read(newLoc[0])
+        DicOps.addEventKeyError(content, newLoc[1:], value)
+        self.model.override(newLoc[0], content)
+    def delete(self, key, loc=None):
+        self.model.set_table_name(self.table_name)
+        if loc is None:
+            self.model.delete(key)
+            return
+        content = self.model.read(loc[0])
+        self._dic_ops.set_dictionary(content)
+        self._dic_ops.set_baseloc(loc[1:])
+        self._dic_ops.delete(key)
+        self.model.override(loc[0], content)
+    def update(self, key, value, loc =None):
+        if not self.exists(key, loc = loc):
+            raise LookupError("Key does not exist. So cant update")
+        self.create(key, value, loc)
+    def read(self, key, loc = None):
+        self.model.set_table_name(self.table_name)
+        if loc is None:
+            return self.model.read(key)
+        content = self.model.read(loc[0])
+        self._dic_ops.set_dictionary(content)
+        self._dic_ops.set_baseloc(loc[1:])
+        return self._dic_ops.read(key)
+    def exists(self, key, loc = None):
+        self.model.set_table_name(self.table_name)
+        if loc is None:
+            return self.model.has(key)
+        self.model.set_table_name(self.table_name)
+        if self.model.has(loc[0]):
+            content = self.model.read(loc[0])
+            self._dic_ops.set_dictionary(content)
+            self._dic_ops.set_baseloc(loc[1:])
+            return self._dic_ops.exists(key)
+        return False
+    def readAll(self, loc = None):
+        if loc is None:
+            loc = []
+        self.model.set_table_name(self.table_name)
+        return self.model.get_content_as_dict()
+class ControllerModelSqliteDB:
+    def __init__(self):
+        self.strings = NameSpace()
+        self.strings.tableStructure = "table_info"
+        self.strings.table2uuid = "tableAndItsUUID"
+    def get_table_name(self):
+        return self.app.model.view_model.currentLogger
+    def set_model(self, model):
+        self.model = model
+    def set_app(self, app):
+        self.app = app
+    def read_structure(self, tableName = None):
+        if tableName is None:
+            tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.tableStructure)
+        return self.model.read(self.app.model.constants.strings.structure, [tableName])
+    def add_attribute(self, fieldName, value):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.tableStructure)
+        self.model.create(fieldName, value, [tableName])
+    def read_field(self, fieldName):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.tableStructure)
+        return self.model.read(fieldName, [tableName])
+    def delete_attribute(self, fieldName):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.tableStructure)
+        self.model.delete(fieldName, [tableName])
+    def create_table(self, name, fields):
+        self.model.set_table_name(self.strings.table2uuid)
+        if self.model.exists(name):
+            self.app.controllers.modelWrapper.update_structure(name, fields)
+            return
+        app.temp = fields
+        uuid = CryptsDB.generateUniqueId()
+        self.model.create(name, uuid)
+        self.model.set_table_name(self.strings.tableStructure)
+        if not mfs.exists(name):
+            self.model.create(name, {})
+        self.model.create(self.app.model.constants.strings.structure, fields, [name])
+    def update_structure(self, name, fields):
+        self.model.set_table_name(self.strings.tableStructure)
+        self.model.update(self.app.model.constants.strings.structure, fields, [name])
+    def table_exists(self, name):
+        self.model.set_table_name(self.strings.table2uuid)
+        return self.model.exists(name)
+    def read_table_names(self):
+        self.model.set_table_name(self.strings.table2uuid)
+        tables =self.model.readAll()
+        res = []
+        for name in tables:
+            res.append(name)
+        return res
+    def delete_table_name(self, table_name):
+        self.model.set_table_name(self.strings.table2uuid)
+        self.model.delete(table_name)
+    def logger_data_add(self, data):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.tableStructure)
+        if not self.model.exists(self.app.model.constants.strings.key_index, [tableName]):
+            self.model.create(self.app.model.constants.strings.key_index, 0, [tableName])
+        idd = self.model.read(self.app.model.constants.strings.key_index,[tableName])
+        self.model.set_table_name(self.strings.table2uuid)
+        uuid = self.model.read(tableName)
+        self.model.set_table_name(uuid)
+        self.model.create(idd, data)
+        self.model.set_table_name(self.strings.tableStructure)
+        self.model.update(self.app.model.constants.strings.key_index, idd+1, [tableName])
+    def logger_data_read(self, idd):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.table2uuid)
+        uuid = self.model.read(tableName)
+        self.model.set_table_name(uuid)
+        return self.model.read(idd)
+    def logger_data_delete(self, idd):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.table2uuid)
+        uuid = self.model.read(tableName)
+        self.model.set_table_name(uuid)
+        self.model.delete(idd)
+    def logger_data_update(self, idd, new_val):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.table2uuid)
+        uuid = self.model.read(tableName)
+        self.model.set_table_name(uuid)
+        self.model.update(idd, new_val)
+    def logger_data_readAll(self):
+        tableName = self.app.controllers.modelWrapper.get_table_name()
+        self.model.set_table_name(self.strings.table2uuid)
+        uuid = self.model.read(tableName)
+        self.model.set_table_name(uuid)
+        return self.model.readAll()
 class Main:
     def logger(scope = None, callSetUp=True):
         if scope is None:
@@ -401,15 +648,14 @@ class Main:
         app = NameSpace()
         nlnw = NewLoggerNewWay()
         nlnw.set_app(app)
-
         ldo = LoggerDataOps()
         ldo.set_app(app)
-
         app.controllers = NameSpace()
         app.views = NameSpace()
         app.model = NameSpace()
         app.model.scope = scope
-        app.model.tableOps = ModelFunc()
+        app.model.tableOps = ModelFuncsDictionary()
+        app.model.tableOps.set_app(app)
         app.model.fields_lookup = FieldsManager()
         app.model.fields_lookup.key = None
         app.views.groups = NameSpace()
@@ -476,6 +722,7 @@ class Main:
         app.controllers.ldcv.data_from_rendered = LoggerDataOps.data_from_rendered
         app.controllers.ldcv.data_reset = LoggerDataOps.reset_rendered_state
         app.controllers.ldcv.generic_data_logger = ldo.logged_btn_func
+        
         app.controllers.searcher.data = NameSpace()
         app.controllers.searcher.data.btn_maker = ldo.logger_data_btn_maker
         app.controllers.searcher.data.engine = LoggerSearch()
@@ -484,16 +731,12 @@ class Main:
         app.controllers.searcher.data.searcher = app.controllers.searcher.search_maker(
             app.controllers.searcher.data.btn_maker, app.controllers.searcher.data.btn_clicked_wrapper, app.controllers.searcher.data.engine)
         app.controllers.ldcv.read_data = ldo.read_data
-        app.controllers.ldcv.read_structure = ldo.read_structure
         app.model.view_model.data_prev_state_key = -1
         app.model.view_model.data_curr_state_key = 0
         app.controllers.ldcv.update_data = ldo.update_data
-        app.controllers.ldcv.delete_data = ldo.delete_it
         app.controllers.ops.data = NameSpace()
-        app.controllers.ops.data.delete = ldo.delete_data
         app.controllers.ldcv.update_view_state = LoggerDataOps.update_state
-        app.controllers.ldcv.data_update_clicked =ldo.update_btn_clicked
-        app.controllers.ops.data.update = ldo.update_value
+        app.controllers.ldcv.data_update_clicked = ldo.update_btn_clicked
         app.controllers.ldcv.data_update_radio_selected = ldo.update_callback_on_data_btn_clicked
         app.views.btn = SingleButtonController()
         app.model.view_model.logger = NameSpace()
@@ -507,6 +750,7 @@ class Main:
         app.controllers.glv.wrappers.searchbtn = nlnw.searching
         app.controllers.glv.wrappers.create_log_btn = nlnw.create_logger
         app.controllers.glv.wrappers.plusbtn = nlnw.plus_btn_clicked
+        app.controllers.ldcv.wrappers.log_button = ldo.log_button_callback_func_wrapper
         app.model.view_model.logger_data = NameSpace()
         app.model.view_model.logger_data.check_box_prev_state = None
         app.controllers.ins = NameSpace()
@@ -519,24 +763,19 @@ class Main:
         app.controllers.ops.confirmer.def_func = nlnw.confirmed
         app.controllers.ops.confirmer.func = None
         app.controllers.ops.confirmer.btn = None
-
-        app.controllers.modelWrapper = NameSpace()
-        app.controllers.modelWrapper.read_tables = None
-        app.controllers.modelWrapper.read_structure = None
-        app.controllers.modelWrapper.read_all_data = None
-        #app.controllers.modelWrapper.read_with_pagination = None
-        #app.controllers.modelWrapper.read_with_filter = None
-        app.controllers.modelWrapper.delete_table = None
-        app.controllers.modelWrapper.delete_data = None
-        app.controllers.modelWrapper.update_structure = None
-        app.controllers.modelWrapper.update_data =None
-        app.controllers.modelWrapper.create_new_table = None
-        app.model.strings = NameSpace()
-        app.model.strings.structure = "structure"
-        app.model.strings.uuid = "uuid"
-        app.model.strings.key_index = "key-index"
-        app.model.strings.data = "data"
-
+        app.controllers.modelWrapper = ControllerModel()
+        app.controllers.modelWrapper.set_app(app)
+        app.model.constants = NameSpace()
+        app.model.constants.strings = NameSpace()
+        app.model.constants.strings.structure = "structure"
+        app.model.constants.strings.uuid = "uuid"
+        app.model.constants.strings.key_index = "key-index"
+        app.model.constants.strings.global_str = "globals"
+        app.model.constants.strings.data = "data"
+        app.model.constants.lists = NameSpace()
+        app.model.constants.lists.loc_tables2uuid = ['global', 'table-name-to-uuid']
+        app.model.constants.lists.loc_tables = ['tables-info']
+        app.model.constants.lists.loc_tables_data = ['table_data']
         app.views.groups.crud.create.create_btn.set_clicked_func(app.controllers.glv.wrappers.create_log_btn)
         app.views.groups.crud.create.fields_props.fieldAddBtn.set_clicked_func(app.controllers.glv.wrappers.plusbtn)
         app.views.groups.crud.create.fields_props.checkBox.observe(app.controllers.glv.field_checkbox_wrapper, ["value"])
@@ -547,4 +786,15 @@ class Main:
         app.views.ldcv.searchView.btn.set_clicked_func(app.controllers.ldcv.wrappers.searchbtn)
         if callSetUp:
             app.controllers.set_up()
+        return app
+    def loggerV2(filename, scope = None, callSetUp=True):
+        from timeline.t2023.sql_crud import SQLiteDictDB
+        mfs = SqliteTableCRUD()
+        sqldb = SQLiteDictDB()
+        sqldb.set_file(filename)
+        mfs.set_model(sqldb)
+        app = Main.logger(scope, callSetUp)
+        app.controllers.modelWrapper = ControllerModelSqliteDB()
+        app.controllers.modelWrapper.set_app(app)
+        app.controllers.modelWrapper.set_model(mfs)
         return app

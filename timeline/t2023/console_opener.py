@@ -35,7 +35,7 @@ class Functionality:
             return
         self.app.controller.utils.run_on_thread(mapped_path)
     def path_mapper(self, device, path):
-        if (device, path) in self.app.controller.pathMapper.value:
+        if hasattr(self.app.controller.pathMapper, "value") and (device, path) in self.app.controller.pathMapper.value:
             return self.app.controller.pathMapper.value[(device, path) ]
         return path
     def device_unique_identifier(self):

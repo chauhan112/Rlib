@@ -373,6 +373,7 @@ class PickleOpsModel:
             SerializationDB.pickleOut(self.content, self.filePath)
     def set_dictionary(self, dic):
         self.content = dic
+        self._loc = []
         self._sync = False
     def set_base_location(self, loc):
         self._loc = loc

@@ -63,7 +63,7 @@ class NewInstructionTable:
         
         self.set_op_runner(self._code_displayer)
         self._current_btn = None
-        self._gc_view = None
+        self._group_view = None
         
     def _pickle_creator(self, name, loc):
         pcrud = PickleCRUDOps()
@@ -149,11 +149,12 @@ class NewInstructionTable:
         cgr = {}
         if file is not None:
             cgr = SerializationDB.readPickle(file)
-        if hasattr(self, "gc"):
-            self._gc._cnt._basic._model.set_dictionary(cgr)
-        if self._gc_view is not None:
-            self._gc._cnt._basic._model.set_dictionary(cgr)
-            return self._gc_view
+        if hasattr(self, "_groupController"):
+            self._groupController._cnt._basic._model.set_dictionary(cgr)
+        if self._group_view is not None:
+            self._groupController._cnt._basic._model.set_dictionary(cgr)
+            self._groupController._update_keys()
+            return self._group_view
         
         from timeline.t2023.groupMaker import GrouperController
         gc = GrouperController()
@@ -202,6 +203,6 @@ class NewInstructionTable:
             gc._cnt._basic._view.outputSection.clear()
         gc._cnt.set_goback_func(goback)
         gc._cnt._basic._view.locationView.locationWidg.observe(changed, names=["value"])
-        self._gc = gc
-        self._gc_view = widgets.VBox([gc._view.layout, self._searchView.layout])
-        return self._gc_view
+        self._groupController = gc
+        self._group_view = widgets.VBox([gc._view.layout, self._searchView.layout])
+        return self._group_view

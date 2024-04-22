@@ -67,6 +67,8 @@ class SearchCopyReloadController:
         self._engine = engine
     def set_up(self):
         self._view.search.set_clicked_func(self._ok_clicked)
+        self._ops_dropdown_selected(1)
+        self._view.operations.observe(self._ops_dropdown_selected)
     def set_view(self, view: SearchCopyReloadView):
         self._view = view
     def set_file_opener(self, fileopener):
@@ -155,14 +157,16 @@ class SearchCopyReloadController:
         else:
             ly = self._engine.search(word, reg= reg)
         
+        self._view.out2.clear()
+        self._view.out1.display(ly, clear= True, ipy= True)
+    def _ops_dropdown_selected(self, wid):
+        typ = self._view.operations.value
         if typ == "search":
             self.set_clicked(self._search)
         elif typ == "copy":
             self.set_clicked(self._copy)
         elif typ == "load":
             self.set_clicked(self._reload)
-        self._view.out2.clear()
-        self._view.out1.display(ly, clear= True, ipy= True)
 class Main:
     def copy_reload_search():
         scrv = SearchCopyReloadView()

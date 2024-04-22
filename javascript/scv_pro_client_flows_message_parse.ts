@@ -1,12 +1,25 @@
+// SCVisitor/pro-tool/Business Logic/ClientFlows/messages/messageParser
+
 interface IMessage {
     getContent();
     set_content(content);
     get_original_msg();
 }
 
+interface Attachment {
+    id: number;
+    fileSize: number;
+    mimType: string;
+    name: string;
+    filePath: string;
+    fileHandle: string;
+    previewPath: string;
+}
+
 type StateNValue = { // see the model: Data/Models/model/StateNValue
     show: boolean;
     value: any;
+     attachment?: Attachment 
 }
 
 type SenderDetail = {
@@ -26,11 +39,14 @@ type CallInvitationStruct = { // equivalent model at: Data/Models/view/CallInvit
     show: boolean;
 }
 
-enum InformativeMessageType { // equivalent model at: Data/Models/view/enums/InformativeMessage
+enum InformativeMessageType { // equivalent model at: CustomSC:Data/Models/enums/InformativeMessageType
     ChatHasEnded = "ChatHasEnded",
     InvitingToCall =  "InvitingToCall",
     CallCancelled = "CallCancelled",
-    JoinedCall = "JoinedCall"
+    JoinedCall = "JoinedCall",
+    RejectedCall = "RejectedCall",
+    CallHasEnded= "CallHasEnded",
+    CallExpired = "CallExpired"
 }
 
 type InformativeMessageComponent = { // equivalent model at: Data/Models/view/InformativeMessage
@@ -38,6 +54,7 @@ type InformativeMessageComponent = { // equivalent model at: Data/Models/view/In
     value: string;
     type: InformativeMessageType; 
 }
+
 
 type UIInputDataForOneMessageElement = { // equivalent model at: Data/Models/view/OneMessageElementView
     scrollDate: StateNValue;
@@ -49,7 +66,7 @@ type UIInputDataForOneMessageElement = { // equivalent model at: Data/Models/vie
 
 const informativeTypeDefault = {show:false, value:"", type: InformativeMessageType.ChatHasEnded}
 const stateNValueDefault = { show: false, value: "" }
-const messageDefault = { state: { show: false, value: "" }, senderType: {type:"", moreInfo: {}}, time: "" }
+const messageDefault = { state: { show: false, value: "" , attachment: null }, senderType: {type:"", moreInfo: {}}, time: "" }
 const callInviteDefault: CallInvitationStruct = {active: false, roomId:"", show: false}
 class Utils {
     public static getDateRelative(date) {
@@ -81,9 +98,13 @@ class Utils {
     }
     public static clockTime(date) {
         var today = new Date(date);
-        var hh = String(today.getHours()).padStart(2, '0');
+        var hours = today.getHours()
+        var ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        var hh = String(hours);
         var min = String(today.getMinutes()).padStart(2, '0');
-        return hh + ':' + min;
+        return hh + ':' + min + ampm;
     }
     public static get_user_with_id(userId, users){
         if (userId){
@@ -117,7 +138,7 @@ class TextMessage implements IMessage {
             informative: { ...informativeTypeDefault },
             botMsg: { show: false, value: {} },
             message: {
-                state: { show: true, value: this.crude_content.message },
+                state: { show: true, value: this.crude_content.message, attachment: this.crude_content.attachment },            
                 senderType: {type: this.crude_content.senderType, moreInfo: {name: Utils.get_user_with_id(this.crude_content.senderId, this.users)}},
                 time: Utils.clockTime(this.crude_content.messageSentTime)
             },
@@ -156,7 +177,7 @@ class BotMessage implements IMessage {
         if (parsed_content.hasOwnProperty("isEndStep")){
             this.parsed_obj.informative = {show: true, value: parsed_content.textData, type: InformativeMessageType.ChatHasEnded}
         }else if (parsed_content.type === "Text" || parsed_content.type === "Email" || parsed_content.type === "PhoneNumber" || parsed_content.type === "FreeText"
-                        || parsed_content.type === "Escalate" ){
+                        || parsed_content.type === "Escalate" || parsed_content.type === "AI_BOT" ){ 
             this.parsed_obj.message.state = {show:true, value: parsed_content.textData}
         }else if (parsed_content.type === "QReply"){
             this.parsed_obj.botMsg = { show: false, value: parsed_content.QReplyOptions } // false because only last quick reply needs to be activated
@@ -193,8 +214,8 @@ class CallInvitationMessge implements IMessage{
         this.parsed_obj.callInfo.roomId = this.crude_content.roomId
         this.parsed_obj.callInfo.show = true
         this.parsed_obj.message.state.show = false
+        this.parsed_obj.message.state.attachment = null
         this.parsed_obj.message.senderType.type = "USER"
-        if (!this.crude_content.roomId) this.parsed_obj.callInfo.active = false
         return this.parsed_obj;
     }
     private hasExired(time:string): boolean { 
@@ -215,6 +236,11 @@ class CallInvitationMessge implements IMessage{
         obj.informative.value = Utils.get_user_with_id(this.crude_content.senderId, this.users) + " is inviting you to a call";
         return msg;
     }
+    deactivate(){
+        let val = this.getContent()
+        val.callInfo.active = false;
+    }
+
 }
 
 class InformativeMessage implements IMessage {
@@ -242,9 +268,9 @@ class InformativeMessage implements IMessage {
         }else if(this.crude_content.informativeMessageId === "CONVERSATION_ASSIGNED"){
             show = true
             msg = info.assignToUser + " joined the conversation"
-        }else if (this.crude_content.informativeMessageId === "CALL_CANCELED_VISITOR"){
+        }else if (this.crude_content.informativeMessageId === "CALL_REJECTED_VISITOR"){
             show = true
-            typ = InformativeMessageType.CallCancelled;
+            typ = InformativeMessageType.RejectedCall;
             msg = "You rejected the call at " + Utils.clockTime(this.crude_content.messageSentTime)
             this.roomId = this.crude_content.roomId
         }else if (this.crude_content.informativeMessageId === "CALL_INVITATION_VISITOR"){
@@ -254,7 +280,18 @@ class InformativeMessage implements IMessage {
             show = true
             msg = "You joined the call at " + Utils.clockTime(this.crude_content.messageSentTime)
             typ = InformativeMessageType.JoinedCall;
-        }
+            this.roomId = this.crude_content.roomId
+        }else if (this.crude_content.informativeMessageId === "CALL_ENDED_VISITOR" || this.crude_content.informativeMessageId === "CALL_ENDED_AGENT"){
+            show = true
+            msg = "The call ended at " + Utils.clockTime(this.crude_content.messageSentTime)
+            typ = InformativeMessageType.CallHasEnded;
+            this.roomId = this.crude_content.roomId
+        }else if (this.crude_content.informativeMessageId === "CALL_INVITATION_EXPIREDVISITOR"){ 
+            show = true
+            msg = "The call invitation expired"
+            typ = InformativeMessageType.CallExpired;
+            this.roomId = this.crude_content.roomId
+        }   
         this.parsed_obj = {
             scrollDate: { ...stateNValueDefault },
             informative: { show: show, value: msg, type: typ},
@@ -277,7 +314,8 @@ class ParsedMessages {
     parse(crude_messages) {
         let res: IMessage[] = []
         let updatingMessages = {}
-
+        let lastInvited  = ""
+        
         for (let i = 0; i < crude_messages.length; i++) {
             let msg = crude_messages[i]
             if (msg.senderType == "BOT") {
@@ -290,7 +328,10 @@ class ParsedMessages {
                 a.set_content(msg)
                 let invite = a.get_informative_part()
                 let cont = a.getContent()
-                updatingMessages[cont.callInfo.roomId] = cont;
+                if (cont.callInfo.roomId) {
+                    updatingMessages[cont.callInfo.roomId] = cont;
+                }else cont.callInfo.active = false;
+                lastInvited = cont.callInfo.roomId
                 res.push(invite)
                 res.push(a)
             } else if (msg.senderType == "INFORMATIVE") {
@@ -309,6 +350,8 @@ class ParsedMessages {
                 res.push(a)
             }
         }
+
+        this.only_activate_last_call_invite(updatingMessages, lastInvited)
         let out = this.add_scroll_time(res)
         if (out.length > 0 ){
             let lastEntry: UIInputDataForOneMessageElement = out[out.length-1]
@@ -317,6 +360,14 @@ class ParsedMessages {
             }
         }
         return this.filterInactiveMessage(out)
+    }
+    private only_activate_last_call_invite(updatingMessages, lastInvited){
+        for (let rmId in updatingMessages) {
+            let val = updatingMessages[rmId]
+            if (lastInvited !== rmId){
+                val.callInfo.active = false;
+            }
+        }
     }
 
     add_scroll_time(msgs: IMessage[]) {
@@ -342,7 +393,7 @@ class ParsedMessages {
             }
             res.push(uidata)
 
-        }
+        } 
         return res
     }
 
@@ -361,8 +412,9 @@ class ParsedMessages {
         this.session_name = session
     }
 }
+
 console.log("parsing the messages")
 let pm = new ParsedMessages();
-pm.set_users($this.users)
-pm.set_session_name($this._state)
-$this.out = pm.parse($this._crudeMsg)
+pm.set_users(this.users)
+pm.set_session_name(this._state)
+this.out = pm.parse(this._crudeMsg) 

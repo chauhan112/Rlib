@@ -150,7 +150,7 @@ class NetworkingDB:
         except:
             s.close()
 
-    def  reverseConnectionClient(ipaddress):   
+    def reverseConnectionClient(ipaddress):   
         import os
         import socket
         import subprocess

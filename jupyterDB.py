@@ -434,6 +434,6 @@ class jupyterDB:
             file_path += '.py'
             File.createFile(file_path)
         else:
-            file_path += ".ipynb"
+            file_path = "debug.ipynb"
             jupyterDB.createJupyterNotebook(file_path)
         OpsDB.cmd().onthread(commands=[f'{vscode} "{file_path}"'])

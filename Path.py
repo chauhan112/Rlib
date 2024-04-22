@@ -235,7 +235,7 @@ class Path:
                 folders = {os.path.basename(f): f for f in folders[1:]}
                 return p, folders
 
-            def  _deleteEmptyFoldersOfPath(path):
+            def _deleteEmptyFoldersOfPath(path):
                 folders = os.listdir(path)
                 for f in folders:
                     newPath = Path.joinPath(path, f)
