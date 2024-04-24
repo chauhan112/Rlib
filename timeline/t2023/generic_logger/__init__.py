@@ -14,8 +14,152 @@ from LibsDB import LibsDB
 from CryptsDB import CryptsDB
 from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
 from basic import BasicController, NameSpace, LoggerSystem
+from timeline.t2023.generic_logger.UIComponents import CrudViewV2, FieldCrudForm, SearchComponent, Utils, ObjMaker, SingleField
 
-from timeline.t2023.generic_logger.UIComponents import GLViewV2
+def FieldsManagerV2():
+    fields = {}
+    order_number = 0
+    def get_fields_sorted():
+        return {key: s.process.fields[key] for key in s.handlers.get_ordered_fields()}
+    def set_fields(fieldsStruct):
+        s.process.fields = fieldsStruct
+        s.process.order_number = max(map(lambda x: fieldsStruct[x][StringEnums.ORDER], fieldsStruct))
+    def reset():
+        s.process.fields = {}
+    def add_field(val, typ, info, order =None):
+        if order is None:
+            order = s.process.order_number
+            s.process.order_number += 1
+        s.process.fields[val]= {StringEnums.TYPE: typ, StringEnums.INFO: info, StringEnums.ORDER: order}
+    def moveDown(key):
+        val = s.process.fields[key]
+        ordered = s.handlers.get_ordered_fields()
+        index = None
+        for i, ke in enumerate(ordered):
+            if key == ke:
+                index = i
+                break
+        if index is not None and index < (len(ordered) - 1):
+            otherKey = ordered[index + 1]
+            otherVal = s.process.fields[otherKey]
+            m = val[StringEnums.ORDER]
+            val[StringEnums.ORDER] = otherVal[StringEnums.ORDER]
+            otherVal[StringEnums.ORDER] = m
+    def moveUp(key):
+        val = s.process.fields[key]
+        ordered = s.handlers.get_ordered_fields()
+        index = None
+        for i, ke in enumerate(ordered):
+            if key == ke:
+                index = i
+                break
+        if index is not None and index > 0:
+            otherKey = ordered[index - 1]
+            otherVal = s.process.fields[otherKey]
+            m = val[StringEnums.ORDER]
+            val[StringEnums.ORDER] = otherVal[StringEnums.ORDER]
+            otherVal[StringEnums.ORDER] = m
+    def delete_field(fieldKey):
+        del s.process.fields[fieldKey]
+    def update_field(oldFieldKey, newKey, newType, newInfo):
+        order = s.process.fields[oldFieldKey][StringEnums.ORDER]
+        s.handlers.delete_field(oldFieldKey)
+        return s.handlers.add_field(newKey, newType, newInfo, order)
+    def get_ordered_fields():
+        return sorted(s.process.fields, key= lambda y: s.process.fields[y][StringEnums.ORDER])
+    def read_field(fieldKey):
+        return s.process.fields[fieldKey]
+    s = ObjMaker.variablesAndFunction(locals())
+    return s
+def GLViewV2():
+    crudView = CrudViewV2()
+    searchComponent = SearchComponent()
+    fieldCrudForm = FieldCrudForm()
+    fieldsManager = FieldsManagerV2()
+    def editing(wid):
+        key = wid._parent.inputs.parent.inputs.parent.state.key
+        vals = s.process.fieldsManager.process.fields[key]
+        s.process.fieldCrudForm.views.fieldType.outputs.layout.value = vals["type"]
+        s.process.fieldCrudForm.views.fieldName.outputs.layout.value = key
+        s.process.fieldCrudForm.process.keyValueComp.handlers.set_dictionary(vals["info"])
+        s.process.fieldCrudForm.views.addBtn.handlers.handle = s.handlers.overwriteField
+        s.process.oldKey = key
+    def overwriteField(wid):
+        s.process.fieldCrudForm.views.addBtn.handlers.handle = s.handlers.add_field_handler
+        key = s.process.fieldCrudForm.views.fieldName.outputs.layout.value
+        typ = s.process.fieldCrudForm.views.fieldType.outputs.layout.value
+        moreInfos = s.process.fieldCrudForm.process.keyValueComp.views.moreInfoLay.state.controller._basic._model.content.copy()
+        s.process.fieldsManager.handlers.update_field(s.process.oldKey, key, typ, moreInfos)
+        s.handlers.reset_form_values()
+        s.handlers.updateList()
+    def reset_form_values():
+        s.process.fieldCrudForm.views.fieldName.outputs.layout.value = ""
+        s.process.fieldCrudForm.process.keyValueComp.handlers.set_dictionary({})
+    def updateList():
+        notDelete = []
+        for sf in s.process.fieldCrudForm.views.fieldsList.outputs.renderedStates:
+            if not sf.state.deleted:
+                notDelete.append(sf)
+        fields = s.process.fieldsManager.handlers.get_ordered_fields()
+        for sf, key in zip(notDelete, fields):
+            sf.state.parent.views.fieldName.outputs.layout.value = key
+            sf.state.parent.views.fieldType.outputs.layout.value = s.process.fieldsManager.process.fields[key]["type"]
+            sf.state.parent.views.container.state.key = key
+    def delete_clicked(wid):
+        key = wid._parent.inputs.parent.inputs.parent.state.key
+        wid._parent.inputs.parent.inputs.parent.hide()
+        s.process.fieldsManager.handlers.delete_field(key)
+        wid._parent.inputs.parent.inputs.parent.state.deleted = True
+    def moveUp(wid):
+        key = wid._parent.inputs.parent.inputs.parent.state.key
+        s.process.fieldsManager.handlers.moveUp(key)
+        s.handlers.updateList()
+    def moveDown(wid):
+        key = wid._parent.inputs.parent.inputs.parent.state.key
+        s.process.fieldsManager.handlers.moveDown(key)
+        s.handlers.updateList()
+    def add_field_handler(wid):
+        key = s.process.fieldCrudForm.views.fieldName.outputs.layout.value
+        typ = s.process.fieldCrudForm.views.fieldType.outputs.layout.value
+        moreInfos = s.process.fieldCrudForm.process.keyValueComp.views.moreInfoLay.state.controller._basic._model.content.copy()
+        if not (key and typ):
+            return
+        if key in s.process.fieldsManager.process.fields:
+            return
+        s.handlers.add_a_field(key, typ, moreInfos)
+        s.process.fieldsManager.handlers.add_field(key, typ, moreInfos)
+        s.handlers.reset_form_values()
+    def add_a_field(key, typ, moreInfos):
+        sf = SingleField()
+        sf.views.fieldName.outputs.layout.value = key
+        sf.views.fieldType.outputs.layout.value = typ
+        sf.views.fieldName.outputs.layout.add_class("w-auto")
+        sf.views.fieldType.outputs.layout.add_class("w-auto")
+        sf.views.container.state.parent = sf
+        sf.views.container.state.key = key
+        sf.views.container.state.deleted = False
+        sf.views.deleteButton.handlers.handle = delete_clicked
+        sf.views.editButton.handlers.handle = editing
+        sf.views.upIcon.handlers.handle = moveUp
+        sf.views.downIcon.handlers.handle = moveDown
+        s.process.fieldCrudForm.views.fieldsList.append(sf.views.container)
+    def radioSelected(wid):
+        val = s.process.crudView.views.crudView.outputs.layout.value
+        if val == "c":
+            s.process.fieldCrudForm.views.container.show()
+            s.process.searchComponent.views.container.hide()
+        else:
+            s.process.fieldCrudForm.views.container.hide()
+            s.process.searchComponent.views.container.show()
+    container = Utils.container([Utils.container([crudView.views.container, searchComponent.views.container]),
+        fieldCrudForm.views.container ], className="flex flex-column")
+    s = ObjMaker.uisOrganize(locals())
+    fieldCrudForm.views.addBtn.handlers.handle = add_field_handler
+    crudView.views.crudView.handlers.handle = radioSelected
+    radioSelected(1)
+    # glv.process.fieldCrudForm.views.fieldType.outputs.layout.options = list(map(lambda x: x.name, SupportedTypes))
+    return s
+
 class IModifier:
     def set_basic_controller(self, bsc):
         pass
@@ -753,7 +897,7 @@ class Main:
     def generic_logger(filepath, scope=None, readPickleFile=True):
         bsc = BasicController()
         bsc.logger = LoggerSystem()
-        glv = GLViewV2()
+        glv = GLView()
         bsc.views.glv = glv
         glc = GLController()
         glc.set_basic_controller(bsc)

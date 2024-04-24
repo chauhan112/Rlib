@@ -181,7 +181,7 @@ def SearchComponent():
         searchType = Utils.get_comp({"options":["any", "reg", "case", "word", "concatenated", "fields"]}, IpywidgetsComponentsEnum.Dropdown,
                                     bind=False, className="w-auto")
         searchBtn = Utils.get_comp({"description": "search"}, IpywidgetsComponentsEnum.Button, className = "w-auto br-5px")
-        layout = Utils.container([inputText, searchType, searchBtn], className="w-100")
+        container = Utils.container([inputText, searchType, searchBtn], className="w-100")
         addToNameSpace(state, locals(), ["state"])
     state = NameSpace()
     _searchComp(state)
@@ -514,6 +514,8 @@ def KeyValueComponent():
         }
         """
         import json
+        def get_values():
+            pass
         def set_dictionary(dic):
             moreInfoLay.state.controller._basic._model.set_dictionary(dic)
             moreInfoLay.state.controller._update_keys()

@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from timeline.t2024.ui_lib.generic_loggerV3 import SearchComponent, KeyValueComponent
+from timeline.t2024.ui_lib.generic_loggerV3 import SearchComponent, KeyValueComponent, SingleField
 from basic import Main as ObjMaker
 def MetaCRUD():
     loggerName = None
@@ -90,7 +90,6 @@ def CrudViewV2():
     }
     .RadioButtonsV2{
         width: auto;
-        min-width: 90px;
     }"""
     crudView = Utils.get_comp({"options": ['r', 'c', 'u', 'd']}, IpywidgetsComponentsEnum.RadioButtons,className="RadioButtonsV2")
     cssCompon = Utils.get_comp({}, ComponentsLib.CSSAdder, customCss= classes)
@@ -107,27 +106,19 @@ def FieldCrudForm():
     htmlCom = Utils.get_comp({},IpywidgetsComponentsEnum.HTML,bind=False)
     keyValueComp = KeyValueComponent()
     outArea = Utils.get_comp({}, IpywidgetsComponentsEnum.Output, bind=False)
+    fieldsList = Utils.container([], className="flex flex-column")
     def showOrhide(wid):
         if moreInfoAdd.outputs.layout.value:
             keyValueComp.views.container.show()
         else:
             keyValueComp.views.container.hide()
-    container = Utils.container([loggerName, Utils.container([fieldName, fieldType, moreInfoAdd, addBtn, keyValueComp.views.container, htmlCom] ),
+    container = Utils.container([loggerName, fieldsList, Utils.container([fieldName, fieldType, moreInfoAdd, addBtn, keyValueComp.views.container, htmlCom] ),
                                  createBtn, outArea], className ="flex flex-column" )
     showOrhide(1)
     moreInfoAdd.handlers.handle = showOrhide
     state = ObjMaker.uisOrganize(locals())
     return state
-def GLViewV2():
-    
-    crudView = CrudViewV2()
-    searchComponent = SearchComponent()
-    fieldCrudForm = FieldCrudForm()
-    def set_options(options):
-        pass
-    container = Utils.container([Utils.container([crudView.views.container, searchComponent.views.layout]), fieldCrudForm.views.container ], className="flex flex-column")
-    state = ObjMaker.uisOrganize(locals())
-    return state
+
 class Main:
     def appendToGlv(bsc):
         glv = bsc.nms2024.glv
@@ -143,4 +134,3 @@ class Main:
         glv.crudOps.options.set_select_func(mcrudUi.handlers.defs.ops_selected_v2)
         mcrudUi.handlers.defs.ops_selected_v2(1,runParentFunc=False)
         glv.mcrudUi = mcrudUi
-        
