@@ -46,6 +46,10 @@ class IpywidgetComponentV2(BaseComponentV2):
             from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget
             self.outputs.layout = AddCSSWidget()
             self.outputs.layout.content = self.inputs.customCss
+        elif self.inputs.typeOfWidget == ComponentsLib.CustomOutput:
+            from modules.Explorer.personalizedWidgets import CustomOutput
+            self.state.controller = CustomOutput()
+            self.outputs.layout = self.state.controller.get_layout()
         else:
             self.outputs.layout = getattr(widgets, self.inputs.typeOfWidget.name)(**self.inputs.params)
             if self.inputs.bind:
@@ -80,6 +84,9 @@ class RepeaterComponentV2(BaseComponentV2):
     def _child_prep(self, omniComponent):
         if omniComponent.handlers.handle != omniComponent.handlers.defs.wrapper:
             omniComponent.handlers.handle = self.handlers.defs.wrapper
+    def clear(self):
+        self.outputs.renderedStates.clear()
+        self.outputs.layout.children = [comp.outputs.layout for comp in self.outputs.renderedStates]
 class Utils:
     def get_comp(infos, typ, **args):
         ic = IpywidgetComponentV2()

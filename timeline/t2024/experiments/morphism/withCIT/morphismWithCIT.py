@@ -26,6 +26,7 @@ class ComponentsLib(Enum):
     ButtonResultDisplayer = 17
     Paginator = 18
     CSSAdder = 19
+    CustomOutput = 20
 class IpywidgetsComponentsEnum(Enum):
     IntSlider            = 1
     FloatSlider          = 2

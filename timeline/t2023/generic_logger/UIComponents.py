@@ -1,6 +1,7 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from timeline.t2024.ui_lib.generic_loggerV3 import SearchComponent, KeyValueComponent, SingleField
 from basic import Main as ObjMaker
+from TimeDB import TimeDB
 def MetaCRUD():
     loggerName = None
     def get_current_logger_name(bsc):
@@ -105,15 +106,22 @@ def FieldCrudForm():
     createBtn   = Utils.get_comp({"description":"create logger"}, IpywidgetsComponentsEnum.Button)
     htmlCom = Utils.get_comp({},IpywidgetsComponentsEnum.HTML,bind=False)
     keyValueComp = KeyValueComponent()
-    outArea = Utils.get_comp({}, IpywidgetsComponentsEnum.Output, bind=False)
     fieldsList = Utils.container([], className="flex flex-column")
     def showOrhide(wid):
         if moreInfoAdd.outputs.layout.value:
             keyValueComp.views.container.show()
         else:
             keyValueComp.views.container.hide()
+    def info(msg, isWarning = False):
+        if isWarning:
+            htmlCom.outputs.layout.value = f"<font face='comic sans ms' color ='red'>{msg}</font>"
+        else:
+            htmlCom.outputs.layout.value = f"<font face='comic sans ms' color ='blue'>{msg}</font>"
+        def disapp():
+            htmlCom.outputs.layout.value=""
+        TimeDB.setTimer().oneTimeTimer(5, disapp)
     container = Utils.container([loggerName, fieldsList, Utils.container([fieldName, fieldType, moreInfoAdd, addBtn, keyValueComp.views.container, htmlCom] ),
-                                 createBtn, outArea], className ="flex flex-column" )
+                                 createBtn], className ="flex flex-column" )
     showOrhide(1)
     moreInfoAdd.handlers.handle = showOrhide
     state = ObjMaker.uisOrganize(locals())

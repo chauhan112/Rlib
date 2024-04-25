@@ -14,7 +14,7 @@ from LibsDB import LibsDB
 from CryptsDB import CryptsDB
 from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
 from basic import BasicController, NameSpace, LoggerSystem
-from timeline.t2023.generic_logger.UIComponents import CrudViewV2, FieldCrudForm, SearchComponent, Utils, ObjMaker, SingleField
+from timeline.t2023.generic_logger.UIComponents import CrudViewV2, FieldCrudForm, SearchComponent, Utils, ObjMaker, SingleField, ComponentsLib
 
 def FieldsManagerV2():
     fields = {}
@@ -76,6 +76,8 @@ def GLViewV2():
     searchComponent = SearchComponent()
     fieldCrudForm = FieldCrudForm()
     fieldsManager = FieldsManagerV2()
+    keysOut = Utils.get_comp({}, ComponentsLib.CustomOutput, bind=False)
+    resultsOut = Utils.get_comp({}, ComponentsLib.CustomOutput, bind=False)
     def editing(wid):
         key = wid._parent.inputs.parent.inputs.parent.state.key
         vals = s.process.fieldsManager.process.fields[key]
@@ -91,11 +93,11 @@ def GLViewV2():
         moreInfos = s.process.fieldCrudForm.process.keyValueComp.views.moreInfoLay.state.controller._basic._model.content.copy()
         s.process.fieldsManager.handlers.update_field(s.process.oldKey, key, typ, moreInfos)
         s.handlers.reset_form_values()
-        s.handlers.updateList()
+        s.handlers.syncViewList()
     def reset_form_values():
         s.process.fieldCrudForm.views.fieldName.outputs.layout.value = ""
         s.process.fieldCrudForm.process.keyValueComp.handlers.set_dictionary({})
-    def updateList():
+    def syncViewList():
         notDelete = []
         for sf in s.process.fieldCrudForm.views.fieldsList.outputs.renderedStates:
             if not sf.state.deleted:
@@ -105,6 +107,15 @@ def GLViewV2():
             sf.state.parent.views.fieldName.outputs.layout.value = key
             sf.state.parent.views.fieldType.outputs.layout.value = s.process.fieldsManager.process.fields[key]["type"]
             sf.state.parent.views.container.state.key = key
+    def set_fields(keyVals):
+        s.process.fieldsManager.handlers.set_fields(keyVals)
+        fields = s.process.fieldsManager.handlers.get_ordered_fields()
+        for key in fields:
+            s.handlers.add_a_field(key, s.process.fieldsManager.process.fields[key]["type"])
+    def clear_fields():
+        s.process.fieldsManager.handlers.reset()
+        s.handlers.reset_form_values()
+        s.process.fieldCrudForm.views.fieldsList.clear()
     def delete_clicked(wid):
         key = wid._parent.inputs.parent.inputs.parent.state.key
         wid._parent.inputs.parent.inputs.parent.hide()
@@ -113,11 +124,11 @@ def GLViewV2():
     def moveUp(wid):
         key = wid._parent.inputs.parent.inputs.parent.state.key
         s.process.fieldsManager.handlers.moveUp(key)
-        s.handlers.updateList()
+        s.handlers.syncViewList()
     def moveDown(wid):
         key = wid._parent.inputs.parent.inputs.parent.state.key
         s.process.fieldsManager.handlers.moveDown(key)
-        s.handlers.updateList()
+        s.handlers.syncViewList()
     def add_field_handler(wid):
         key = s.process.fieldCrudForm.views.fieldName.outputs.layout.value
         typ = s.process.fieldCrudForm.views.fieldType.outputs.layout.value
@@ -126,10 +137,10 @@ def GLViewV2():
             return
         if key in s.process.fieldsManager.process.fields:
             return
-        s.handlers.add_a_field(key, typ, moreInfos)
+        s.handlers.add_a_field(key, typ)
         s.process.fieldsManager.handlers.add_field(key, typ, moreInfos)
         s.handlers.reset_form_values()
-    def add_a_field(key, typ, moreInfos):
+    def add_a_field(key, typ):
         sf = SingleField()
         sf.views.fieldName.outputs.layout.value = key
         sf.views.fieldType.outputs.layout.value = typ
@@ -152,14 +163,13 @@ def GLViewV2():
             s.process.fieldCrudForm.views.container.hide()
             s.process.searchComponent.views.container.show()
     container = Utils.container([Utils.container([crudView.views.container, searchComponent.views.container]),
-        fieldCrudForm.views.container ], className="flex flex-column")
+        fieldCrudForm.views.container, keysOut, resultsOut ], className="flex flex-column")
     s = ObjMaker.uisOrganize(locals())
     fieldCrudForm.views.addBtn.handlers.handle = add_field_handler
     crudView.views.crudView.handlers.handle = radioSelected
     radioSelected(1)
     # glv.process.fieldCrudForm.views.fieldType.outputs.layout.options = list(map(lambda x: x.name, SupportedTypes))
     return s
-
 class IModifier:
     def set_basic_controller(self, bsc):
         pass
@@ -310,95 +320,6 @@ class FieldsManager:
         return self._fields[fieldKey]
     def get_layout(self):
         return [self._fields_view_map[ta].layout for ta in self.get_ordered_fields()]
-class GLController:
-    def __init__(self):
-        self._override = False
-        self._key_val = {}
-        self.set_field_manager(FieldsManager())
-    def set_field_manager(self, mng):
-        self._fields_manager = mng
-    def set_basic_controller(self, bsc):
-        self._bsc = bsc
-    def set_up(self):
-        HideableWidget.hideIt(self._bsc.views.glv.crudopsWid)
-        HideableWidget.hideIt(self._bsc.views.glv.moreInfo[0])
-        self._bsc.views.glv.fieldInfo.typeOfWid.options = list(map(lambda x: x.name, SupportedTypes))
-        self._bsc.views.glv.fieldInfo.checkBox.observe(self._showKeyValAddOps, names="value")
-        self._bsc.views.glv.fieldInfo.fieldAddBtn.set_clicked_func(self._add_clicked)
-        self._bsc.views.glv.loggerInfo.createBtn.set_clicked_func(self._logger_creator)
-        self._update_keys(self._key_val)
-    def _showKeyValAddOps(self, wd):
-        HideableWidget.hideIt(self._bsc.views.glv.moreInfo[0])
-        if self._bsc.views.glv.fieldInfo.checkBox.value:
-            HideableWidget.showIt(self._bsc.views.glv.moreInfo[0])
-            if self._key_val:
-                self._update_keys(self._key_val)
-    def _add_clicked(self, btn):
-        val = self._bsc.views.glv.fieldInfo.textWid.value.strip()
-        typ = self._bsc.views.glv.fieldInfo.typeOfWid.value
-        if not val:
-            self._info("please add field name", True)
-            return
-        if not typ:
-            self._info("please select a type", True)
-            return
-        self._bsc.views.glv.fieldInfo.textWid.value = ""
-        self._add_field(val, typ)
-        self._override = False
-    def _add_field(self, val, typ):
-        if val in self._fields_manager.get_ordered_fields() and not self._override:
-            self._info("Title already exists")
-            return
-        if self._override:
-            fvi = self._fields_manager.update_field(self._old_key, val, typ, self._key_val)
-        else:
-            fvi = self._fields_manager.add_field(val, typ, self._key_val)
-        HideableWidget.hideIt(fvi.displayInfoWid)
-        fvi.editBtn.on_click(lambda x: self._editing_field(fvi))
-        fvi.deleteBtn.on_click(lambda x: self._delete_field(fvi))
-        self._update_keys({})
-        self._bsc.views.glv.fieldInfo.listWid.children = self._fields_manager.get_layout()
-    def _editing_field(self, field):
-        self._override = True
-        self._old_key = field.textWid.value
-        self._bsc.views.glv.fieldInfo.textWid.value = field.textWid.value
-        self._bsc.views.glv.fieldInfo.typeOfWid.value = field.typeOfWid.value
-        fieldContent = self._fields_manager.read_field(field.textWid.value)
-        self._update_keys(fieldContent['info'])
-    def _delete_field(self, field):
-        self._fields_manager.delete_field(field.textWid.value)
-        self._bsc.views.glv.fieldInfo.listWid.children = self._fields_manager.get_layout()
-    def _info(self, msg, isWarning = False):
-        if isWarning:
-            self._bsc.views.glv.loggerInfo.out.value = f"<font face='comic sans ms' color ='red'>{msg}</font>"
-        else:
-            self._bsc.views.glv.loggerInfo.out.value = f"<font face='comic sans ms' color ='blue'>{msg}</font>"
-        def disapp():
-            self._bsc.views.glv.loggerInfo.out.value=""
-        TimeDB.setTimer().oneTimeTimer(5, disapp)
-    def _logger_creator(self, btn):
-        val = self._bsc.views.glv.loggerInfo.nameWid.value.strip()
-        if not val:
-            self._info("give a logger name", True)
-            return
-        if len(self._fields_manager.get_ordered_fields())== 0:
-            self._info("add some fields", True)
-            return
-        self._info("adding logger")
-        self._bsc._model.add(val, {'structure': self._fields_manager.get_ordered_fields(), 'data': {}, 
-            StringEnums.UUID: CryptsDB.generateUniqueId()})
-        self.reset()
-    def reset(self):
-        self._override = False
-        self._fields_manager.reset()
-        self._update_keys({})
-        self._bsc.views.glv.loggerInfo.nameWid.value = ""
-        self._bsc.views.glv.fieldInfo.listWid.children = self._fields_manager.get_layout()
-    def _update_keys(self, keys):
-        self._key_val = keys
-        cnt = self._bsc.views.glv.moreInfo[1]
-        cnt._basic._model.set_dictionary(self._key_val)
-        cnt._update_keys()
 class CRUPOps(Enum):
     READ= "r"
     CREATE= "c"
@@ -415,8 +336,8 @@ class LoggerSearcherController:
     def set_basic_controller(self, bsc):
         self._bsc = bsc
     def set_up(self):
-        self._bsc.views.glv.logSearch.btn.set_clicked_func(self._on_search_clicked)
-        self._bsc.views.glv.crudOps.options.set_select_func(self._ops_selected)
+        self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._on_search_clicked
+        self._bsc.views.glv.process.crudView.views.crudView.handlers.handle = self._ops_selected
         self.set_button_click_func(self._opIt)
     def _active_loggers_keys(self):
         allContent = self._bsc._model.readAll()
@@ -428,44 +349,45 @@ class LoggerSearcherController:
                 keys.append(x)
         return keys
     def _on_search_clicked(self, btn):
-        word = self._bsc.views.glv.logSearch.textWid.value.strip()
-        reg = self._bsc.views.glv.logSearch.isRegWid.value
-        case = self._bsc.views.glv.logSearch.isCase.value
+        word = self._bsc.views.glv.process.searchComponent.views.inputText.outputs.layout.value.strip()
+        val = self._bsc.views.glv.process.searchComponent.views.searchType.outputs.layout.value
+        reg = False
+        case = False
+        if val == "reg":
+            reg = True
+        elif val == "case":
+            case = True
         self._tasks_names = self._active_loggers_keys()
         self._searcher._engine.set_container(self._tasks_names)
         layo = self._searcher.search(word, reg =reg, case=case)
-        self._bsc.views.glv.logSearch.couput.display(layo,True, True)
+        self._bsc.views.glv.views.keysOut.state.controller.display(layo, True, True)
     def _btn_click_func(self, btn):
         self._bsc.debug = btn
         self._clicked_func(btn, self)
     def _opIt(self, btn, *param):
-        self._bsc.views.glv.out.display(self._bsc.views.ldcv.layout, True, True)
+        self._bsc.views.glv.views.resultsOut.state.controller.display(self._bsc.views.ldcv.layout, True, True)
         self._bsc.controllers.ldcc.set_current_btn(btn)
         self._bsc.views.ldcv.searchView.couput.clear()
         self._bsc.controllers.ldcc._ops_selected(None)
     def _delete_logger_intermediate(self, btn, *param):
         self._clicked = btn.description
-        self._bsc.views.glv.logSearch.btn.layout.description = "confirm"
-        self._bsc.views.glv.logSearch.btn.set_clicked_func(self._delete_logger)
+        self._bsc.views.glv.process.searchComponent.views.searchBtn.outputs.layout.description = "confirm"
+        self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._delete_logger
     def _delete_logger(self, btn, *param):
         taskName = self._clicked
-        self._bsc.views.glv.logSearch.btn.set_clicked_func(self._on_search_clicked)
+        self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._on_search_clicked
         if taskName:
-            self._bsc.views.glv.logSearch.btn.layout.description = "search"
+            self._bsc.views.glv.process.searchComponent.views.searchBtn.outputs.layout.description = "search"
             st = self._bsc._model.read(taskName)
             st["status"] = "deleted"
             self._bsc._model.add(taskName, st, True)
             self._clicked = None
     def _default_update_logger(self, btn, *param):  
-        self._bsc.controllers.glc.reset()
+        self._bsc.views.glv.handlers.clear_fields()
         st = self._bsc._model.read(btn.description)
-        self._bsc.views.glv.loggerInfo.nameWid.value = btn.description
+        self._bsc.views.glv.process.fieldCrudForm.views.loggerName.outputs.layout.value = btn.description
         struc = st["structure"]
-        for k in struc:
-            typ = struc[k]['type']
-            self._bsc.controllers.glc._key_val = struc[k]['info']
-            self._bsc.controllers.glc._add_field(k, typ)
-        HideableWidget.showIt(self._bsc.views.glv.crudopsWid)
+        self._bsc.views.glv.handlers.set_fields(struc)
     def _btn_maker(self, des, func):
         btn = widgets.Button(description = self._tasks_names[des], layout= {"width":"auto"})
         btn.on_click(func)
@@ -484,39 +406,49 @@ class LoggerSearcherController:
         see.default_display(False)
         return see
     def _ops_selected(self, wid, *param):
-        self._bsc.views.glv.logSearch.btn.set_clicked_func(self._on_search_clicked)
-        val = self._bsc.views.glv.crudOps.options.wid.value
-        HideableWidget.hideIt(self._bsc.views.glv.crudopsWid)
-        HideableWidget.showIt(self._bsc.views.glv.logSearch.layout)
-        self._bsc.views.glv.out.clear()
+        self._bsc.views.glv.handlers.radioSelected(wid)
+        self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._on_search_clicked
+        val = self._bsc.views.glv.process.crudView.views.crudView.outputs.layout.value
+        self._bsc.views.glv.process.searchComponent.views.container.show()
+        self._bsc.views.glv.views.keysOut.state.controller.clear()
         if val == CRUPOps.READ.value:
             self.set_button_click_func(self._opIt)
         elif val == CRUPOps.UPDATE.value:
             self.set_button_click_func(self._default_update_logger)
-            self._bsc.views.glv.loggerInfo.createBtn.set_clicked_func(self._update_logger_structure)
+            self._bsc.views.glv.process.fieldCrudForm.views.createBtn.handlers.handle = self._update_logger_structure
         elif val == CRUPOps.DELETE.value:
             self.set_button_click_func(self._delete_logger_intermediate)
         elif val == CRUPOps.CREATE.value:
-            self._bsc.views.glv.loggerInfo.createBtn.set_clicked_func(self._bsc.controllers.glc._logger_creator)
-            HideableWidget.hideIt(self._bsc.views.glv.logSearch.layout)
-            HideableWidget.showIt(self._bsc.views.glv.crudopsWid)
-            self._bsc.controllers.glc.reset()
+            self._bsc.views.glv.process.fieldCrudForm.views.createBtn.handlers.handle = self._create_logger
+            self._bsc.views.glv.process.searchComponent.views.container.hide()
+            self._bsc.views.glv.handlers.clear_fields()
     def _update_logger_structure(self, btn):
-        val = self._bsc.views.glv.loggerInfo.nameWid.value.strip()
+        val = self._bsc.views.glv.process.fieldCrudForm.views.loggerName.outputs.layout.value.strip()
         if not val:
-            self._bsc.controllers.glc._info("give a logger name", True)
+            self._bsc.views.glv.process.fieldCrudForm.handlers.info("give a logger name", True)
             return
-        if len(self._bsc.controllers.glc._fields_manager.get_ordered_fields())== 0:
-            self._bsc.controllers.glc._info("add some fields", True)
+        if len(self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted())== 0:
+            self._bsc.views.glv.process.fieldCrudForm.handlers.info("add some fields", True)
             return
-        self._bsc.controllers.glc._info("updating logger")
+        self._bsc.views.glv.process.fieldCrudForm.handlers.info("updating logger")
         content = self._bsc._model.read(val)
-        content['structure'] = self._bsc.controllers.glc._fields_manager.get_ordered_fields()
+        content['structure'] = self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted()
         self._bsc._model.add(val, content, True)
-        self._bsc.controllers.glc.reset()
-        HideableWidget.hideIt(self._bsc.views.glv.crudopsWid)
+        self._bsc.views.glv.handlers.clear_fields()
     def set_logged_data_crud_operator(self, oper):
         self._bsc.controllers.ldcc = oper
+    def _create_logger(self, btn):
+        val = self._bsc.views.glv.process.fieldCrudForm.views.loggerName.outputs.layout.value.strip()
+        if not val:
+            self._bsc.views.glv.process.fieldCrudForm.handlers.info("give a logger name", True)
+            return
+        if len(self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted())== 0:
+            self._bsc.views.glv.process.fieldCrudForm.handlers.info("add some fields", True)
+            return
+        self._bsc.views.glv.process.fieldCrudForm.handlers.info("adding logger")
+        self._bsc._model.add(val, {'structure': self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted(), 'data': {}, 
+            StringEnums.UUID: CryptsDB.generateUniqueId()})
+        self._bsc.views.glv.handlers.clear_fields()
 class LoggerDataCRUDOpsView:
     def __init__(self):
         self.opsWid = CrudView()
@@ -897,12 +829,9 @@ class Main:
     def generic_logger(filepath, scope=None, readPickleFile=True):
         bsc = BasicController()
         bsc.logger = LoggerSystem()
-        glv = GLView()
+        glv = GLViewV2()
+        glv.process.fieldCrudForm.views.fieldType.outputs.layout.options = list(map(lambda x: x.name, SupportedTypes))
         bsc.views.glv = glv
-        glc = GLController()
-        glc.set_basic_controller(bsc)
-        bsc.controllers.glc = glc
-        glc.set_up()
         pcrud = PickleCRUDOps()
         if readPickleFile:
             pcrud.set_pickle_file(filepath)
@@ -914,7 +843,7 @@ class Main:
         lsc.set_up()
         if scope:
             bsc.set_scope(scope)
-            glv.moreInfo[1]._basic.set_scope(scope)
+            glv.process.fieldCrudForm.process.keyValueComp.views.moreInfoLay.state.controller._basic.set_scope(scope)
         ldcv = LoggerDataCRUDOpsView()
         bsc.views.ldcv = ldcv
         ldcc = LoggerDataCRUDController()
@@ -928,4 +857,4 @@ class Main:
         dfvr.set_controller(bsc)
         dfvr.set_up()
         bsc.controllers.dfvr = dfvr
-        return glv.layout, bsc
+        return bsc
