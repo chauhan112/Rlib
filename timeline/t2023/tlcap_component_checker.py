@@ -173,8 +173,8 @@ class TLCapUIComponentsSearchView:
         nrb.add_widget(self.configForPasting)
         self.copyFilePath = widgets.Button(description= "copyFilePath", layout={'width':"auto"})
         nrb.add_widget(self.copyFilePath)
-        self.openModules = widgets.Button(description= "openImportedModules", layout={'width':"auto"})
-        nrb.add_widget(self.openModules)
+        # self.openModules = widgets.Button(description= "openImportedModules", layout={'width':"auto"})
+        # nrb.add_widget(self.openModules)
     def display(self):
         if self.gnrb is None:
             self._make_layout()
@@ -201,7 +201,7 @@ class UICompSearcherController:
         self._ui.configPrinter.on_click(self._config_print)
         self._ui.configForPasting.on_click(self._config_to_paste)
         self._ui.copyFilePath.on_click(self._copy_file_path)
-        self._ui.openModules.on_click(self._open_imported_modules)
+        # self._ui.openModules.on_click(self._open_imported_modules)
     def _copy_file_path(self, wid):
         from ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(os.path.abspath(self._ui.drop.value))

@@ -153,3 +153,36 @@ def urlsOps():
     tabWid.titles = [t for t in tab_contents]
     GNotebookLayoutController.instances[key] = tabWid
     display(GNotebookLayoutController.instances[key])
+
+# generic logger v1
+def ggn():
+    key = "generic-logger"
+    from IPython.display import display
+    from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key].views.glv.views.container.outputs.layout)
+        return
+
+    from timeline.t2023.generic_logger import Main
+    from timeline.t2023.security import Main as Sec
+    cbnt = Main.generic_logger("../../2023/10. oct/logger.pkl", globals())
+    cbnt.set_model(Sec.model_with_security("../../2023/10. oct/logger.pkl"))
+    GNotebookLayoutController.instances[key] = cbnt
+    display(GNotebookLayoutController.instances[key].views.glv.views.container.outputs.layout)
+
+# generic logger v4 (advance search and sort filters ) 
+def ggn():
+    key = "test-generic-logger"
+    from IPython.display import display
+    from modules.rlib_notebook_tools.instructions_tool import GNotebookLayoutController
+    if key in GNotebookLayoutController.instances:
+        display(GNotebookLayoutController.instances[key].process.container.views.container.outputs.layout)
+        return
+    import os
+    from timeline.t2024.generic_logger.generic_loggerV4 import Main
+    from LibsDB import LibsDB
+    filename = os.sep.join([LibsDB.cloudPath(), 'timeline', '2024', '05_May', "logger_transformed.sqlite"])
+    cnt = Main.generic_logger(filename)
+    cnt.process.container.views.container.outputs.layout
+    GNotebookLayoutController.instances[key] = cnt
+    display(cnt.process.container.views.container.outputs.layout)

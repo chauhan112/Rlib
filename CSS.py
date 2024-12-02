@@ -1,6 +1,6 @@
 from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget
-from timeline.t2024.experiments.models import LocalStorageTableOps, ModelInitializer
-ModelInitializer.initialize()
+import os
+from LibsDB import LibsDB
 
 def cssUpdator(state):
     from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils
@@ -20,6 +20,8 @@ def cssUpdator(state):
     addToNameSpace(state, locals(), ["state"])
 
 class Main:
+    loaded = None
+    ui = None
     def updatorLC(viewOnly=True):
         from basic import NameSpace
         state = NameSpace()
@@ -27,13 +29,21 @@ class Main:
         if viewOnly:
             return state.views.updator.outputs.layout
         return state
+    def crudUI(returnController=False):
+        from timeline.t2024.tailwind.twcrudOps import TailWindCRUDOps
+        twcrud = TailWindCRUDOps()
+        twcrud.process.CSSMain = Main
+        twcrud.process.model.set_file(os.sep.join([LibsDB.cloudPath(), "timeline","2024","06_Jun","twcss.pkl"]))
+        if returnController:
+            return twcrud
+        return twcrud.views.container.outputs.layout
     def loadInCssComponent(content = None):
         acw = AddCSSWidget()
         if content is None:
-            app_name = "css_updator"
-            key = "jupyter-css"
-            cssContent = LocalStorageTableOps.read(app_name, key)["value"]
-            acw.content =  cssContent
+            Main.ui = Main.crudUI(True)
+            acw.content = Main.ui.handlers.toText()
+            Main.loaded = acw
         else:
             acw.content = content
         return acw
+    

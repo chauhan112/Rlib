@@ -15,7 +15,6 @@ class ListContentSearch(MultilineStringSearch):
         return self._iterator(lambda val: ComparerDB.inCompare(leftIn=str(word), right=str(val), case=case))
     def pattern(self, patt):
         return self._iterator(lambda val: ComparerDB.regexSearch(regex=patt, word=str(val)))
-
 class ListSearcher:
     def __init__(self):
         self.set_btn_click_func(lambda x,y : x)

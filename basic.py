@@ -86,10 +86,12 @@ def addToNameSpace(obj, dictVals, ignoring= []):
     ObjectOps.setEvenIfItdoesNotExist(obj, ["local_states"], dictVals)
 
 class Main:
-    def dicToNamespace(dictVals, obj = None):
+    def dicToNamespace(dictVals, obj = None, ignoreIfExistsInObj= False):
         if obj is None:
             obj = ObjectOps.make_obj()
         for key in dictVals:
+            if hasattr(obj, key) and ignoreIfExistsInObj:
+                continue
             val = dictVals[key]
             if isinstance(val, dict):
                 Main.dicToNamespace(val)
@@ -100,12 +102,14 @@ class Main:
     def dicToNamespaceWithIgnores(dictVals, obj = None, ignores= []):
         newDict= {key: dictVals[key] for key in dictVals if key not in ignores}
         return Main.dicToNamespace(newDict, obj)
-    def variablesAndFunction(dictVals, ignoring= [], obj=None):
+    def variablesAndFunction(dictVals, ignoring= [], obj=None, ignoreIfExistsInObj= False):
         if obj is None:
             obj = ObjectOps.make_obj()
         import inspect
         for key in dictVals:
             if key in ignoring:
+                continue
+            if hasattr(obj, key) and ignoreIfExistsInObj:
                 continue
             val = dictVals[key]
             if inspect.isclass(val):
@@ -124,3 +128,17 @@ class Main:
         if not ObjectOps.exists(obj, ["process"]): 
             obj.process = ObjectOps.make_obj()
         return obj
+    def namespace():
+        return ObjectOps.make_obj()
+class CallerWithJson:
+    def call(obj, loc=None, args=None, kwargs= None, isString=False):
+        if args is None:
+            args =  []
+        if kwargs is None:
+            kwargs = {}
+        if not isString:
+            obj = eval(obj)
+        func = obj
+        if loc is not None:
+            func = ObjectOps.getter(obj, loc)
+        return func(*args,**kwargs)

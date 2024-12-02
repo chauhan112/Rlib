@@ -7,7 +7,20 @@ class IExt:
         self.path = os.path.abspath(path)
     def display(self):
         raise NotImplementedError("abstract method")
-
+def NewCodeDisplayer():
+    from timeline.t2024.code_highlight import CodeHighlighter
+    from basic import Main as ObjMaker
+    from FileDatabase import File
+    chl = CodeHighlighter()
+    lang = "py"
+    def set_language(lang):
+        s.process.lang = lang
+    def display(filepath):
+        content = File.getFileContent(filepath)
+        chl.handlers.set_content(content, s.process.lang)
+        return chl.views.container.outputs.layout
+    s = ObjMaker.variablesAndFunction(locals())
+    return s
 class NotebookGeneralDisplayer(IExt):
     def __init__(self, func ):
         self.func = func
@@ -40,7 +53,7 @@ class ExplorerFileDisplayer:
         self.extDic = self._defaultDisplayer()
         for key in extDic:
             self.set_extension_displayer(key, extDic[key])
-
+        self.ncd = NewCodeDisplayer()
     def _defaultDisplayer(self):
         extDic= {}
         from FileDatabase import File
@@ -50,10 +63,13 @@ class ExplorerFileDisplayer:
         from ExplorerDB import ExplorerDB
         from LibsDB import LibsDB
         from SerializationDB import SerializationDB
-        standardContentFiles = SerializationDB.readPickle(LibsDB.picklePath("GeneralDB"))['files_to_read']
+        data = SerializationDB.readPickle(LibsDB.picklePath("GeneralDB"))
+        standardContentFiles = data['files_to_read']
         for ext in standardContentFiles:
             extDic[ext] = DisplayInMd(ext)
-        extDic['py'] = DisplayInMd('py', 'python')
+        for ext in data["hasLexers"]:
+            extDic[ext] = NotebookGeneralDisplayer(lambda x: self.hasLexers(ext, x))
+        
         extDic['png'] = NotebookGeneralDisplayer(ImageProcessing.showImgFromFile)
         extDic['jpg'] = NotebookGeneralDisplayer(ImageProcessing.showImgFromFile)
         extDic['ipynb'] = NotebookGeneralDisplayer(lambda path: ModuleDB.colorPrint('python',
@@ -62,8 +78,16 @@ class ExplorerFileDisplayer:
         extDic['dcm'] = NotebookGeneralDisplayer(ShowImage.displayDCMImage)
         extDic['zip'] = NotebookGeneralDisplayer(ExplorerDB.zipExplorer)
         extDic['pkl'] = NotebookGeneralDisplayer(ExplorerDB.pickleExplorer)
+        extDic['webp'] = NotebookGeneralDisplayer(self.webp)
         return extDic
-        
+    def hasLexers(self,lang, path):
+        self.ncd.handlers.set_language(lang)
+        return self.ncd.handlers.display(path)
+    def webp(self, filepath):
+        from PIL import Image
+        im = Image.open(filepath)
+        return im
+
     def displayPath(self, path):
         ext = path.split(".")[-1].lower()
         if(ext in self.extDic):

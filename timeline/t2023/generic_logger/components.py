@@ -28,6 +28,8 @@ class IComponent:
         raise NotImplementedError("abstract method")
     def is_empty(self):
         raise NotImplementedError("abstract method")
+    def set_info(self, infos):
+        raise NotImplementedError("abstract method")
 class GComponent(IComponent):
     def set_widget(self, wid):
         self._widget = wid
@@ -134,6 +136,7 @@ class MultipleSelect(GComponent):
         self._description = widgets.Label(kwargs["description"], 
             layout={"width":"80px", "justify_content":"flex-end", "margin":"0px 8px 0px 0px"})
         self.set_widget(widgets.HBox([self._description, ly]))
+        ly.add_class("w-fit")
     def clear(self):
         self._controller.set_model([])
         self._controller.reset()
@@ -162,6 +165,7 @@ class DropdownInput(IPyWidget):
 class KeyValueInput(GComponent):
     def __init__(self, **kwargs):
         ly, self._controller = KeyValueAdderView.keyValueCrud({})
+        ly.add_class("w-fit")
         self._controller._basic._view.opsView.valueTextareaWidg.layout.width =""
         self._controller._basic._view.opsView.valueTextareaWidg.add_class("w-100")
         self._controller._basic._view.opsView.valueTextareaWidg.add_class("textarea-h-150px")

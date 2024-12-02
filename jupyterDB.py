@@ -91,7 +91,7 @@ class jupyterDB:
             return delta
         def conv(timeStr):
             a, b, c= timeStr.split()
-            d,m,y = list(map(int, b.split(".")))
+            d, m, y = list(map(int, b.split(".")))
             h, mi, se = list(map(int, c.split(":")))
             t = (y*365 + m* 31 + d) * 24* 60 * 60  + h * 60*60 + mi * 60 + se
             return t
@@ -101,7 +101,18 @@ class jupyterDB:
         if compare(k['libSize'][-1][0], timeStamp) > 6*60*60:
             k['libSize'] += [(timeStamp, si)]
             jupyterDB.pickle().write(k, 'logs')
-        print(si)
+        def convert_size(size_bytes):
+            import math
+            if size_bytes == 0:
+                return "0B"
+            size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+            i = int(math.floor(math.log(size_bytes, 1024)))
+            p = math.pow(1024, i)
+            s = round(size_bytes / p, 2)
+    
+            return f"{s} {size_name[i]}"
+        totalSizeInBytes = sum(map(File.size, pyFiles))
+        print(convert_size(totalSizeInBytes), "==", round(totalSizeInBytes/1024, 2), "kb")
 
     def codeDumper():
         from NotebookDB import NotebookDB

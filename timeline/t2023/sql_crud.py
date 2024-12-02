@@ -53,6 +53,13 @@ class SqlCRUD:
         content = self._sqlddb.read(self._loc[0])
         ListDB.dicOps().add(content, self._loc[1:] + [key], value)
         self._sqlddb.override(self._loc[0], content)
+    def addEvenKeyError(self, key, value):
+        if len(self._loc) == 0:
+            self._sqlddb.override(key, value)
+            return
+        content = self._sqlddb.read(self._loc[0])
+        ListDB.dicOps().addEvenKeyError(content, self._loc[1:] + [key], value)
+        self._sqlddb.override(self._loc[0], content)
     def getKeys(self):
         val = self.value()
         if(type(val) == dict):

@@ -59,7 +59,6 @@ class FileSyncer:
                 Path.delete([toFilePath])
                 Path.copyFiles([fromFilePath], os.path.dirname(toFilePath))
 
-
 from timeline.t2024.experiments.models import LocalStorageTableOps, ModelInitializer
 
 class FileSyncLC:

@@ -75,7 +75,13 @@ class LibsDB:
                     if f in founds:
                         allKeys.remove(f)
                 return allKeys
-
+            def ui():
+                from timeline.t2023.advance_pickle_crud import Main
+                from jupyterDB import jupyterDB
+                lay, cont = Main.keyValueCrud({})
+                cont._basic.set_scope(jupyterDB._params)
+                cont.set_file(LibsDB.picklePath("runBasic.pkl"))
+                return cont._basic._view.layout
         if opcode == 1:
             return Temp
         elif opcode == 2:

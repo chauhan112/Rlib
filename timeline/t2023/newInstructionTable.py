@@ -1,6 +1,5 @@
 from timeline.t2023.searchSystem import Main as SearchWithPagination
 from timeline.t2023.advance_searcher import Main as AdvanceSearchEngine
-from timeline.t2023.generic_logger import SearchView
 from timeline.t2023.generic_logger.components import SingleButtonController
 from SearchSystem import DicSearch
 from modules.Explorer.personalizedWidgets import CustomOutput

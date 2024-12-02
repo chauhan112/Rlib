@@ -5,6 +5,7 @@ from SerializationDB import SerializationDB
 from OpsDB import IOps
 from LibPath import *
 from FileDatabase import File
+
 class ImageProcessing:
     def showImgFromFile(imgPath):
         from PIL import Image
@@ -25,8 +26,9 @@ class ImageProcessing:
         print("Enter ESC to quit")
         def nothing(x):
             pass
+        windowName = 'marking'
         img = ImageProcessing.getCV2Image(image_path, imgTyp)
-        cv2.namedWindow('marking')
+        cv2.namedWindow(windowName)
         cv2.createTrackbar('H Lower','marking',0,255,nothing)
         cv2.createTrackbar('H Higher','marking',255,255,nothing)
         cv2.createTrackbar('S Lower','marking',0,255,nothing)
@@ -51,6 +53,11 @@ class ImageProcessing:
             cv2.imshow("Masking ",res1)
             k = cv2.waitKey(200) & 0xFF # large wait time to remove freezing
             if k == 113 or k == 27:
+                cv2.destroyAllWindows()
+                break
+            try:
+                cv2.getWindowProperty(windowName, 0)
+            except:
                 cv2.destroyAllWindows()
                 break
         return np.array([hL, sL, vL]), np.array([hH, sH, vH])
@@ -137,7 +144,7 @@ class ImageProcessing:
                 return wordcloud.to_array()
         return Temp
 class Contour:
-    def getAllContours( img = '' ,hsvBoundLimits = None,  contourLimitSize = 300, imgTyp= "PIL" ):
+    def getAllContours( img = '' ,hsvBoundLimits = None):
         img = ImageProcessing.getCV2Image(img)
         if(hsvBoundLimits is None):
             hsvBoundLimits = ImageProcessing.selectColorHSV(img, "CV2")
@@ -248,9 +255,17 @@ class CVImage(IImage):
         if not name.endswith(".png"):
             name += ".png"
         cv2.imwrite(name, self.data)
-    def display_in_window(self):
-        cv2.imshow('image',self.data)
-        cv2.waitKey(0)
+    def display_in_window(self, window_name = "image"):
+        window = PanZoomWindow(self.data, window_name)
+        key = -1
+        while not (key == ord('q') or key == 27 ):
+            try:
+                cv2.getWindowProperty(window_name, 0)
+            except:
+                break
+            key = cv2.waitKey(5)
+        cv2.destroyAllWindows()
+        
     def open_in_program(self):
         file = "test.png"
         self.save(file)
@@ -353,3 +368,73 @@ class MakeAnimation(IOps):
         if not name.endswith(".gif"):
             name += ".gif"
         self._output_name = name
+
+class PanZoomWindow:
+    def __init__(self, img, windowName = 'PanZoomWindow'):
+        self.WINDOW_NAME = windowName
+        self.img = img
+        self.panAndZoomState = PanAndZoomState(img.shape, self)
+        cv2.namedWindow(self.WINDOW_NAME, cv2.WINDOW_NORMAL)
+        self.redrawImage()
+        cv2.setMouseCallback(self.WINDOW_NAME, self.onMouse)
+    def onMouse(self,event, x,y,_ignore1,_ignore2):
+        if event == cv2.EVENT_MOUSEMOVE:
+            return
+        elif event == cv2.EVENT_RBUTTONDOWN:
+            self.mButtonDownLoc = np.array([y,x])
+        elif event == cv2.EVENT_RBUTTONUP and self.mButtonDownLoc is not None:
+            dy = y - self.mButtonDownLoc[0]
+            pixelsPerDoubling = 0.2*self.panAndZoomState.shape[0]
+            changeFactor = (1.0+abs(dy)/pixelsPerDoubling)
+            changeFactor = min(max(1.0,changeFactor),5.0)
+            if changeFactor < 1.05:
+                dy = 0 
+            if dy > 0: 
+                zoomInFactor = 1.0/changeFactor
+            else:
+                zoomInFactor = changeFactor
+            self.panAndZoomState.zoom(self.mButtonDownLoc[0], self.mButtonDownLoc[1], zoomInFactor)
+        elif event == cv2.EVENT_LBUTTONDOWN:
+            coordsInDisplayedImage = np.array([y,x])
+            if np.any(coordsInDisplayedImage < 0) or np.any(coordsInDisplayedImage > self.panAndZoomState.shape[:2]):
+                print("you clicked outside the image area")
+            else:
+                print(f"you clicked on {coordsInDisplayedImage} within the zoomed rectangle")
+                coordsInFullImage = self.panAndZoomState.ul + coordsInDisplayedImage
+                print(f"this pixel holds {self.img[coordsInFullImage[0],coordsInFullImage[1]]}")
+    def redrawImage(self):
+        pzs = self.panAndZoomState
+        cv2.imshow(self.WINDOW_NAME, self.img[pzs.ul[0]:pzs.ul[0]+pzs.shape[0], pzs.ul[1]:pzs.ul[1]+pzs.shape[1]])
+
+class PanAndZoomState:
+    MIN_SHAPE = np.array([50,50])
+    def __init__(self, imShape, parentWindow):
+        self.ul = np.array([0,0]) 
+        self.imShape = np.array(imShape[0:2])
+        self.shape = self.imShape
+        self.parentWindow = parentWindow
+    def zoom(self,relativeCy,relativeCx,zoomInFactor):
+        self.shape = (self.shape.astype(float) / zoomInFactor).astype(int)
+        self.shape[:] = np.max(self.shape) 
+        self.shape = np.maximum(PanAndZoomState.MIN_SHAPE,self.shape) 
+        c = self.ul+np.array([relativeCy,relativeCx])
+        self.ul = (c-self.shape/2).astype(int)
+        self._fixBoundsAndDraw()
+    def _fixBoundsAndDraw(self):
+        self.ul = np.maximum(0,np.minimum(self.ul, self.imShape-self.shape))
+        self.shape = np.minimum(np.maximum(PanAndZoomState.MIN_SHAPE,self.shape), self.imShape-self.ul)
+        yFraction = float(self.ul[0])/max(1,self.imShape[0]-self.shape[0])
+        xFraction = float(self.ul[1])/max(1,self.imShape[1]-self.shape[1])
+        self.parentWindow.redrawImage()
+    def setYAbsoluteOffset(self,yPixel):
+        self.ul[0] = min(max(0,yPixel), self.imShape[0]-self.shape[0])
+        self._fixBoundsAndDraw()
+    def setXAbsoluteOffset(self,xPixel):
+        self.ul[1] = min(max(0,xPixel), self.imShape[1]-self.shape[1])
+        self._fixBoundsAndDraw()
+    def setYFractionOffset(self,fraction):
+        self.ul[0] = int(round((self.imShape[0]-self.shape[0])*fraction))
+        self._fixBoundsAndDraw()
+    def setXFractionOffset(self,fraction):
+        self.ul[1] = int(round((self.imShape[1]-self.shape[1])*fraction))
+        self._fixBoundsAndDraw()

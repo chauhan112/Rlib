@@ -1,10 +1,7 @@
 import ipywidgets as widgets
-import datetime
 from modules.SearchSystem.modular import HideableWidget
 from modules.Explorer.personalizedWidgets import CustomOutput
-from timeline.t2023.advance_pickle_crud import Main as KeyValueAdderView
 from timeline.t2023.searchSystem import Main as SearchWithPagination
-from TimeDB import TimeDB
 from PickleCRUDDB import PickleCRUDOps
 from enum import Enum
 from SearchSystem import ISearch
@@ -13,8 +10,48 @@ from SerializationDB import SerializationDB
 from LibsDB import LibsDB
 from CryptsDB import CryptsDB
 from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
-from basic import BasicController, NameSpace, LoggerSystem
-from timeline.t2023.generic_logger.UIComponents import CrudViewV2, FieldCrudForm, SearchComponent, Utils, ObjMaker, SingleField, ComponentsLib
+from basic import BasicController, LoggerSystem
+from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SearchComponent, ObjMaker, SingleField, UpdateMenu
+from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
+
+class StringEnums:
+    DISABLED = "disabled"
+    AUTO = "auto"
+    OPTIONS ="options"
+    TYPE ="type"
+    INFO ="info"
+    KEY_NR = "key-index"
+    ORDER = "order"
+    STATUS = "status"
+    DELETED = "deleted"
+    UUID = "uuid"
+class IModifier:
+    def set_basic_controller(self, bsc):
+        pass
+    def get_layout(self):
+        pass
+    def set_up(self):
+        pass
+    def update_data(self, version: int):
+        pass
+class SupportedTypes(Enum):
+    Text = 1
+    LargeText = 2
+    Checkbox = 3
+    Options = 4
+    Date = 5
+    Time = 6
+    DateTime = 7
+    KeyValuesPair = 8
+    MultipleSelect = 9
+    Boolean = 10
+    Crud = 11
+
+class CRUPOps(Enum):
+    READ= "r"
+    CREATE= "c"
+    UPDATE= "u"
+    DELETE = "d"
 
 def FieldsManagerV2():
     fields = {}
@@ -23,9 +60,10 @@ def FieldsManagerV2():
         return {key: s.process.fields[key] for key in s.handlers.get_ordered_fields()}
     def set_fields(fieldsStruct):
         s.process.fields = fieldsStruct
-        s.process.order_number = max(map(lambda x: fieldsStruct[x][StringEnums.ORDER], fieldsStruct))
+        s.process.order_number = max(map(lambda x: fieldsStruct[x][StringEnums.ORDER], fieldsStruct)) + 1
     def reset():
         s.process.fields = {}
+        s.process.order_number = 0
     def add_field(val, typ, info, order =None):
         if order is None:
             order = s.process.order_number
@@ -74,7 +112,8 @@ def FieldsManagerV2():
 def GLViewV2():
     crudView = CrudViewV2()
     searchComponent = SearchComponent()
-    fieldCrudForm = FieldCrudForm()
+    updatePage = UpdateMenu()
+    fieldCrudForm = updatePage.process.fieldsCrud
     fieldsManager = FieldsManagerV2()
     keysOut = Utils.get_comp({}, ComponentsLib.CustomOutput, bind=False)
     resultsOut = Utils.get_comp({}, ComponentsLib.CustomOutput, bind=False)
@@ -150,181 +189,28 @@ def GLViewV2():
         sf.views.container.state.key = key
         sf.views.container.state.deleted = False
         sf.views.deleteButton.handlers.handle = delete_clicked
-        sf.views.editButton.handlers.handle = editing
+        sf.views.editButton.handlers.handle = s.handlers.editing
         sf.views.upIcon.handlers.handle = moveUp
         sf.views.downIcon.handlers.handle = moveDown
         s.process.fieldCrudForm.views.fieldsList.append(sf.views.container)
     def radioSelected(wid):
         val = s.process.crudView.views.crudView.outputs.layout.value
         if val == "c":
-            s.process.fieldCrudForm.views.container.show()
+            s.process.updatePage.views.container.show()
             s.process.searchComponent.views.container.hide()
         else:
-            s.process.fieldCrudForm.views.container.hide()
+            s.process.updatePage.views.container.hide()
             s.process.searchComponent.views.container.show()
-    container = Utils.container([Utils.container([crudView.views.container, searchComponent.views.container]),
-        fieldCrudForm.views.container, keysOut, resultsOut ], className="flex flex-column")
+    searchWithResults = Utils.container([searchComponent.views.container, keysOut], className="flex flex-column")
+
+    container = Utils.container([Utils.container([crudView.views.container, searchWithResults]),
+        updatePage.views.container, resultsOut ], className="flex flex-column")
+    
     s = ObjMaker.uisOrganize(locals())
     fieldCrudForm.views.addBtn.handlers.handle = add_field_handler
     crudView.views.crudView.handlers.handle = radioSelected
     radioSelected(1)
-    # glv.process.fieldCrudForm.views.fieldType.outputs.layout.options = list(map(lambda x: x.name, SupportedTypes))
     return s
-class IModifier:
-    def set_basic_controller(self, bsc):
-        pass
-    def get_layout(self):
-        pass
-    def set_up(self):
-        pass
-    def update_data(self, version: int):
-        pass
-class SearchView:
-    def __init__(self):
-        self.textWid = widgets.Text(placeholder = "word", layout={"width":"auto"})
-        self.isRegWid = widgets.Checkbox(description="is reg", indent =False, layout={"width":"auto"})
-        self.isCase = widgets.Checkbox(description="case", indent =False, layout={"width":"auto"})
-        self.btn = SingleButtonController(description="search", layout={"width":"auto"})
-        self.couput = CustomOutput()
-        self.btnOutput = CustomOutput()
-        self.searchRow = widgets.HBox([self.textWid, self.isRegWid, self.isCase, self.btn.layout])
-        self.layout = widgets.VBox([self.searchRow,self.couput.get_layout(), self.btnOutput.get_layout()])
-class SupportedTypes(Enum):
-    Text = 1
-    LargeText = 2
-    Checkbox = 3
-    Options = 4
-    Date = 5
-    Time = 6
-    DateTime = 7
-    KeyValuesPair = 8
-    MultipleSelect = 9
-    Boolean = 10
-class CrudView:
-    def __init__(self):
-        design=widgets.HTML("""
-            <style>
-                .RadioButtons div {
-                    flex-flow: row wrap;
-                    max-width: 90px;
-                    overflow:auto;
-                }
-                .RadioButtons input{
-                    border-radius: 10px;
-                    padding: 8px;
-                    margin-right: 2px;
-                }
-                .RadioButtons label{
-                    width: 30px;
-                    border-radius: 10px;
-                    padding: 2px;
-                    margin : 1px;
-                    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.1);
-                }
-                .RadioButtons{
-                    width: auto;
-                    min-width: 90px;
-                }
-                .widget-box{
-                    width: fit-content;
-                    overflow: hidden;
-                }
-                .widget-textarea textarea, .jupyter-widget-textarea textarea {
-                    min-height: 120px;
-                }
-            </style>""")
-        self.wid = widgets.RadioButtons( options=['r', 'c', 'u', 'd'])
-        self.wid.add_class("RadioButtons")
-        self.layout = widgets.HBox([self.wid, design])
-        self.wid.observe(self._selected, names=["value"])
-        self.set_select_func(self._default_on_selected)
-    def _default_on_selected(self, infos, *param):
-        pass
-    def set_select_func(self, func):
-        self._func = func
-    def _selected(self, infos):
-        self._func(infos, self)
-class FieldInfoView:
-    def __init__(self):
-        self.textWid = widgets.Text(placeholder = "field name", layout={"width":"auto"})
-        self.typeOfWid = widgets.Dropdown(options=[], layout =widgets.Layout(width="auto"))
-        self.checkBox = widgets.Checkbox(description="add more info", indent =False, layout={"width":"auto"})
-        self.displayInfoWid = widgets.Textarea(disabled=True,layout= widgets.Layout(height='auto'))
-        self.editBtn = widgets.Button(icon="edit", layout={"width":"auto"}, button_style="success")
-        self.deleteBtn = widgets.Button(icon="trash", layout={"width":"auto"}, button_style="danger")
-        self.layout = widgets.HBox([self.textWid, self.typeOfWid, self.checkBox, self.displayInfoWid, self.editBtn, self.deleteBtn], disabled=True)
-class GLView:
-    def __init__(self):
-        self.fieldInfo = NameSpace()
-        self.loggerInfo = NameSpace()
-        self.moreInfo = KeyValueAdderView.keyValueCrud({})
-        self.logSearch = SearchView()
-        self.crudOps = NameSpace()
-        self.crudOps.options = CrudView()
-        self.crudOps.layout = widgets.HBox([self.crudOps.options.layout, self.logSearch.layout])
-        self.loggerInfo.out = widgets.HTML()
-        self.loggerInfo.nameWid = widgets.Text(description="logger name")
-        self.loggerInfo.createBtn = SingleButtonController(description="create logger")
-        self.fieldInfo.listWid = widgets.VBox()
-        self.fieldInfo.textWid = widgets.Text(placeholder = "field name", layout={"width":"auto"})
-        self.fieldInfo.typeOfWid = widgets.Dropdown(options=[], layout =widgets.Layout(width="auto"))
-        self.fieldInfo.checkBox = widgets.Checkbox(description="add more info", indent =False, layout={"width":"auto"})
-        self.fieldInfo.fieldAddBtn = SingleButtonController(icon="plus-circle", layout={"width":"auto"})
-        self.addRowLay = widgets.HBox([self.fieldInfo.textWid, self.fieldInfo.typeOfWid,self.fieldInfo.checkBox, self.fieldInfo.fieldAddBtn.layout, self.moreInfo[0]])
-        self.crudopsWid = widgets.VBox([self.loggerInfo.nameWid, self.fieldInfo.listWid, self.addRowLay, self.loggerInfo.createBtn.layout, self.loggerInfo.out])
-        self.out = CustomOutput()
-        self.layout = widgets.VBox([self.crudOps.layout,self.crudopsWid, self.out.get_layout()])
-class StringEnums:
-    DISABLED = "disabled"
-    AUTO = "auto"
-    OPTIONS ="options"
-    TYPE ="type"
-    INFO ="info"
-    KEY_NR = "key-index"
-    ORDER = "order"
-    STATUS = "status"
-    DELETED = "deleted"
-    UUID = "uuid"
-class FieldsManager:
-    def __init__(self):
-        self.reset()
-        self._order_number = 0
-    def reset(self):
-        self._fields = {}
-        self._fields_view_map = {}
-    def add_field(self, val, typ, info, order =None):
-        if order is None:
-            order = self._order_number
-            self._order_number += 1
-        self._fields[val]= {StringEnums.TYPE: typ, StringEnums.INFO: info, StringEnums.ORDER: order}
-        fvi = FieldInfoView()
-        fvi.checkBox.disabled = True
-        fvi.textWid.disabled = True
-        fvi.typeOfWid.disabled = True
-        fvi.typeOfWid.options = list(map(lambda x: x.name, SupportedTypes))
-        fvi.displayInfoWid.disabled = True
-        fvi.textWid.value = val
-        fvi.typeOfWid.value = typ
-        self._fields_view_map[val] = fvi
-        return fvi
-    def delete_field(self, fieldKey):
-        del self._fields[fieldKey]
-        del self._fields_view_map[fieldKey]
-    def update_field(self, oldFieldKey, newKey, newType, newInfo):
-        order = self._fields[oldFieldKey][StringEnums.ORDER]
-        self.delete_field(oldFieldKey)
-        return self.add_field(newKey, newType, newInfo, order)
-    def get_ordered_fields(self):
-        return {key: self._fields[key] for key in sorted(self._fields, key= lambda y: self._fields[y]['order'])}
-    def read_field(self, fieldKey):
-        return self._fields[fieldKey]
-    def get_layout(self):
-        return [self._fields_view_map[ta].layout for ta in self.get_ordered_fields()]
-class CRUPOps(Enum):
-    READ= "r"
-    CREATE= "c"
-    UPDATE= "u"
-    DELETE = "d"
 class LoggerSearcherController:
     def __init__(self):
         self._clicked = None
@@ -365,33 +251,37 @@ class LoggerSearcherController:
         self._bsc.debug = btn
         self._clicked_func(btn, self)
     def _opIt(self, btn, *param):
+        self._current_btn = btn
         self._bsc.views.glv.views.resultsOut.state.controller.display(self._bsc.views.ldcv.layout, True, True)
         self._bsc.controllers.ldcc.set_current_btn(btn)
         self._bsc.views.ldcv.searchView.couput.clear()
         self._bsc.controllers.ldcc._ops_selected(None)
     def _delete_logger_intermediate(self, btn, *param):
-        self._clicked = btn.description
+        self._clicked = btn
         self._bsc.views.glv.process.searchComponent.views.searchBtn.outputs.layout.description = "confirm"
         self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._delete_logger
     def _delete_logger(self, btn, *param):
-        taskName = self._clicked
+        taskName = self._clicked.description
         self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._on_search_clicked
         if taskName:
             self._bsc.views.glv.process.searchComponent.views.searchBtn.outputs.layout.description = "search"
             st = self._bsc._model.read(taskName)
             st["status"] = "deleted"
             self._bsc._model.add(taskName, st, True)
+            self._clicked._parent.hide()
             self._clicked = None
-    def _default_update_logger(self, btn, *param):  
+    def _default_update_logger(self, btn, *param):
         self._bsc.views.glv.handlers.clear_fields()
         st = self._bsc._model.read(btn.description)
         self._bsc.views.glv.process.fieldCrudForm.views.loggerName.outputs.layout.value = btn.description
         struc = st["structure"]
         self._bsc.views.glv.handlers.set_fields(struc)
+        self._bsc.views.glv.process.updatePage.views.container.show()
+        
     def _btn_maker(self, des, func):
-        btn = widgets.Button(description = self._tasks_names[des], layout= {"width":"auto"})
-        btn.on_click(func)
-        return btn
+        btn = Utils.get_comp({"description":self._tasks_names[des]}, IpywidgetsComponentsEnum.Button, className="w-auto")
+        btn.handlers.handle = func
+        return btn.outputs.layout
     def get_default_searcher(self):
         from timeline.t2023.links_crud_ui import SearchEngine, ButtonViewWithPagination
         from SearchSystem import MultilineStringSearch
@@ -410,7 +300,7 @@ class LoggerSearcherController:
         self._bsc.views.glv.process.searchComponent.views.searchBtn.handlers.handle = self._on_search_clicked
         val = self._bsc.views.glv.process.crudView.views.crudView.outputs.layout.value
         self._bsc.views.glv.process.searchComponent.views.container.show()
-        self._bsc.views.glv.views.keysOut.state.controller.clear()
+        self._bsc.views.glv.views.resultsOut.state.controller.clear()
         if val == CRUPOps.READ.value:
             self.set_button_click_func(self._opIt)
         elif val == CRUPOps.UPDATE.value:
@@ -422,6 +312,7 @@ class LoggerSearcherController:
             self._bsc.views.glv.process.fieldCrudForm.views.createBtn.handlers.handle = self._create_logger
             self._bsc.views.glv.process.searchComponent.views.container.hide()
             self._bsc.views.glv.handlers.clear_fields()
+            self._bsc.views.glv.views.keysOut.state.controller.clear()
     def _update_logger_structure(self, btn):
         val = self._bsc.views.glv.process.fieldCrudForm.views.loggerName.outputs.layout.value.strip()
         if not val:
@@ -435,6 +326,8 @@ class LoggerSearcherController:
         content['structure'] = self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted()
         self._bsc._model.add(val, content, True)
         self._bsc.views.glv.handlers.clear_fields()
+        self._bsc.views.glv.process.updatePage.views.container.hide()
+        self._current_btn._parent.state.updated = True
     def set_logged_data_crud_operator(self, oper):
         self._bsc.controllers.ldcc = oper
     def _create_logger(self, btn):
@@ -446,15 +339,15 @@ class LoggerSearcherController:
             self._bsc.views.glv.process.fieldCrudForm.handlers.info("add some fields", True)
             return
         self._bsc.views.glv.process.fieldCrudForm.handlers.info("adding logger")
-        self._bsc._model.add(val, {'structure': self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted(), 'data': {}, 
+        self._bsc._model.add(val, {'structure': self._bsc.views.glv.process.fieldsManager.handlers.get_fields_sorted(), 'data': {},
             StringEnums.UUID: CryptsDB.generateUniqueId()})
         self._bsc.views.glv.handlers.clear_fields()
 class LoggerDataCRUDOpsView:
     def __init__(self):
-        self.opsWid = CrudView()
+        self.opsWid = CrudViewV2()
         self.searchView = AdvanceSearchView()
         self.out = CustomOutput()
-        self.layout = widgets.VBox([widgets.HBox([self.opsWid.layout, self.searchView.layout]), self.out.get_layout()])
+        self.layout = widgets.VBox([widgets.HBox([self.opsWid.views.container.outputs.layout, self.searchView.layout]), self.out.get_layout()])
 class AdvanceSearchView:
     def __init__(self):
         self.textWid = widgets.Text(placeholder = "word", layout={"width":"auto"})
@@ -543,13 +436,13 @@ class LoggerSearch(ISearch):
         self._data = data
     def search(self, word, case = False, reg = False):
         if self._stype == "fields":
-            return self.search_in_fields(word, reg, case)
+            return self.search_in_fields(word, reg, case)[::-1]
         elif self._stype == "word" and word != "":
             reg = True
             word = "\\b" + word + "\\b"
         elif self._stype == "concatenated":
-            return self.concatenated_search(word, reg, case)
-        return self._search_in_index(word, reg, case, self._data)
+            return self.concatenated_search(word, reg, case)[::-1]
+        return self._search_in_index(word, reg, case, self._data)[::-1]
     def _search_in_index(self, word, reg, case, container):
         res = []
         for i in container:
@@ -558,31 +451,30 @@ class LoggerSearch(ISearch):
                 if ke not in val and word == "":
                     res.append(i)
                     break
-                if ComparerDB.has(word, val[ke],case,reg):
-                    res.append(i)
-                    break
-        return res[::-1]
+                if ke in val:
+                    if ComparerDB.has(word, val[ke],case,reg):
+                        res.append(i)
+                        break
+        return res
     def set_indices_to_search(self, indices):
         self._indices2search = indices
     def set_search_type(self, search_type):
         self._stype = search_type
     def search_in_fields(self, dicFields, reg, case):
-        asdndn = {}
-        exec(f"dfsdfda={dicFields}",None,asdndn)
-        tosearch = asdndn['dfsdfda']
-        return self._search_in_fields(tosearch, reg, case, self._data)
+        return self._search_in_fields(eval(dicFields), reg, case, self._data)
     def _search_in_fields(self, tosearch, reg, case, container):
         res  = []
         for i in container:
             val = self._data[i]
+            found = True
             for ke in tosearch:
                 if ke not in val:
-                    res.append(i)
+                    found = True
                     break
                 fieldContent = val[ke]
-                if ComparerDB.has(tosearch[ke], str(val[ke]),case,reg):
-                    res.append(i)
-                    break
+                found = found and ComparerDB.has(tosearch[ke], str(val[ke]),case,reg)
+            if found:
+                res.append(i)
         return res
     def date_filter(self, ):
         pass
@@ -636,11 +528,14 @@ class LoggerDataCRUDController:
         self._update_reader_data()
     def _default_res_btn_clicked_for_read(self, btn, *param):
         HideableWidget.showIt(self._bsc.views.ldcv.out.get_layout())
-        vals = self._data[btn._key]
+        vals = self._data[btn._key] 
+        structures = self._bsc._model.read(self._cur_btn.description)["structure"] 
+        sortedKeys = sorted(structures,key = lambda x: structures[x]["order"])
         res = ""
-        for ke  in vals:
-            res +=  ke + ": " +  str(vals[ke]) + "\n"
-            res += ("-"*40) + "\n"
+        for ke in sortedKeys:
+            if ke in vals:
+                res +=  ke + ": " +  str(vals[ke]) + "\n"
+                res += ("-"*40) + "\n"
         self._bsc.views.ldcv.out.clear()
         with self._bsc.views.ldcv.out._out:
             print(res)
@@ -687,12 +582,12 @@ class LoggerDataCRUDController:
         self._bsc = basic_cont
     def set_up(self):
         self._bsc.views.ldcv.searchView.btn.set_clicked_func(self._search_btn_click)
-        self._bsc.views.ldcv.opsWid.set_select_func(self._ops_selected)
+        self._bsc.views.ldcv.opsWid.views.crudView.handlers.handle = self._ops_selected
     def _ops_selected(self, wid, *param):
         HideableWidget.showIt(self._bsc.views.ldcv.searchView.searchType)
         HideableWidget.showIt(self._bsc.views.ldcv.searchView.textWid)
         HideableWidget.showIt(self._bsc.views.ldcv.searchView.searchRow)
-        val = self._bsc.views.ldcv.opsWid.wid.value
+        val = self._bsc.views.ldcv.opsWid.views.crudView.outputs.layout.value
         self._bsc.views.ldcv.searchView.btn.set_clicked_func(self._search_btn_click)
         self._bsc.views.ldcv.searchView.btn.layout.description = "search"
         HideableWidget.hideIt(self._bsc.views.ldcv.searchView.couput.get_layout())
@@ -715,13 +610,19 @@ class LoggerDataCRUDController:
             self.set_result_btn_click_func(self._default_res_btn_clicked_for_delete)
     def set_renderer(self, rendererCreator):
         self._rendererCreator = rendererCreator
+    def _renderIt(self):
+        if hasattr(self._cur_btn._parent.state, "updated"):
+            if self._cur_btn._parent.state.updated:
+                return True
+        return self._cur_btn.description not in self._view_map
     def _default_render_func(self, btn, *param):
-        if self._cur_btn.description not in self._view_map:
+        if self._renderIt():
             lrc = self._rendererCreator()
             lrc.set_scope(self._bsc._scope)
             lrc.set_model(self._cur_btn.description, self._bsc._model)
             out = lrc.render()
             self._view_map[self._cur_btn.description] = lrc
+            self._cur_btn._parent.state.updated = False
         else:
             out = self._view_map[self._cur_btn.description].render()
         self._view_map[self._cur_btn.description].set_adder_func(self._default_res_btn_clicked_for_create)
@@ -765,6 +666,7 @@ class LoggerDataCRUDController:
     def set_search_func(self, func):
         self._search_func = func
     def _result_btn_clicked(self, btn):
+        self._bsc.debugLogDataBtn = btn
         self._res_btn_click(btn, self)
     def set_button_name_maker(self, name_maker):
         self._name_maker = name_maker

@@ -119,11 +119,13 @@ class ZipFileExplorer(FileExplorerWithPaths):
 
 class OSFileExplorer(IExplorer):
     def __init__(self,initialPath = None):
-        self.path = initialPath
+        self.set_path(initialPath)
         if(initialPath is None):
-            self.path = os.path.abspath('.')
+            self.set_path(os.path.abspath('.'))
+    def set_path(self, path):
+        self.path = path
         self.sep = os.sep
-    
+       
     def cd(self, key):
         k = self.path + self.sep + key
         if(self.path == ''):

@@ -1,7 +1,12 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from timeline.t2024.ui_lib.generic_loggerV3 import SearchComponent, KeyValueComponent, SingleField
+from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent, KeyValueComponent, SingleField
 from basic import Main as ObjMaker
 from TimeDB import TimeDB
+from timeline.t2023.generic_logger.components import DateInput, TimeInput, DateTimeInput
+from typing import Union
+import datetime
+import ipywidgets as widgets
+
 def MetaCRUD():
     loggerName = None
     def get_current_logger_name(bsc):
@@ -28,48 +33,25 @@ def MetaCRUD():
     def read_meta(key):
         loggerInfos = state.process.bsc._model.read(state.process.loggerName)
         return loggerInfos["meta"][key]
-    def update_logger_name(bsc):
-        state.process.bsc = bsc
-        if hasattr(bsc.nms2024.ldcc, "_cur_btn"):
-            state.process.loggerName = get_current_logger_name(bsc)
     def set_logger_name(name):
         state.process.loggerName = name
     state  = ObjMaker.variablesAndFunction(locals())
     return state
 def MetaCRUDUI():
-    opsType = Utils.get_comp({"options": ["create", "read", "update", "delete"]}, IpywidgetsComponentsEnum.Dropdown, className="w-auto")
     contentWid = Utils.get_comp({"placeholder": "content"}, IpywidgetsComponentsEnum.Textarea, bind=False, className="w-auto")
     addBtn = Utils.get_comp({"icon": "plus", "button_style": "success"}, IpywidgetsComponentsEnum.Button, className="w-auto")
     delBtn = Utils.get_comp({"icon": "trash", "button_style": "danger"}, IpywidgetsComponentsEnum.Button, className="w-auto")
-    showOrHide = Utils.get_comp({"description": "show", "indent":False}, IpywidgetsComponentsEnum.Checkbox, className="w-auto")
+    okBtn = Utils.get_comp({"description": "ok"}, IpywidgetsComponentsEnum.Button, className="w-auto")
     model = MetaCRUD()
-    def hideOrShow(wid):
-        
-        if state.views.showOrHide.outputs.layout.value:
-            formContainer.show()
-        else:
-            formContainer.hide()
     def doNothing(wid):
         pass
-    def ops_selected_v2(wid, inst=None, runParentFunc= True):
-        val = state.views.glv.crudOps.options.wid.value
-        if val == "u":
-            container.show()
-        else:
-            container.hide()
-        if state.process.model.process.loggerName is None:
-            container.hide()
-        if runParentFunc:
-            state.process.bsc.nms2024.lsc._ops_selected(wid, inst)
-    formContainer = Utils.container([opsType, contentWid, addBtn,delBtn])
-    container = Utils.container([showOrHide, formContainer], className ="flex flex-column")
+    def initialize():
+        pass
+    container = Utils.container([contentWid, addBtn,delBtn, okBtn])
     state = ObjMaker.uisOrganize(locals())
-    showOrHide.handlers.handle = hideOrShow
     addBtn.handlers.handle = doNothing
     delBtn.handlers.handle = doNothing
-    opsType.handlers.handle = doNothing
-    hideOrShow(1)
-    
+
     return state
 def CrudViewV2():
     classes = """.RadioButtonsV2 div {
@@ -91,10 +73,11 @@ def CrudViewV2():
     }
     .RadioButtonsV2{
         width: auto;
+        min-width: 90px;
     }"""
     crudView = Utils.get_comp({"options": ['r', 'c', 'u', 'd']}, IpywidgetsComponentsEnum.RadioButtons,className="RadioButtonsV2")
     cssCompon = Utils.get_comp({}, ComponentsLib.CSSAdder, customCss= classes)
-    container = Utils.container([crudView, cssCompon])
+    container = Utils.container([crudView, cssCompon], className="overflow-unset")
     state = ObjMaker.uisOrganize(locals())
     return state
 def FieldCrudForm():
@@ -126,7 +109,74 @@ def FieldCrudForm():
     moreInfoAdd.handlers.handle = showOrhide
     state = ObjMaker.uisOrganize(locals())
     return state
-
+def UpdateMenu():
+    toogleButtons = Utils.get_comp({"options":["structure", "meta"]}, IpywidgetsComponentsEnum.ToggleButtons)
+    outArea = Utils.get_comp({}, ComponentsLib.CustomOutput)
+    fieldsCrud = FieldCrudForm()
+    metaCrud = MetaCRUDUI()
+    def toggled(wid):
+        opt = s.views.toogleButtons.outputs.layout.value
+        if opt == "meta":
+            s.views.outArea.state.controller.display(s.process.metaCrud.views.container.outputs.layout, True, True)
+        else:
+            s.views.outArea.state.controller.display(s.process.fieldsCrud.views.container.outputs.layout, True, True)
+    container = Utils.container([toogleButtons, outArea], className = "flex flex-column")
+    toogleButtons.handlers.handle = toggled
+    
+    s = ObjMaker.uisOrganize(locals())
+    toggled(1)
+    return s
+def GenericDateTime():
+    typ = ""
+    component = None
+    prev_funcs = ObjMaker.namespace()
+    def keyExists(key, dic):
+        return  key in dic and dic[key]
+    def set_type(typ: Union["time", "date", "both"]="both"):
+        s.process.typ = typ
+    def get_state():
+        return s
+    def clear():
+        if s.handlers.keyExists("auto", s.process.infos):
+            now = datetime.datetime.now()
+            s.process.component.value = now
+        else:
+            s.process.component.value = None
+    def value():
+        return s.process.component.value
+    def set_info(infos):
+        s.process.infos = infos
+    def process_info():
+        s.handlers.clear()
+        if "disabled" in s.process.infos:
+            s.process.component.disabled = s.process.infos["disabled"]
+    def layout():
+        return s.process.component
+    def set_value(value):
+        key1 = "auto-edit"
+        key2 = "auto-update"
+        infos = s.process.infos
+        if s.handlers.keyExists(key1, infos) or s.handlers.keyExists(key2, infos):
+            now = datetime.datetime.now()
+            s.process.component.value = now
+        else:
+            s.process.component.value = value
+    def is_empty():
+        return True
+    def set_up(**kwargs):
+        a = None
+        typ = s.process.typ
+        if typ == "date":
+            a = widgets.DatePicker(**kwargs)
+        elif typ == "time":
+            a = widgets.TimePicker(**kwargs)
+        elif typ == "both":
+            a = widgets.NaiveDatetimePicker(**kwargs)
+        else:
+            raise IOError("unknown type detected")
+        s.process.component = a
+    s = ObjMaker.variablesAndFunction(locals())
+    return s
 class Main:
     def appendToGlv(bsc):
         glv = bsc.nms2024.glv

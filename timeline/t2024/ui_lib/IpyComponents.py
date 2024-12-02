@@ -50,6 +50,11 @@ class IpywidgetComponentV2(BaseComponentV2):
             from modules.Explorer.personalizedWidgets import CustomOutput
             self.state.controller = CustomOutput()
             self.outputs.layout = self.state.controller.get_layout()
+        elif self.inputs.typeOfWidget == ComponentsLib.ListNavigator:
+            from timeline.t2023.viewsCollection import Main as ViewsCollection
+            self.outputs.layout, self.state.controller = ViewsCollection.get_list_maker()
+        elif self.inputs.typeOfWidget == ComponentsLib.IpyWrapper:
+            self.outputs.layout = self.inputs.value
         else:
             self.outputs.layout = getattr(widgets, self.inputs.typeOfWidget.name)(**self.inputs.params)
             if self.inputs.bind:
@@ -61,8 +66,12 @@ class IpywidgetComponentV2(BaseComponentV2):
             val = self.inputs.params[key]
             setattr(self.outputs.layout, key, val)
 class RepeaterComponentV2(BaseComponentV2):
+    def _def_handler_wrapper(self, wid):
+        self.state.selected = wid
+        self.handlers.handle(wid)
     def render(self):
         self.outputs.renderedStates = []
+        self.handlers.defs.wrapper = self._def_handler_wrapper
         for omniComponent in self.inputs.inp_components:
             self._child_prep(omniComponent)
             omniComponent.inputs.parent = self
@@ -98,3 +107,7 @@ class Utils:
         rc.set_inputs(inp_components = comps, **args)
         rc.render()
         return rc
+    def wrapper(wid):
+        bc = BaseComponentV2()
+        bc.outputs.layout = wid
+        return bc

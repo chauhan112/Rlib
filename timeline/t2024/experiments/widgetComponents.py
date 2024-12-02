@@ -410,7 +410,7 @@ class Main:
     def breadCrumbExample():
         bc = BreadCrumb()
         bc.state.data = [("a", "a"), ("bas", "asb")]
-        bc.get_layout()        
+        bc.get_layout()
         return bc
     def iconButton():
         phww = PlaceholderWrapper()

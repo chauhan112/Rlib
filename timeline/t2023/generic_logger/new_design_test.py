@@ -1,4 +1,4 @@
-from timeline.t2023.generic_logger import FieldInfoView, GLView, SupportedTypes, FieldsManager, LoggerButtonNameDecider, LoggerSearch,LoggerDataCRUDOpsView, NewRenderer
+from timeline.t2023.generic_logger import SupportedTypes, LoggerButtonNameDecider, LoggerSearch, LoggerDataCRUDOpsView, NewRenderer
 from modules.SearchSystem.modular import HideableWidget
 from TimeDB import TimeDB
 from timeline.t2023.generic_logger.components import SingleButtonController
@@ -9,6 +9,125 @@ from CryptsDB import CryptsDB
 import ipywidgets as widgets
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
+class FieldsManager:
+    def __init__(self):
+        self.reset()
+        self._order_number = 0
+    def reset(self):
+        self._fields = {}
+        self._fields_view_map = {}
+    def add_field(self, val, typ, info, order =None):
+        if order is None:
+            order = self._order_number
+            self._order_number += 1
+        self._fields[val]= {StringEnums.TYPE: typ, StringEnums.INFO: info, StringEnums.ORDER: order}
+        fvi = FieldInfoView()
+        fvi.checkBox.disabled = True
+        fvi.textWid.disabled = True
+        fvi.typeOfWid.disabled = True
+        fvi.typeOfWid.options = list(map(lambda x: x.name, SupportedTypes))
+        fvi.displayInfoWid.disabled = True
+        fvi.textWid.value = val
+        fvi.typeOfWid.value = typ
+        self._fields_view_map[val] = fvi
+        return fvi
+    def delete_field(self, fieldKey):
+        del self._fields[fieldKey]
+        del self._fields_view_map[fieldKey]
+    def update_field(self, oldFieldKey, newKey, newType, newInfo):
+        order = self._fields[oldFieldKey][StringEnums.ORDER]
+        self.delete_field(oldFieldKey)
+        return self.add_field(newKey, newType, newInfo, order)
+    def get_ordered_fields(self):
+        return {key: self._fields[key] for key in sorted(self._fields, key= lambda y: self._fields[y]['order'])}
+    def read_field(self, fieldKey):
+        return self._fields[fieldKey]
+    def get_layout(self):
+        return [self._fields_view_map[ta].layout for ta in self.get_ordered_fields()]
+class SearchView:
+    def __init__(self):
+        self.textWid = widgets.Text(placeholder = "word", layout={"width":"auto"})
+        self.isRegWid = widgets.Checkbox(description="is reg", indent =False, layout={"width":"auto"})
+        self.isCase = widgets.Checkbox(description="case", indent =False, layout={"width":"auto"})
+        self.btn = SingleButtonController(description="search", layout={"width":"auto"})
+        self.couput = CustomOutput()
+        self.btnOutput = CustomOutput()
+        self.searchRow = widgets.HBox([self.textWid, self.isRegWid, self.isCase, self.btn.layout])
+        self.layout = widgets.VBox([self.searchRow,self.couput.get_layout(), self.btnOutput.get_layout()])
+class CrudView:
+    def __init__(self):
+        design=widgets.HTML("""
+            <style>
+                .RadioButtons div {
+                    flex-flow: row wrap;
+                    max-width: 90px;
+                    overflow:auto;
+                }
+                .RadioButtons input{
+                    border-radius: 10px;
+                    padding: 8px;
+                    margin-right: 2px;
+                }
+                .RadioButtons label{
+                    width: 30px;
+                    border-radius: 10px;
+                    padding: 2px;
+                    margin : 1px;
+                    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.1);
+                }
+                .RadioButtons{
+                    width: auto;
+                    min-width: 90px;
+                }
+                .widget-box{
+                    width: fit-content;
+                    overflow: hidden;
+                }
+                .widget-textarea textarea, .jupyter-widget-textarea textarea {
+                    min-height: 120px;
+                }
+            </style>""")
+        self.wid = widgets.RadioButtons( options=['r', 'c', 'u', 'd'])
+        self.wid.add_class("RadioButtons")
+        self.layout = widgets.HBox([self.wid, design])
+        self.wid.observe(self._selected, names=["value"])
+        self.set_select_func(self._default_on_selected)
+    def _default_on_selected(self, infos, *param):
+        pass
+    def set_select_func(self, func):
+        self._func = func
+    def _selected(self, infos):
+        self._func(infos, self)
+class FieldInfoView:
+    def __init__(self):
+        self.textWid = widgets.Text(placeholder = "field name", layout={"width":"auto"})
+        self.typeOfWid = widgets.Dropdown(options=[], layout =widgets.Layout(width="auto"))
+        self.checkBox = widgets.Checkbox(description="add more info", indent =False, layout={"width":"auto"})
+        self.displayInfoWid = widgets.Textarea(disabled=True,layout= widgets.Layout(height='auto'))
+        self.editBtn = widgets.Button(icon="edit", layout={"width":"auto"}, button_style="success")
+        self.deleteBtn = widgets.Button(icon="trash", layout={"width":"auto"}, button_style="danger")
+        self.layout = widgets.HBox([self.textWid, self.typeOfWid, self.checkBox, self.displayInfoWid, self.editBtn, self.deleteBtn], disabled=True)
+class GLView:
+    def __init__(self):
+        self.fieldInfo = NameSpace()
+        self.loggerInfo = NameSpace()
+        self.moreInfo = KeyValueAdderView.keyValueCrud({})
+        self.logSearch = SearchView()
+        self.crudOps = NameSpace()
+        self.crudOps.options = CrudView()
+        self.crudOps.layout = widgets.HBox([self.crudOps.options.layout, self.logSearch.layout])
+        self.loggerInfo.out = widgets.HTML()
+        self.loggerInfo.nameWid = widgets.Text(description="logger name")
+        self.loggerInfo.createBtn = SingleButtonController(description="create logger")
+        self.fieldInfo.listWid = widgets.VBox()
+        self.fieldInfo.textWid = widgets.Text(placeholder = "field name", layout={"width":"auto"})
+        self.fieldInfo.typeOfWid = widgets.Dropdown(options=[], layout =widgets.Layout(width="auto"))
+        self.fieldInfo.checkBox = widgets.Checkbox(description="add more info", indent =False, layout={"width":"auto"})
+        self.fieldInfo.fieldAddBtn = SingleButtonController(icon="plus-circle", layout={"width":"auto"})
+        self.addRowLay = widgets.HBox([self.fieldInfo.textWid, self.fieldInfo.typeOfWid,self.fieldInfo.checkBox, self.fieldInfo.fieldAddBtn.layout, self.moreInfo[0]])
+        self.crudopsWid = widgets.VBox([self.loggerInfo.nameWid, self.fieldInfo.listWid, self.addRowLay, self.loggerInfo.createBtn.layout, self.loggerInfo.out])
+        self.out = CustomOutput()
+        self.layout = widgets.VBox([self.crudOps.layout,self.crudopsWid, self.out.get_layout()])
 class NewLoggerNewWay:
     def generic_logger_default_state(self):
         self.app.controllers.utils.hideUi(self.app.views.groups.crud.create.layout)

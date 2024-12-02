@@ -2,7 +2,7 @@ import anywidget
 import traitlets
 
 class AddCSSWidget(anywidget.AnyWidget):
-    _esm = """export function render({ model, el }) {
+    _esm = """function render({ model, el }) {
 
     let styleSheet = document.createElement("style");
     styleSheet.innerHTML = model.get("content")
@@ -11,6 +11,7 @@ class AddCSSWidget(anywidget.AnyWidget):
     });
     el.appendChild(styleSheet);
     }
+    export default { render }
     """
     content = traitlets.Unicode(default_value="").tag(sync=True)
     
