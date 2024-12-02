@@ -1,3 +1,4 @@
+//SCVisitor/Citizen-tool/flows/botStepExecution
 enum BotStatus {
     Started,
     Completed,
@@ -11,7 +12,7 @@ class RefreshTimer {
     logger: any;
     key: string;
 
-    start(logIt =true){
+    start(logIt = true) {
         this.clear();
         this.timer = setTimeout(this.callback, this.duration);
         let nowTime = Date.now()
@@ -147,7 +148,7 @@ class BotStepManager {
         let nextStepTimeout = stepContent.getNextStepForTimeOut()
         let time2wait = stepContent.parsed.timeout
         let logIt = true;
-        if (remainingTime > 0){
+        if (remainingTime > 0) {
             time2wait = remainingTime
             logIt = false;
         }
@@ -165,6 +166,7 @@ class BotStepManager {
 
         if (stepContent.parsed.type == "Escalate") {
             this.addToEndedBots(VariableService.global.botModel.currentBotId)
+            this.logger.update_bot_completed_count(VariableService.global.botModel.currentBotId)
             this.stopBotExecution()
             this.setTimerForSession()
             this.flowGlobalEscalatetoagent.run([this.parentRef, this.visitorRef, false,
@@ -174,15 +176,16 @@ class BotStepManager {
             this.resetBotSteps()
         } else if (step + 1 >= this.totalBotSteps) {
             this.addToEndedBots(VariableService.global.botModel.currentBotId)
+            this.logger.update_bot_completed_count(VariableService.global.botModel.currentBotId)
             this.continueToNextBot()
         } else {
-            if (VariableService.global.botModel.timer) {VariableService.global.botModel.timer.clear()}
+            if (VariableService.global.botModel.timer) { VariableService.global.botModel.timer.clear() }
             VariableService.global.botModel.timer = this.timerSet(() => { this.repeatSteps(nextStepTimeout) }, time2wait, "StepTimer", logIt);
         }
         VariableService.global.changeTrigger += 1
         this.setTimerForSession()
     }
-    private timerSet(func, time2wait, key: string, logIt=true) {
+    private timerSet(func, time2wait, key: string, logIt = true) {
         console.log("setting time: ", key)
         let timer = new RefreshTimer();
         timer.set_callback(func)
@@ -214,7 +217,8 @@ class BotStepManager {
         VariableService.global.view.window.hideBorderBottom = false
         VariableService.global.sessionManger.name = sessionName
         VariableService.global.botModel.expecting.type = "None"
-
+        if (VariableService.global.botModel.timer)
+            VariableService.global.botModel.timer.clear(); 
         let msgs = VariableService.global.parsedMessages
         let lastEntry = msgs[msgs.length - 1]
         if (lastEntry && VariableService.global.sessionManger.name !== "BotRunningSession") {
@@ -246,8 +250,8 @@ class BotStepManager {
     }
     private nextStepForBot(botId, step, substep) {
         let lastBotStepInfo = this.logger.get_last_step_info()
-        if (lastBotStepInfo && botId === lastBotStepInfo.botId ) return [step, substep]
-        return [0,0]
+        if (lastBotStepInfo && botId === lastBotStepInfo.botId) return [step, substep]
+        return [0, 0]
     }
     continueToNextBot(stepNr = 0, subStepNr = 0) {
         this.flowGlobalGetnextbot.run([this.convId, this.visitorRef, this.parentRef, false, this.logger.get_status()]).then((response: any) => {
@@ -261,16 +265,21 @@ class BotStepManager {
                 this.setParsedSteps(VariableService.global.botModel.parsedBots)
                 this.startingABot()
                 this.logger.update_bot_status(response.result.botId, BotStatus[BotStatus.Started])
+                this.logger.update_bot_started_count(response.result.botId)
                 this.logger.update_time(response.result.botId)
-                if (VariableService.global.botModel.timer) {VariableService.global.botModel.timer.clear();}
+                if (VariableService.global.botModel.timer) { VariableService.global.botModel.timer.clear(); }
                 VariableService.global.botModel.timer = this.timerSet(() => { this.repeatSteps([stepNr, subStepNr]) }, 1000, "StepTimer", false);
                 VariableService.global.botModel.currentBotId = response.result.botId
                 this.logger.update_interacted_status(VariableService.global.botModel.currentBotId, VariableService.global.view.widgetV1.widgetState === "Open")
             } else {
-                if (response.result.assignedUser)
+                if (response.result.assignedUser){
                     this.stopBotExecution({ type: "AGENT", name: response.result.assignedUser }, "LiveAgentSession")
-                else this.stopBotExecution()
-                this.setTimerForSession(false)
+                    this.setTimerForSession(false)
+                }else { 
+                    // when it goes to customer support, timer is set to check for new bots every one min # 60*1000
+                    this.stopBotExecution()
+                    VariableService.global.sessionManger.botConversation = this.timerSet(() => { this.botSessionEnds() }, 60*1000, "SessionTimer", false);
+                }
                 VariableService.global.changeTrigger += 1
             }
         }, (error: { [key: string]: any }) => {
@@ -284,7 +293,7 @@ class BotStepManager {
     }
     botSessionEnds() {
         console.log("bot session ends");
-        if (VariableService.global.sessionManger.botConversation) {VariableService.global.sessionManger.botConversation.clear(); }
+        if (VariableService.global.sessionManger.botConversation) { VariableService.global.sessionManger.botConversation.clear(); }
         if (VariableService.global.sessionManger.name === "BotRunningSession")
             this.addToEndedBots(VariableService.global.botModel.currentBotId)
         VariableService.global.sessionManger.name = "LiveIdleSession"
@@ -292,17 +301,17 @@ class BotStepManager {
         this.resetBotSteps()
     }
     start() {
-        if (VariableService.global.botModel.timer) {VariableService.global.botModel.timer.clear(); }
+        if (VariableService.global.botModel.timer) { VariableService.global.botModel.timer.clear(); }
         console.log("clearing timeout")
         let stepO = parseInt(localStorage.getItem("stepNumber"))
         let substepO = parseInt(localStorage.getItem("subStepNumber"))
         VariableService.global.botModel.timer = this.timerSet(() => { this.repeatSteps([stepO, substepO]) }, 1000, "StepTimer", false);
     }
-    setTimerForSession(reset=true) {
-        if (VariableService.global.sessionManger.botConversation) {VariableService.global.sessionManger.botConversation.clear(); }
+    setTimerForSession(reset = true) {
+        if (VariableService.global.sessionManger.botConversation) { VariableService.global.sessionManger.botConversation.clear(); }
         console.log("bot session timeout in (s)", this.timeout / 1000)
 
-        if (reset) { VariableService.global.sessionManger.botConversation = this.timerSet(() => { this.botSessionEnds() }, this.timeout,"SessionTimer");}
+        if (reset) { VariableService.global.sessionManger.botConversation = this.timerSet(() => { this.botSessionEnds() }, this.timeout, "SessionTimer"); }
         else {
             let rf = new RefreshTimer()
             rf.set_logger(this.logger)
@@ -330,4 +339,4 @@ bsm.setMessageUpdater(new FlowGlobalUpdatemessages())
 bsm.setEscalator(new FlowGlobalEscalatetoagent())
 bsm.setNextBotInstance(new FlowGlobalGetnextbot())
 bsm.setTimeoutPeriod(VariableService.config.sessionTimeoutInX) // 2 hr = 2*60*60*1000 // 3 min = 3* 60 * 1000
-VariableService.global.botModel.instance = bsm
+VariableService.global.botModel.instance = bsm  

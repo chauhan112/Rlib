@@ -3,6 +3,7 @@ from FileDatabase import File
 import ast
 from ListDB import ListDB
 from jupyterDB import jupyterDB
+
 class NameSpace:
     pass
 class CentralLocationImports:
@@ -95,15 +96,15 @@ class DependencyExtractor:
         for n in im.names:
             dic[path].append((n.name, n.asname, im))
     def get_file_path_from_import(self, im):
-            if isinstance(im, ast.Import):
-                return None
-            file= self._basic._prefix.replace(os.sep,"/") + "/" + im.module.replace(".", "/") + ".py"
-            initPath = self._basic._prefix.replace(os.sep,"/") + "/" + im.module.replace(".", "/") + "/__init__.py"
-            if os.path.exists(file):
-                return file
-            elif os.path.exists(initPath):
-                return initPath
+        if isinstance(im, ast.Import):
             return None
+        file= self._basic._prefix.replace(os.sep,"/") + "/" + im.module.replace(".", "/") + ".py"
+        initPath = self._basic._prefix.replace(os.sep,"/") + "/" + im.module.replace(".", "/") + "/__init__.py"
+        if os.path.exists(file):
+            return file
+        elif os.path.exists(initPath):
+            return initPath
+        return None
     def _paths_with_classes(self, imports = None):
         if imports is None:
             imports = self.get_imports()
@@ -589,7 +590,7 @@ class DicOps:
         valT = dic
         lastKey = loc.pop()
         for x in loc:
-            if x not in valT:
+            if type(valT) == dict and x not in valT:
                 valT[x] = {}
             valT = valT[x]
         valT[lastKey] = val

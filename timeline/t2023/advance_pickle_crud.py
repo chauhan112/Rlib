@@ -61,7 +61,7 @@ class LoggerViews:
         self.opsView.valueWidg = widgets.Text(placeholder="value or variable", layout={"width":"auto"})
         self.opsView.valueTextareaWidg = widgets.Textarea(placeholder="content", layout={"width":"auto"})
         self.opsView.value = MutuallyExclusiveWidget([self.opsView.valueWidg, self.opsView.valueTextareaWidg])
-        self.opsView.moreOps = widgets.Dropdown(options=["none","is var","textarea", "empty list", "empty dict"], layout =widgets.Layout(width="auto"))
+        self.opsView.moreOps = widgets.Dropdown(options=["none","eval","is var","textarea", "empty list", "empty dict"], layout =widgets.Layout(width="auto"))
         self.opsView.overriderChe = widgets.Checkbox(description="overwrite",indent=False, layout={'width':"auto"})
         self.opsRow = widgets.HBox([self.opsView.labelWidg, self.opsView.opsWidg, self.opsView.keyWidg, self.opsView.moreOps,
             self.opsView.value.get_layout(), self.opsView.overriderChe, self.opsView.okBtn], justify_content='space-between')
@@ -69,7 +69,7 @@ class LoggerViews:
         self.outputSection = CustomOutput()
         self.layout = widgets.VBox([self.fileOpsRow, self.locRow, self.keyRow, self.opsRow, self.outputSection.get_layout()],
                                    layout=widgets.Layout( display='flex',  flex_flow='column',  border='solid 2px BurlyWood',
-                                                         align_items='stretch', width="auto", min_height="200px", padding="3px"))
+                                                         align_items='stretch', min_height="200px", padding="3px")) 
 class BasicController:
     def set_model(self, model):
         self._model = model
@@ -205,6 +205,8 @@ class OpsController:
             value = {}
         elif mo == "is var":
             value = self._basic._scope[value]
+        elif mo == "eval":
+            value = eval(self._basic._view.opsView.valueTextareaWidg.value.strip())
             
         override = self._basic._view.opsView.overriderChe.value
         added = False
@@ -270,7 +272,7 @@ class OpsController:
         if val in ["none", "is var"]:
             self._basic._view.opsView.value.set_index(0)
             self._basic._view.opsView.value.update()
-        elif val == "textarea":
+        elif val in ["textarea", "eval"]:
             self._basic._view.opsView.value.set_index(1)
             self._basic._view.opsView.value.update()
         else:

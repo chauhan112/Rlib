@@ -1,3 +1,5 @@
+// schBot/pro-tool/Business Logic/ClientFlows/GlobalFlows/selectBot
+
 interface IFilterBot {
     apply(bots: any[]): any;
 }
@@ -34,7 +36,9 @@ class OnceInteractedNeverRunAgainBot implements IFilterBot {
                 let botInfo = this.botStatus["" + bot.id]
                 if (!botInfo) {
                     res.push(bot)
-                } else if (botInfo && !botInfo.interacted) {
+                } else if(!botInfo.interacted){
+                    res.push(bot)
+                } else if (botInfo && botInfo.status != "Completed") {
                     res.push(bot)
                 }
             }
@@ -57,7 +61,9 @@ class EveryFixedIntervalRunningBot implements IFilterBot {
                     res.push(bot)
                 }else if (this.get_time_difference(botInfo.startedTime) >= this.interval) {
                     res.push(bot)
-                }else if (!botInfo.interacted) {
+                }else if(!botInfo.interacted){
+                    res.push(bot)
+                }else if (botInfo.status != "Completed") {
                     res.push(bot)
                 }
             }
@@ -295,12 +301,12 @@ class Main{
 }
 
 console.log("selecting a bot...")
-let [bs, tfc] = Main.get_bot_selector($this.bots, $this._botsStatus, $this.isInBussinessHr, $this._timeSpent, $this._currentPageUrl, $this.visitorSession, $this._timeLimit)
+let [bs, tfc] = Main.get_bot_selector(this.bots, this._botsStatus, this.isInBussinessHr, this._timeSpent, this._currentPageUrl, this.visitorSession, this._timeLimit)
 let res = bs.get_available_bot()
-$this.userType = "Agent"
-$this.remTriggerTime = tfc.remainingTimeSpent
+this.userType = "Agent"
+this.remTriggerTime = tfc.remainingTimeSpent
 if (res.length > 0) {
-    $this.botId = res[0].id
-    $this.userType = "Bot"
-}
+    this.botId = res[0].id
+    this.userType = "Bot"
+}   
 

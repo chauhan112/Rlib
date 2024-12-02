@@ -264,12 +264,15 @@ class GraphDB:
     def frequencyPlot(dic, title = "freq plot", xAxis = "x", yAxis = "y"):
         return GraphDB.barPlot({xAxis:list(dic.keys()), yAxis: list(dic.values())}, title=title)
 
-    def showTableEditor(arr):
+    def showTableEditor(arr, display= True):
         from texttable import Texttable
         t = Texttable()
         for row in arr:
             t.add_row(row)
-        print(t.draw())
+        if display:
+            print(t.draw())
+        else:
+            return t.draw()
 
     def displayCode():
         class Temp:

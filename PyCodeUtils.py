@@ -41,7 +41,7 @@ class PyCodeUtils:
         return yaml.safe_load(layer2)
 
     def pyCommentRemover(source):
-        import io, tokenize, re
+        import io, tokenize
         io_obj = io.StringIO(source)
         out = ""
         prev_toktype = tokenize.INDENT

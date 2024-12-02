@@ -16,8 +16,12 @@ class SQLCrudWrapper:
         self._sqldb.add(key, value)
     def read(self, key):
         self._sqldb.goForward(key)
-        val = self._sqldb.value()
-        self._sqldb.goback()
+        try:
+            val = self._sqldb.value()
+        except:
+            pass
+        finally:
+            self._sqldb.goback()
         return val
     def readAll(self):
         return self._sqldb.value()

@@ -254,12 +254,15 @@ class CustomOutput:
         self.set_base_layout(VRBox())
     def set_base_layout(self, base):
         self._base_container = base
-    def display(self,layout, clear= False, ipy= False):
+    def display(self,layout, clear= False, ipy= False, printIt=False):
         if clear:
             self.clear()
         if not ipy:
             with self._out:
-                display(layout)
+                if printIt:
+                    print(layout)
+                else:
+                    display(layout)
             return
         self._base_container.add_widget(layout)
     def get_layout(self):

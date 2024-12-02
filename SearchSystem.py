@@ -163,6 +163,7 @@ class MultilineStringSearch(ISearchSystem, ContainerSetable):
 class FilesContentSearch(ISearchSystem, ContainerSetable):
     def __init__(self, filepaths):
         container = {path: MultilineStringSearch(self.getContent(path)) for path in filepaths}
+        self.filepaths = filepaths
         self.set_container(container)
     def wordSearch(self, word, case = False):
         return self._iterator(lambda key: self.container[key].wordSearch(word, case))

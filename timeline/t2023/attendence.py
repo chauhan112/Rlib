@@ -49,9 +49,7 @@ class Attendence:
             content = jupyterDB.clip().text()
         self._content = content
         soup = htmlDB.getParsedData(content)
-        self._allMsgs = htmlDB.searchOnSoup({"tagName": "li",
-                                             "attr":{"class": "messageListItem__6a4fb"}},
-                                            soup)
+        self._allMsgs = htmlDB.getTags("li", soup)
         res = []
         for one in self._allMsgs:
             if one.h3:
@@ -144,7 +142,7 @@ class TimeCalculatorView:
         self.contentwid = widgets.Textarea(placeholder = "html content or file path", layout = {'width': "60%", 'height': "70px"})
         self.startWid = widgets.DatePicker(layout = self.deflay, description="start time")
         self.endWid = widgets.DatePicker(layout = self.deflay, description="end time")
-        self.typWid = widgets.Dropdown(options = ["message time", "messaged time"],description="type of extraction")
+        self.typWid = widgets.Dropdown(options = ["message time", "messaged time"], description="type of extraction")
         self.generate_exceptions = widgets.Button(description="generate")
         self.out = CustomOutput()
         self.contentType = widgets.Dropdown(layout = self.deflay, options = ["file", "text", "clipboard"])
@@ -221,6 +219,8 @@ class TimeCalculatorController:
                     lay.value = StringEnum.LEFT
                 elif "done" in ms:
                     lay.value = StringEnum.LEFT
+                elif "back" in ms:
+                    lay.value = StringEnum.STARTED
                 self._memoization[ms] = lay
                 ly.append(lay)
         return widgets.HBox([widgets.VBox(ly), widgets.Textarea(value = json.dumps(self._extract_dict(), indent=4), 

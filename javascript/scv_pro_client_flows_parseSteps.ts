@@ -1,4 +1,6 @@
-let DEFAULT_TIMEOUT = 1.5* 1000 // 10 sec
+// SCVisitor/pro-tool/Business Logic/ClientFlows/botSteps/parseSteps
+
+let DEFAULT_TIMEOUT = 1.5 * 1000 // 10 sec
 
 interface IStepType {
     parse(): any;
@@ -29,7 +31,7 @@ class TextStepType implements IStepType {
         if (this.content.data.hasOwnProperty("goToIndex")) {
             stp = this.content.data.goToIndex
         }
-        let obj = { 
+        let obj = {
             type: this.content.type,
             isQuickReply: false,
             isInputReply: false,
@@ -38,7 +40,7 @@ class TextStepType implements IStepType {
             QReplyOptions: [],
             UInputData: "",
             textData: this.content.data.text.trim(),
-            timeout: DEFAULT_TIMEOUT, 
+            timeout: DEFAULT_TIMEOUT,
             Step: stp
         }
         this.parsed = obj
@@ -68,11 +70,11 @@ class QReplyStepType implements IStepType {
     }
     set_next_step(step, substep) {
         this.next_step = [step, substep]
-        for (let opt of this.parsed.QReplyOptions){
-            if ( !opt.hasOwnProperty("stepIndex") ){
+        for (let opt of this.parsed.QReplyOptions) {
+            if (!opt.hasOwnProperty("stepIndex")) {
                 opt.stepIndex = -1
             }
-            if (opt.stepIndex == -1 ){
+            if (opt.stepIndex == -1) {
                 opt.stepIndex = step
             }
         }
@@ -85,11 +87,11 @@ class QReplyStepType implements IStepType {
     }
     parse() {
         if (this.parsed) { return this.parsed }
-        let content= this.content.data.text
-        if (content){
+        let content = this.content.data.text
+        if (content) {
             content = content.trim()
         }
-        this.parsed = { 
+        this.parsed = {
             type: this.content.type,
             isQuickReply: true,
             isInputReply: false,
@@ -116,7 +118,7 @@ class UInputStepType implements IStepType {
         this.content = null
         this.parsed = null
         this.next_step = [-1, -1]
-        this.next_step_for_timeout=[-1,0]
+        this.next_step_for_timeout = [-1, 0]
     }
     set_content(steps) {
         this.content = steps
@@ -126,8 +128,8 @@ class UInputStepType implements IStepType {
         this.next_step = [step, substep]
     }
 
-    set_next_step_for_timeout(step){
-        this.next_step_for_timeout=[step, 0]
+    set_next_step_for_timeout(step) {
+        this.next_step_for_timeout = [step, 0]
     }
     getNextStep() {
         return this.next_step
@@ -149,30 +151,54 @@ class UInputStepType implements IStepType {
         let typeFixer = { // check InputType data model
             'email': 'Email',
             'phone': 'PhoneNumber',
-            'freeinput': 'FreeText'
+            'freeinput': 'FreeText',
+            'AI_BOT': "AI_BOT"
         }
+        // let regexChecker = {
+        //     'email': /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        //     'phone': /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?\s*$/,
+        // }
+
+        // let regexChecker = {
+        //     'email': /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        //     'phone': /^\d{1,14}$/,
+        // }
         let regexChecker = {
             'email': /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             'phone': /^[+]{0,1}[0-9]{5,14}$/,
         }
 
+
         let errorMsgMap = {
-            'email': "Oops the email is not valid. Maybe you are missing @ 0r a .com.",
+            'email': "Oops the email is not valid. Maybe you are missing @ or a .com.",
             'phone': "Please enter valid phone number"
         }
 
         let placeHolderMap = {
             'email': "email@example.com",
             'phone': "Enter your phone number",
-            'freeinput': 'Send a message…'
+            'freeinput': 'Send a message…',
+            'AI_BOT': "Make your query here"
         }
-        let content= this.content.data.text
-        if (content){
+        let content = this.content.data.text
+        if (content) {
             content = content.trim()
+        }
+        let typ = this.content.data.inputType
+        let botName = ""
+        if (typ == "freeinput") {
+            if (content.length > 6 && content.substr(0, 6) == "AI_BOT"){
+                typ = "AI_BOT"
+                content = content.substr(6).trim()
+                let lines = content.split("\n")
+                botName = lines.shift().trim()
+                content = lines.join("\n")
+                content = content.trim()
+            }
         }
 
         let obj = { // Object of array from [entity/ECT.SalesChatDM: Bot2V]
-            type: typeFixer[this.content.data.inputType],
+            type: typeFixer[typ],
             isQuickReply: false,
             isInputReply: true,
             isTextReply: true,
@@ -180,13 +206,14 @@ class UInputStepType implements IStepType {
             QReplyOptions: [],
             UInputData: "",
             textData: content,
-            timeout: this.content.data.inputExpires*1000,
+            timeout: this.content.data.inputExpires * 1000,
             Step: beforeInputExpireStep,
             inputExpireStep: inputExpireStep,
             saveToProfile: this.content.data.saveToProfile,
-            regex: regexChecker[this.content.data.inputType],
-            errorMsg: errorMsgMap[this.content.data.inputType],
-            placeHolder: placeHolderMap[this.content.data.inputType]
+            regex: regexChecker[typ],
+            errorMsg: errorMsgMap[typ],
+            placeHolder: placeHolderMap[typ],
+            extra: botName
         }
         this.set_next_step(obj.Step, 0)
         this.set_next_step_for_timeout(obj.inputExpireStep)
@@ -195,8 +222,8 @@ class UInputStepType implements IStepType {
     }
 }
 
-
-class EscalateToAgent implements IStepType{
+ 
+class EscalateToAgent implements IStepType {
     content: any
     parsed: any // json format
     current_step: number
@@ -212,7 +239,7 @@ class EscalateToAgent implements IStepType{
     }
     parse() {
         if (this.parsed) { return this.parsed }
-        let obj = { 
+        let obj = {
             type: this.content.type,
             textData: this.content.data.text.trim(),
             timeout: this.content.data.noAgentExpires
@@ -227,12 +254,12 @@ class EscalateToAgent implements IStepType{
         return this.getNextStep()
     }
     set_next_step(step: any, substep: any) {
-        
+
     }
 }
 
 
-class Parser{
+class Parser {
     private parseASubStep(step: any) {
         switch (step.type) {
             case "Text":
@@ -247,13 +274,13 @@ class Parser{
                 let uist = new UInputStepType()
                 uist.set_content(step)
                 return uist
-            case "Escalate":    
+            case "Escalate":
                 let eta = new EscalateToAgent()
                 eta.set_content(step)
                 return eta
         }
     }
-    
+
     private parseAStep(steps: any) {
         let contents = steps.contents
         let res = [];
@@ -267,8 +294,8 @@ class Parser{
         }
         return res;
     }
-    
-    parse (steps) {
+
+    parse(steps) {
         let res = []
         for (let step_with_substeps of steps) {
             res.push(this.parseAStep(step_with_substeps))
@@ -276,15 +303,15 @@ class Parser{
         return res
     }
 }
-class NextStepDecider{
+class NextStepDecider {
     botSteps: any;
-    set_bot_steps(parsedSteps: any){
-        this.botSteps= parsedSteps
+    set_bot_steps(parsedSteps: any) {
+        this.botSteps = parsedSteps
     }
-    compareArrays(arr1,arr2){
-        if (arr1.length != arr2.length){return false}
+    compareArrays(arr1, arr2) {
+        if (arr1.length != arr2.length) { return false }
         for (let i = 0; i < arr1.length; i++) {
-            if( arr1[i] != arr2[i]){return false}
+            if (arr1[i] != arr2[i]) { return false }
         }
         return true
     }
@@ -300,36 +327,36 @@ class NextStepDecider{
         }
         return [step, substep + 1]
     }
-    
-    assignNextSteps(){
+
+    assignNextSteps() {
         for (let i = 0; i < this.botSteps.length; i++) {
             let lstep = this.botSteps[i]
             for (let j = 0; j < lstep.length; j++) {
                 let lsubSubstep = lstep[j]
                 let res = this.getNext(i, j)
                 let gns = lsubSubstep.getNextStep()
-                if (gns[0]== -1){
+                if (gns[0] == -1) {
                     lsubSubstep.set_next_step(res[0], res[1])
                 }
                 let gnsft = lsubSubstep.getNextStepForTimeOut()
-                if (lsubSubstep instanceof UInputStepType && gnsft[0] ==-1){
+                if (lsubSubstep instanceof UInputStepType && gnsft[0] == -1) {
                     lsubSubstep.set_next_step_for_timeout(res[0])
                 }
             }
         }
-        if (this.botSteps.length > 0){
-            this.botSteps[this.botSteps.length-1][0].parsed.isEndStep = true
+        if (this.botSteps.length > 0) {
+            this.botSteps[this.botSteps.length - 1][0].parsed.isEndStep = true
         }
     }
 }
 console.log("parsing steps classes")
 
-if ($this._botSteps){
+if (this._botSteps) {
     let p = new Parser()
-    let ps = p.parse($this._botSteps)
+    let ps = p.parse(this._botSteps)
     let nsd = new NextStepDecider()
     nsd.set_bot_steps(ps)
     nsd.assignNextSteps()
-    $this.out = ps
-}
+    this.out = ps
+} 
 

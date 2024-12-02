@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Skipper</title>
+    <link rel="stylesheet" href="video.css" />
+  </head>
+  <body>
+    <input
+      type="text"
+      id="video-url"
+      placeholder="Enter YouTube URL"
+      style="width: 80%"
+    />
+    <button onclick="loadVideo()">Load Video</button>
+    <div id="player"></div>
+    <div id="controls">
+      <button onclick="markSkipStart()">Mark Skip Start</button>
+      <button onclick="markSkipEnd()">Mark Skip End</button>
+      <button onclick="saveSkipTimes()">Save Skip Times</button>
+      <div id="skip-times"></div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

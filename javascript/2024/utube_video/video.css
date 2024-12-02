@@ -1,0 +1,15 @@
+#controls {
+  margin-top: 20px;
+}
+.skip-time {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.skip-time input {
+  margin-right: 10px;
+}
+#player {
+  width: 100vw;
+  height: 100vh;
+}

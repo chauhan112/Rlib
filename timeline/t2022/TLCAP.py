@@ -243,7 +243,7 @@ class NameFinder:
                     res.append("serverFlows")
                 res.append(self._get_data([elem, "name"]))
                 self._location_data.set_index(i+2)
-            elif val == "components":
+            elif val in ["components"]:
                 elem = self._location_data.get_element(i+1)
                 nmaeOFfCompo = self._get_data([elem, "name"])
                 res.pop()
