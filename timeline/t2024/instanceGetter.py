@@ -37,7 +37,7 @@ def InstanceGetter():
     
     srk = SearchWithResultKeys()
     container = srk.views.container
-    nri = jupyterDB._params["GNotebookLayoutController"].instances["new-rlib-it"]
+    nri = jupyterDB._params["rlib"].kvs
     sc = SearchComplex()
     sc.handlers.valFunc = lambda x,y: y[0]
     def search(word, typ, ctx=None):
@@ -50,7 +50,10 @@ def InstanceGetter():
         res = list(map(lambda x: s.process.sc.process.values[x], res))
         return res
     def btnClicked(key):
+        
         jupyterDB._params["cnt"] = s.process.data[key]
+        with s.process.srk.views.outArea.outputs.layout:
+            display("assigned to variable cnt")
     def nameGetter(info):
         if type(info) == str:
             return info
