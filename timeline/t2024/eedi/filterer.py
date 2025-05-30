@@ -7,6 +7,7 @@ from SerializationDB import SerializationDB
 
 def MisConceptsFilterer():
     lrd = ListResultDisplayer()
+    lrd.handlers.set_up()
     lrd.handlers.labelFunc = lambda x: x[1]
     oe = lrd.process.exp
     oe.views.outputDisplayer.outputs.layout.remove_class("h-600px")
