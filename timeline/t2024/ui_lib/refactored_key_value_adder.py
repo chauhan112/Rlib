@@ -1058,6 +1058,7 @@ def MechanismForKeyValueSetter():
             s.process.callers[index] = s.handlers.load(metaInfo[keyType.value])
         else:
             return
+        s.process.currentIndex = index
         s.process.callers[index].handlers.run(btn)
     def load(txt):
         exp = {}
@@ -1067,7 +1068,8 @@ def MechanismForKeyValueSetter():
             res.handlers.set_parent(s)
         return res
     def refreshIt(w):
-        s.process.callers.clear()
+        #s.process.callers.clear()
+        del s.process.callers[s.process.currentIndex]
         s.process.parent.process.metaKeyValue.process.refreshAddCancelBtns.views.cancelBtn.handlers.handle(w)
     def set_up():
         s.process.prev_funcs.btn_clicked = s.process.parent.process.keysDisplayer.views.btns.handlers.handle
@@ -1091,7 +1093,11 @@ def KeyValueComponentV2():
     def readAll():
         return s.process.mkvp.process.kvsForMeta.process.model._model._dic
     def set_file(file):
-        raise IOError("not implemented yet")
+        def changed():
+            SerializationDB.pickleOut(s.handlers.readAll(), s.process.filePath)
+        s.process.filePath = file
+        s.handlers.set_dictionary(SerializationDB.readPickle(file))
+        s.process.mkvp.process.model._model_changed = changed
     def model_changed():
         pass
     mkvp.process.addCancelBtns.views.cancelBtn.handlers.handle = doNothing
