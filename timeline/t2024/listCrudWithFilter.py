@@ -136,7 +136,12 @@ def JsonCrud():
     cancelBtn = Utils.get_comp(dict(description="cancel"), IpywidgetsComponentsEnum.Button, className="w-auto")
     okBtn = Utils.get_comp(dict(description="ok"), IpywidgetsComponentsEnum.Button, className="w-auto")
     confirm = Utils.container([cancelBtn, okBtn], className="w-100 right")
-    txtarea = Utils.get_comp(dict(placeholder="write and validate json"), IpywidgetsComponentsEnum.Textarea, className="p0 w-100 hmin-200px textarea")
+    xx = {'filter': {'options': [['not done',
+        ['search', [['attrs', 'done'], 'equal', True, True]]]],
+      'selected': 'not done'}}
+    import pprint
+    
+    txtarea = Utils.get_comp(dict(placeholder=pprint.pformat(xx)), IpywidgetsComponentsEnum.Textarea, className="p0 w-100 hmin-200px textarea")
     label = Utils.get_comp(dict(), IpywidgetsComponentsEnum.Label, bind=False)
     container = Utils.container([txtarea, label, confirm], className="flex flex-column")
     model = {}
