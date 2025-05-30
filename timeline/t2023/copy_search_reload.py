@@ -55,7 +55,7 @@ class FilesSearch:
             if i == 0:
                 res = self._search_in_files(self._files, w, case=case, reg =reg)
             else:
-                res = self._search_in_files_line(res, w, case=case, reg=reg)
+                res = self._search_in_files([x[0] for x in res], w, case=case, reg=reg)
         return res
     def set_files(self, files):
         self._files = files

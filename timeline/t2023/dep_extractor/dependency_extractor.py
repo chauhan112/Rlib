@@ -561,7 +561,8 @@ class AstTools:
             node.body = new_body
         return node
     def remove_annotations(node):
-        RemoveAnnotation().remove(node)
+        ra = RemoveAnnotation()
+        ra.remove(node)
     def assign_parent(astObj, parent=None):
         if type(astObj) in [set, list]:
             np = NameSpace()
@@ -979,7 +980,8 @@ class RenameSameNameClasses:
                 self._new_name = AstTools.get_new_name(f, self._bsc._prefix, clsNa)
                 self._riac._resolved_tracker[f][clsNa]['<value>'].name = self._new_name
                 DicOps.dicIterIter(CentralLocationImports.all_calls[f][clsNa], apply_value_func=self._callRename)
-        DicOps.dicIterIter(CentralLocationImports.all_imports[None], apply_value_func=self._extact_all_non_resolved_imports)
+        if None in CentralLocationImports.all_imports:
+            DicOps.dicIterIter(CentralLocationImports.all_imports[None], apply_value_func=self._extact_all_non_resolved_imports)
     def set_basic(self, bsc):
         self._bsc = bsc
     def set_resolver(self, riac):
@@ -1037,8 +1039,8 @@ class Main:
         
         return bsc
     def get_explorer(node):
-        from modules.code_parser.explorer import Main
-        exp =Main.ast_explorer("")
+        from modules.code_parser.explorer import Main as MainExp
+        exp = MainExp.ast_explorer("")
         exp._exp.set_model(node)
         exp._fill_values()
         return exp
