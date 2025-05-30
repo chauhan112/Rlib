@@ -48,15 +48,15 @@ def DiscordMessageParser():
             s.handlers.set_end_date(datetime(year=y, month=m, day=d, hour=h, minute=M))
     def set_start_date(datet: datetime):
         s.process.start_date = datet
-        s.process.pipeline.append(lambda y: Array(y).filter(lambda x: x[0] >= s.process.start_date).array)
     def set_end_date(datet: datetime):
         s.process.end_date = datet
-        s.process.pipeline.append(lambda y: Array(y).filter(lambda x: x[0] <= s.process.end_date).array)
     def get_filtered_results():
         res = s.process.content
         for f in s.process.pipeline:
             res = f(res)
-        return res
+        startfunc = lambda y: Array(y).filter(lambda x: x[0] >= s.process.start_date).array
+        endfunc = lambda y: Array(y).filter(lambda x: x[0] <= s.process.end_date).array
+        return endfunc(startfunc(res))
     def readableMessage(arr):
         res = []
         for one in arr:
@@ -72,11 +72,11 @@ def DiscordMessageParser():
         return newRes
     def date_time_sanitizer(timeStr):
         yst = TimeDB.yesterday()
-        timeStr = timeStr.replace("Yesterday at", f"{yst[1]}/{yst[2]}/{yst[0]}")
+        timeStr = timeStr.replace("Yesterday at", f"{yst[1]}/{yst[2]}/{yst[0]%100},")
         yst = TimeDB.today()[0]
-        timeStr = timeStr.replace("Today at", f"{yst[1]}/{yst[2]}/{yst[0]}")
+        timeStr = timeStr.replace("Today at", f"{yst[1]}/{yst[2]}/{yst[0]%100},")
         tim = timeStr.replace("—","").strip().strip()
-        return datetime.strptime(tim, "%m/%d/%Y %I:%M %p") 
+        return datetime.strptime(tim, "%m/%d/%y, %I:%M %p") 
     pipeline.append(readableMessage)
     pipeline.append(sanitizeDateTime)
     s = ObjMaker.variablesAndFunction(locals())
@@ -271,9 +271,10 @@ def AttendenceUI():
         state = s.handlers.extract_msg_state()
         res = []
         for st, end in arr:
-            if state[st[1]] == "ignore" or state[end[1]] == "ignore":
+            st1, end1 = st[1].lower(), end[1].lower()
+            if state[st1] == "ignore" or state[end1] == "ignore":
                 continue
-            state[st[1]] == "started" and state[end[1]] == "left"
+            assert state[st1] == "started" and state[end1] == "left"
             res.append((end[0] - st[0]).seconds)
         return res
     def get_keys_for_messaged_time():
