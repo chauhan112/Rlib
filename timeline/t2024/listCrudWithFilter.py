@@ -14,6 +14,7 @@ def SearchComplex():
         return v
     valFunc = default_val_func
     dm = DictionaryModel()
+    renderedMap = {}
     def search(typ, word, vals=None):
         if vals is None:
             vals = s.process.values
@@ -47,9 +48,7 @@ def SearchComplex():
         elif typ == "greater":
             return word > targetWord
         elif typ == "exec":
-            xx = {}
-            exec(word, xx)
-            f = (xx["f"])
+            f = s.handlers.getFunc(word)
             return f(key, targetWord, s)
         return False
     def sort(vals=None, reverse=False):
@@ -58,11 +57,18 @@ def SearchComplex():
         if type(s.process.values) == dict:
             return sorted(vals, key = lambda x: s.handlers.valFunc(x, s.process.values[x]), reverse=reverse)
         return sorted(vals, key = lambda x: s.handlers.valFunc(x, vals[x]), reverse=reverse)
+    def getFunc(funcText):
+        if funcText in s.process.renderedMap:
+            return s.process.renderedMap[funcText]
+        else:
+            xx = {}
+            exec(funcText, xx)
+            f = (xx["f"])
+            s.process.renderedMap[funcText] = f
+            return f
     def sortWithExec( funcText, vals=None ):
-        xx = {}
-        exec(funcText, xx)
-        f = (xx["f"])
-        return sorted(vals, key = lambda x: f(s.handlers.valFunc(x, s.process.values[x]), s))
+        f = s.handlers.getFunc(funcText)
+        return sorted(vals, key = lambda x: f((x, s.handlers.valFunc(x, s.process.values[x])), s))
     def opsList(searches):
         """
         opTyp = search|sort
