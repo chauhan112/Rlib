@@ -184,9 +184,9 @@ def ConsoleAndFolderOpenerModel():
         def opensuse(path):
             subprocess.run(["dolphin", path])
         def gamingLaptop(path):
-            subprocess.run(["explorer", path])
+            subprocess.run(["explorer", path.replace("/", os.sep)])
         def window2019(path):
-            subprocess.run(["explorer", path])
+            subprocess.run(["explorer", path.replace("/", os.sep)])
         return ObjMaker.uisOrganize(locals())
     def device_unique_identifier():
         uname = platform.uname()
@@ -265,7 +265,7 @@ def MoreFunctionalities():
         if type(selected)== str:
             if not selected.startswith(ExplorerUtils.dirIcon()):
                 path2Copy += os.sep + selected
-        ClipboardDB.copy2clipboard(path2Copy)
+        ClipboardDB.copy2clipboard(path2Copy.replace(os.sep, "/"))
     def set_up():
         s.process.parent.views.buttons.append(s.views.copyPathBtn)
         s.views.copyPathBtn.handlers.handle = copyPathCallback
@@ -289,6 +289,7 @@ class Main:
     def osExpWithPagination(path= None):
         from timeline.t2024.ListResultDisplayer import ListResultDisplayer
         lrd = ListResultDisplayer()
+        lrd.handlers.set_up()
         if path is not None:
             lrd.process.exp.handlers.set_path(path)
         return lrd

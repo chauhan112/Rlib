@@ -71,5 +71,4 @@ def ListResultDisplayer():
         s.process.exp.handlers.render()
     exp.views.filterSearch.handlers.handle = onFiltered
     s = ObjMaker.uisOrganize(locals())
-    set_up()
     return s
