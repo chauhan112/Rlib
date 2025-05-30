@@ -29,6 +29,9 @@ class htmlDB:
         return soup.findAll(name)
 
     def searchOnSoup(dic, soup):
+        """
+        dic: {"tagName":"name", "attr":{"attrName": "attrValue"}}
+        """
         if(not('tagName' in dic and 'attr' in dic)):
             print('give dictionary containing {"tagName":"name", "attr":{"attrName": "attrValue"}}')
             return
