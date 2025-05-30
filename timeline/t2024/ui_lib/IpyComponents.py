@@ -29,9 +29,17 @@ class BaseComponentV2:
     def show(self):
         HideableWidget.showIt(self.outputs.layout)
     def update_classes(self):
+        self.inputs.classes = self.inputs.className.split()
         if self.inputs.className:
-            for clsName in self.inputs.className.split():
+            for clsName in self.inputs.classes:
                 self.outputs.layout.add_class(clsName)
+    def add_class(self, className):
+        self.inputs.classes.append(className)
+        self.outputs.layout.add_class(className)
+    def removeAllClasses(self):
+        for cn in self.inputs.classes:
+            self.outputs.layout.remove_class(cn)
+        self.inputs.classes.clear()
 class IpywidgetComponentV2(BaseComponentV2):
     def render(self):
         if self.inputs.typeOfWidget == IpywidgetsComponentsEnum.Button:
