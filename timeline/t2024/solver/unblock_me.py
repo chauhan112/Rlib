@@ -267,21 +267,31 @@ def UnBlockMeSolver():
     return s
 class UnblockMeVisualizer:
     def __init__(self, board_size=(6,6),cell_size=100 ):
+        self.offset = 4
+        self.board = None
+        self.board_margin = 4
         self.set_params(board_size, cell_size)
     def set_params(self, board_size=(6,6), cell_size=100):
         self.board_size = board_size
         x,y = board_size
         self.cell_size = cell_size
-        self.board_width = x * cell_size
-        self.board_height = y * cell_size
-        self.offset = 4
+        self.board_width = x * cell_size + self.board_margin
+        self.board_height = y * cell_size + self.board_margin
     def create_board(self):
         board = np.ones((self.board_height, self.board_width, 3), dtype=np.uint8) * 255
+        self.board = board
         x, y = self.board_size
-        for i in range(x + 1):
-            cv2.line(board,  (0, i * self.cell_size), (self.board_width, i * self.cell_size), (200, 200, 200), 1)
-        for i in range(y + 1):
-            cv2.line(board, (i * self.cell_size, 0), (i * self.cell_size, self.board_height), (200, 200, 200), 1)
+        cell_size = self.cell_size
+        width = x * cell_size
+        height =y * cell_size
+        for i in range(y+1):
+            p1 = (0, i * self.cell_size)
+            p2 = (width, i * self.cell_size)
+            cv2.line(board, p1 ,p2 , (200, 200, 200), 1)
+        for i in range(x+1):
+            p1 = (i * self.cell_size, 0)
+            p2 = (i * self.cell_size, height)
+            cv2.line(board, p1,p2 , (200, 200, 200), 1)
         return board
     def add_block(self, board, block, color=(0, 0, 255)):
         """
@@ -301,7 +311,9 @@ class UnblockMeVisualizer:
         cv2.putText(board,str(index), pm, cv2.FONT_HERSHEY_SIMPLEX, 1, 255, 2)
         return board
     def visualize_board(self, blocks, output_path=None):
-        board = self.create_board()
+        board = self.board
+        if self.board is None:
+            board = self.create_board()
         colors = [
             (0, 0, 255),      # Red (main block)
             (0, 255, 0),      # Green
@@ -318,6 +330,8 @@ class UnblockMeVisualizer:
         if output_path is not None:
             cv2.imwrite(output_path, ll)
         return board
+    def reset(self):
+        self.create_board()
 def MakeAnimation():
     grid = None
     cellSize = 100
