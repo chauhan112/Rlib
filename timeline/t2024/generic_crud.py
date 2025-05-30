@@ -221,7 +221,7 @@ def CRUDFilter():
     undoers.results = []
     def btnMaker(ele):
         return Utils.get_comp({"description": s.process.resultDisplayer.handlers.name_getter(ele)}, 
-                              IpywidgetsComponentsEnum.Button, className="mw-100px w-auto")
+                              IpywidgetsComponentsEnum.Button, className="w-auto")
     def get_form():
         if s.process.model.process.dicModel.exists(["meta", "structure"]):
             pstr = s.process.model.process.dicModel.read(["meta", "structure"])
@@ -623,7 +623,6 @@ def ViewRenderer():
             s.handlers.onToggled(1)
         else:
             s.process.prev_onChange(w)
-        
     def onToggled(w):
         p = s.process.parent
         cr = s.process.cr
@@ -639,7 +638,6 @@ def ViewRenderer():
             p.process.scv.process.searchComponent.views.container.hide()
             customRendering.handlers.set_data(allData, p)
             p.process.scv.views.keysOut.state.controller.display(customRendering.views.container.outputs.layout, True, True)
-        
     s = ObjMaker.uisOrganize(locals())
     return s
 def StructureCrud():
@@ -737,6 +735,7 @@ def AdvanceCRUDFilterer():
         s.process.cf.process.model.process.dicModel.set_file(file)
     s = ObjMaker.uisOrganize(locals())
     # set_file("test.pkl")
+    cf.process.parent = s
     return s
 def formMaker():
     from timeline.t2024.generic_logger.generic_loggerV4 import FormGeneratorV2, SupportedTypes
@@ -787,6 +786,40 @@ class CRUDAdvance(GComponent):
         self.state.process.model.handlers.set_data(val)
     def is_empty(self):
         return len(self.state.process.model.handlers.readAll()) == 0
+def ManyLayerCrud():
+    from timeline.t2024.generic_crud import AdvanceCRUDFilterer
+    adf = AdvanceCRUDFilterer()
+    prev_get_loc_func = adf.process.cf.process.model.process.dicModel._get_loc
+    saveBtn = Utils.get_comp({"description":"save"},IpywidgetsComponentsEnum.Button, className = "w-auto")
+    container = adf.views.container
+    def onSave(w):
+        s.process.adf.process.cf.process.model.process.dicModel.changed()
+        s.process.adf.views.saveBtn.hide()
+    def set_file(filepath):
+        s.process.adf.process.cf.process.model.process.dicModel.set_file(filepath)
+        s.process.filepath = filepath
+    def set_file_with_loc(filepath, loc = []):
+        s.handlers.set_file(filepath)
+        s.process.adf.process.cf.process.model.process.dicModel.s.process.main_loc = loc
+        dm = s.process.adf.process.cf.process.model.process.dicModel
+        if not dm.exists(["data"]):
+            dm.add(["data"], {})
+            dm.add(["meta", "current-key"], 0)
+        if not dm.exists(["meta"]):
+            dm.add(["meta", "current-key"], 0)
+    def get_loc(loc):
+        if type(loc) == list:
+            return s.process.adf.process.cf.process.model.process.dicModel.s.process.main_loc.copy() + loc
+        return s.handlers.prev_get_loc_func(loc)
+    saveBtn.hide()
+    saveBtn.outputs.layout.add_class("bg-blue-light")
+    adf.process.cf.process.scv.process.searchComponent.views.container.append(saveBtn)
+    adf.views.saveBtn = saveBtn
+    adf.process.cf.process.model.process.dicModel._get_loc = get_loc
+    saveBtn.handlers.handle = onSave
+    s = ObjMaker.uisOrganize(locals())
+    adf.process.parent = s
+    return s
 class Main:
     def crud_filter():
         cf = CRUDFilter()
@@ -800,3 +833,5 @@ class Main:
         return cf
     def crud_with_renderer():
         return AdvanceCRUDFilterer()
+    def many_layer_crud():
+        return ManyLayerCrud()
