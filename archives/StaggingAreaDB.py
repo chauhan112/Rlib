@@ -285,12 +285,6 @@ class StaggingAreaDB:
             if(len(dependency[cls]) !=0):
                 dependentClasses[cls] = set(dependency[cls])
         return dependentClasses
-    def weather_data(city):
-        import requests
-        query='q='+city
-        url = 'http://api.openweathermap.org/data/2.5/weather?'+query+'&APPID=b35975e18dc93725acb092f7272cc6b8&units=metric'
-        res=requests.get(url)
-        return res.json()
     def uninstallPackages(packages = [], env='base', showOut= True):
         from OpsDB import OpsDB
         cmds = [f'conda activate {env}']
