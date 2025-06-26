@@ -4,7 +4,7 @@
 
 ## Overview
 
-Rlib is a comprehensive personal Python library developed by chauhan112. It serves as a collection of tools, utilities, abstractions, and experiments built over time to assist with various development tasks, data management, code analysis, and creating interactive user interfaces, primarily within the Jupyter Notebook environment.
+Rlib is a comprehensive personal Python library developed by me. It serves as a collection of tools, utilities, abstractions, and experiments built over time to assist with various development tasks, data management, code analysis, and creating interactive user interfaces, primarily within the Jupyter Notebook environment.
 
 Due to its nature as a personal toolkit evolved over years (as reflected in the `timeline` directory structure), it contains a diverse and eclectic mix of functionalities.
 
