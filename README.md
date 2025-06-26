@@ -56,9 +56,9 @@ git clone <repository_url> Rlib
 # Add the path to Rlib to your PYTHONPATH or manage via sys.path in scripts/notebooks
 ```
 
-*Potentially, a `setup.py` might exist or could be added for standard installation using pip:*
+* a `setup.py` exists at modules/LibPath/ or could be added for standard installation using pip:  Open the file modules/LibPath/LibPath/__init__.py and make the changes install with following commands*
 
 ```bash
-# cd Rlib
-# pip install .
+# cd modules/LibPath
+# python setup.py install
 ```
