@@ -2,8 +2,9 @@ from basic import Main as ObjMaker
 from ..twoD_tools import Vector
 from enum import Enum
 from typing import List
-from ..tools import ArrayTools
+from ..tools import ArrayTools, ColorMap, Field
 import copy
+from ..objectedness import Main as GridMain, GridObject
 import numpy as np
 def LinesTools():
     def orientation(obj: GridObject):
@@ -38,32 +39,33 @@ def Solver05a7bcf2():
         (x1, y1) = target.bounding_rect[0]
         (x2, y2) = target.bounding_rect[1]
         vec = Vector(x2 - x1, y2 - y1)
+        (x,y), _ = obj.bounding_rect
         if vec.x > vec.y: # vertical direction
-            if obj.bounding_rect[0][0] < vec.x:
+            if y < y1:
                 return ToGoDirection.right
             else:
                 return ToGoDirection.left
         else:
-            if obj.bounding_rect[0][1] < vec.y:
+            if x < x1:
                 return ToGoDirection.down
             else:
                 return ToGoDirection.up
     def get_objs_and_directions(inp):
         objs = GridMain.get_objs( inp, True)
-        y,b, r = solver.handlers.get_colored_objs(objs)
+        y,b, r = get_colored_objs(objs)
         assert len(b) == 1
         assert len(r) == 1
         b = b[0]
         r = r[0]
-        direction = solver.handlers.get_move_direction(y[0], b)
+        direction = get_move_direction(y[0], b)
         return y, b, r, direction
     def solve(inp):
         _, _, _, direction = get_objs_and_directions(inp)
         rotMap = {ToGoDirection.right: 3, ToGoDirection.up: 2, ToGoDirection.left: 1, ToGoDirection.down: 0}
         rot = rotMap[direction]
-        newArr = solver.handlers.rotx(inp, rot)
+        newArr = rotx(inp, rot)
         res = solve_down_oriented(newArr)
-        return Field(solver.handlers.rotx(res.arr.tolist(), (-rot % 4)))
+        return Field(rotx(res.arr.tolist(), (-rot % 4)))
     def solve_down_oriented(inp):
         ys, b, r, direction = get_objs_and_directions(inp)
         def notIsInside(point):
