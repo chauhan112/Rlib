@@ -11,6 +11,7 @@ class ColorMap(Enum):
     RED = 2
     YELLOW = 4
     LIGHT_BLUE = 8
+    GREEN = 3
 
 class ArcQuestion:
     def __init__(self, question):
@@ -56,19 +57,30 @@ class ArrayTools:
         return [[value if x == prev_value else x for x in row] for row in arr]
     def rotate(arr: List[List[int]]):
         return np.rot90(arr).tolist()
+    def isInside(arrShape: Tuple[int, int], point: Tuple[int, int]):
+        sx,sy = arrShape
+        x,y = point
+        return 0 <= x < sx and 0 <= y < sy
 class Field:
     def __init__(self, arr):
         self.arr = np.array(arr, dtype=int)
+        self._placer = self._def_placer
     def shape(self):
         return self.arr.shape
-    def place(self, firstPoint, arr):
-        assert isinstance(firstPoint, tuple), "firstPoint must be of type tuple"
-        assert isinstance(arr, Field), "arr must be of type Field"
+    def _def_placer(self, firstPoint, arr, inst=None):
         sx,sy = arr.shape()
         x,y = firstPoint
         for i in range(sx):
             for j in range(sy):
                 self.arr[x+i][y+j] = arr.arr[i][j]
+    def place(self, firstPoint, arr,):
+        assert isinstance(firstPoint, tuple), "firstPoint must be of type tuple"
+        assert isinstance(arr, Field), "arr must be of type Field"
+        from inspect import signature
+        if len(signature(self._placer).parameters) == 3:
+            self._placer(firstPoint, arr, self)
+            return
+        self._placer(firstPoint, arr )
     def copy(self):
         return Field(self.arr.tolist.copy())
     
@@ -80,3 +92,5 @@ class Field:
         assert isinstance(other, Field), "other must be of type Field"
         self.shape() == other.shape()
         return (self.arr == other.arr).all()
+    def replace_value(self,old_value, new_value ):
+        self.arr[self.arr == old_value] = new_value
