@@ -61,6 +61,8 @@ class ArrayTools:
         sx,sy = arrShape
         x,y = point
         return 0 <= x < sx and 0 <= y < sy
+    def transpose(arr: List[List[int]]):
+        return np.transpose(arr).tolist()
 class Field:
     def __init__(self, arr):
         self.arr = np.array(arr, dtype=int)
