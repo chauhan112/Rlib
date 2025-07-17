@@ -1,4 +1,4 @@
-from src.twoD_tools import Vector, ExtendTools, BoundingRect
+from ..twoD_tools import Vector, ExtendTools, BoundingRect
 from collections import namedtuple
 from ..objectedness import GridObject, Main as GridMain
 from ..tools import ArrayTools, Field
