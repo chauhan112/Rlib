@@ -2,7 +2,7 @@ from .solver0692e18c import toolsAgregate
 from ..tools import ArrayTools, Vector
 from ..Fields import Field
 from ...arc_agi_2 import ObjMaker, Labels
-from ..objectedness import Main as GridMain
+from ..objectedness import Main as GridMain, GridObject
 from .moreTools import FieldPlacers
 import copy
 
@@ -135,6 +135,76 @@ def Solver09629e4f():
                 v = inp[a+i][b+j]
                 fill_section(inpCopy, (i*4,j*4), v)
         return Field(inpCopy)
+    s = ObjMaker.variablesAndFunction(locals())
+    return s
+def Solver0962bcdd():
+    description = "extends smaller objects diagonally and horizontally by one cell"
+    def pxColor(ob: GridObject):
+        pc = ob.rect_obj[0][1]
+        xc = ob.rect_obj[1][1]
+        return pc, xc
+    def replace_color(plusColor, xColor):
+        x = getX(5, xColor)
+        p = getPlus(5, plusColor)
+        f = getField(p)
+        f.place((0, 0), Field(x))
+        return f
+    def getX(size, val):
+        res = []
+        for i in range(size):
+            row = [0] * size
+            row[i] = val
+            row[-1-i] = val
+            res.append(row)
+        return res
+    def getPlus(size, val):
+        res = []
+        for i in range(size):
+            if i == size // 2:
+                row = [val] * size
+            else:
+                row = [0] * size
+                row[size//2] = val
+            res.append(row)
+        return res
+    def getField(arr):
+        field = Field(arr)
+        fp = FieldPlacers()
+        field._placer = fp.handlers.overlap_with_transparent
+        return field
+    def solve(inp):
+        objs = GridMain.get_objs(inp, True)
+        res = Field(inp)
+        bigObjs = [x for x in objs if x.area > 1]
+        for ob in bigObjs:
+            p,x = pxColor(ob)
+            f = replace_color(p, x)
+            x,y = ob.bounding_rect[0]
+            res.place((x-1, y-1), f)
+        return res
+    s = ObjMaker.variablesAndFunction(locals())
+    return s
+def Solver0520fde7():
+    def addCommon(arr1,arr2):
+        newArr = []
+        for i, row in enumerate(arr1):
+            newRow = []
+            for j, val in enumerate(row):
+                v2 = arr2[i][j]
+                if val == 0 or v2 == 0:
+                    newRow.append(0)
+                else:
+                    newRow.append(val + v2)
+            newArr.append(newRow)
+        return newArr
+
+    def sliceArray(arr, start, end):
+        return [row[start:end] for row in arr]
+
+    def solve(inp):
+        arr1 = sliceArray(inp, 0, 3)
+        arr2 = sliceArray(inp, 4, 7)
+        return Field(addCommon(arr1, arr2))
     s = ObjMaker.variablesAndFunction(locals())
     return s
 ConnectObjects = Solver_06df4c85
