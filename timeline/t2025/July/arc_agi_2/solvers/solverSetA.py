@@ -1,5 +1,9 @@
-from .tools import ArrayTools, Field, ArcQuestion,Labels
+from ..tools import ArrayTools, Labels, ColorMap
 from typing import List
+from ..objectedness import GridObjectGetter, GridObject
+from ..Fields import Field
+from ..reader import ArcQuestion
+
 def sol_00576224(inp):
     finp = ArrayTools.flipHorizontally(inp)
     av = [Field(inp), Field(finp)]
@@ -25,7 +29,7 @@ class Solver009d5c81:
         self.question = question
         self.process()
     def process(self):
-        from .objectedness import Main as GridMain
+        from ..objectedness import Main as GridMain
         valMap = {}
         for ob in self.question.question[Labels.train]:
             inp = ob[Labels.input]
@@ -35,7 +39,7 @@ class Solver009d5c81:
             valMap[s.uid] = b.value
         self.valMap = valMap
     def solve(self, inp):
-        from .objectedness import Main as GridMain, GridObject
+        from ..objectedness import Main as GridMain, GridObject
         s, b  = sorted(GridMain.get_objs(inp, True), key=lambda x: x.area)
         assert isinstance(b, GridObject), "b must be of type GridObject"
         b.replace_value(self.valMap[s.uid])
@@ -46,14 +50,14 @@ class Solver009d5c81:
         return res
 
 def sol_00d62c1b(inp):
-    from .objectedness import GridObjectGetter
+    from ..objectedness import GridObjectGetter
     grg = GridObjectGetter()
     grg.set_grid(inp)
     grg.vals_allower = lambda x: True
     objs = grg.extract_objects()
     mo =list(filter(lambda x: x.value == 0 and not x.touches_boundry(), objs))
     for m in mo:
-        m.replace_value(4)
+        m.replace_value(ColorMap.YELLOW.value)
     res = Field(inp.copy())
     for m in mo:
         res.place(m.bounding_rect[0],Field(m.rect_obj) )
@@ -61,7 +65,6 @@ def sol_00d62c1b(inp):
 
 class Solver00dbd492:
     def get_objs(self, inp):
-        from .objectedness import GridObjectGetter
         grg = GridObjectGetter()
         grg.set_grid(inp)
         grg.vals_allower = lambda x: True
@@ -107,7 +110,7 @@ class Solver017c7c7b:
         return True
     def find_min_period(self, arr: List[List[int]]):
         arrToString = lambda row: "".join(map(str, row))
-        arrString = list(map(arrToString, arr))
+        arrString = [arrToString(v) for v in arr]
         i = 0
         j = 1
         while j < len(arrString):
@@ -149,7 +152,7 @@ class Solver017c7c7b:
         return res
 
 def sol_025d127b(inp):
-    from .objectedness import Main as GridMain
+    from ..objectedness import Main as GridMain
     def isBase(ob, parentObj):
         (bcpx, bcpy) = parentObj.shape
         _, (ox, oy) = ob.bounding_rect
@@ -198,7 +201,7 @@ def sol_025d127b(inp):
     return res
 
 def sol_03560426(inp):
-    from .objectedness import Main as GridMain
+    from ..objectedness import Main as GridMain
     objs = GridMain.get_objs(inp)
     res = Field([])
     res.set_shape(ArrayTools.shape(inp))

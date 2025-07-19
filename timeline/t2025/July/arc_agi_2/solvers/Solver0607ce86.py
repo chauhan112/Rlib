@@ -1,7 +1,8 @@
 import numpy as np
 import random
 from ...arc_agi_2 import ObjMaker
-from ..tools import ArrayTools, Field
+from ..tools import ArrayTools
+from ..Fields import Field
 # case1: we know the shape of the object
 def prev_code():
     def numSize(row):

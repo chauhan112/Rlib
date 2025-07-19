@@ -1,6 +1,7 @@
 import numpy as np
 from ...arc_agi_2 import ObjMaker
-from ..tools import ArrayTools, Field
+from ..tools import ArrayTools
+from ..Fields import Field
 def toolsAgregate():
     from src.rlib.timeline.t2025.July.arc_agi_2.solvers.Solver0607ce86 import Solver0607ce86
     from src.rlib.timeline.t2025.July.arc_agi_2.solvers.Solver05f2a901 import Solver05f2a901

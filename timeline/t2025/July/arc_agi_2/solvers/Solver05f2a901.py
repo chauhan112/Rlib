@@ -1,10 +1,10 @@
-from .solver05a7bcf2 import Solver05a7bcf2, ToGoDirection
+from .solver05a7bcf2 import Solver05a7bcf2
 from .solverExtend import SolverExtenderTools
-from ..twoD_tools import ExtendTools
 from typing import Tuple
 from ...arc_agi_2 import ObjMaker
 from ..objectedness import Main as GridMain, GridObject
-from ..tools import ColorMap, Field
+from ..tools import ColorMap, ToGoDirection, ExtendTools
+from ..Fields import Field
 
 def Solver05f2a901():
     def get_red_blue(inp):

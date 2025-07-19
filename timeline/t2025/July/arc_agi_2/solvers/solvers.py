@@ -1,6 +1,6 @@
 from .solver0692e18c import toolsAgregate
-from ..twoD_tools import Vector
-from ..tools import ArrayTools, Field
+from ..tools import ArrayTools, Vector
+from ..Fields import Field
 from ...arc_agi_2 import ObjMaker, Labels
 from ..objectedness import Main as GridMain
 
@@ -38,15 +38,6 @@ def Solver_06df4c85():
             else:
                 b.append(o)
         return a, b
-    def placer(firstPoint, arr, inst=None):
-        sx,sy = arr.shape()
-        x,y = firstPoint
-        for i in range(sx):
-            for j in range(sy):
-                tval = arr.arr[i][j]
-                if tval == 0:
-                    continue 
-                inst.arr[x+i][y+j] = arr.arr[i][j]
     def solve(inp):
         objs = GridMain.get_objs(inp, False)
         mx= max([x.area for x in objs])
@@ -109,7 +100,6 @@ def solver08ed6ac7():
         return field
     s = ObjMaker.variablesAndFunction(locals())
     return s
-    
 def Solver09629e4f():
     def get_subsections_count(inp):
         res = []

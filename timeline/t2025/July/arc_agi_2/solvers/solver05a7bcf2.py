@@ -1,11 +1,10 @@
 from ...arc_agi_2 import ObjMaker
-from ..twoD_tools import Vector
-from enum import Enum
 from typing import List
-from ..tools import ArrayTools, ColorMap, Field
+from ..tools import ArrayTools, ColorMap, ToGoDirection,Vector
 import copy
 from ..objectedness import Main as GridMain, GridObject
 import numpy as np
+from ..Fields import Field
 
 def LinesTools():
     def orientation(obj: GridObject):
@@ -107,11 +106,7 @@ def Solver05a7bcf2():
         return res
     s = ObjMaker.variablesAndFunction(locals())
     return s
-class ToGoDirection(Enum):
-    up = (-1,0)
-    down = (1,0)
-    left = (0,-1)
-    right =(0,1)
+
 def FieldPlacers():
     def place_only_at_zero(value):
         return value == 0
@@ -145,6 +140,15 @@ def FieldPlacers():
                     break
                 if s.handlers.placing_codition(inst.arr[p][q]):
                     inst.arr[p][q] = arr.arr[i][j]
+    def overlap_with_transparent(firstPoint, arr, inst):
+        sx,sy = arr.shape()
+        x,y = firstPoint
+        for i in range(sx):
+            for j in range(sy):
+                tval = arr.arr[i][j]
+                if tval == 0:
+                    continue 
+                inst.arr[x+i][y+j] = arr.arr[i][j]
     s = ObjMaker.variablesAndFunction(locals())
     return s
 def get_field(arr):
