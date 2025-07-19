@@ -14,7 +14,6 @@ def Solver05a7bcf2():
         f._placer = placers.handlers.full_inside_place
         placers.handlers.placing_codition = lambda x: True
         return f
-
     def get_colored_objs(objs: List[GridObject]):
         y = []
         b = []

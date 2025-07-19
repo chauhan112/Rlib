@@ -68,6 +68,29 @@ class ArrayTools:
     @staticmethod
     def transpose(arr: List[List[int]]):
         return np.transpose(arr).tolist()
+    @staticmethod
+    def fillRowMap(arr, val):
+        return [val if v != 0 else 0 for v in arr]
+    @staticmethod
+    def invertRow(arrMask):
+        return [1 - v for v in arrMask]
+    @staticmethod
+    def invert2dArray(arr):
+        return [ArrayTools.invertRow(v) for v in arr]
+    @staticmethod
+    def fill2dArray(arr, val):
+        return [ArrayTools.fillRowMap(v, val) for v in arr]
+    @staticmethod
+    def flatten(arr):
+        return np.array(arr).flatten().tolist()
+    @staticmethod
+    def getMaskIndices(arr):
+        res = set()
+        for i, row in enumerate(arr):
+            for j, v in enumerate(row):
+                if v != 0:
+                    res.add((i, j))
+        return res
 class Vector(namedtuple("Vector", ["x", "y"])):
     def __radd__(self, other):
         return self + other

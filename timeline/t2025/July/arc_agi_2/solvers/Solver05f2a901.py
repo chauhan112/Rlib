@@ -5,12 +5,12 @@ from ...arc_agi_2 import ObjMaker
 from ..objectedness import Main as GridMain, GridObject
 from ..tools import ColorMap, ToGoDirection, ExtendTools
 from ..Fields import Field
+from .moreTools import rotx
 
 def Solver05f2a901():
     def get_red_blue(inp):
         objs = GridMain.get_objs(inp)
         assert len(objs) == 2
-
         redObj = list(filter(lambda x: x.value == ColorMap.RED.value, objs))[0]
         blueOb  = list(filter(lambda x: x.value == ColorMap.LIGHT_BLUE.value, objs))[0]
         return redObj, blueOb
@@ -50,9 +50,9 @@ def Solver05f2a901():
         direction = get_direction_to_move(redOb, blueOb)
         rotMap = {ToGoDirection.right: 3, ToGoDirection.up: 2, ToGoDirection.left: 1, ToGoDirection.down: 0}
         rot = rotMap[direction]
-        newArr = solver.handlers.rotx(inp, rot)
+        newArr = rotx(inp, rot)
         res = solve_down_oriented(newArr)
-        return Field(solver.handlers.rotx(res.arr.tolist(), (-rot % 4)))
+        return Field(rotx(res.arr.tolist(), (-rot % 4)))
     solver = Solver05a7bcf2()
 
     s = ObjMaker.variablesAndFunction(locals())
