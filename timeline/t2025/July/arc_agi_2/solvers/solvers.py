@@ -3,7 +3,7 @@ from ..tools import ArrayTools, Vector
 from ..Fields import Field
 from ...arc_agi_2 import ObjMaker, Labels
 from ..objectedness import Main as GridMain
-
+from .moreTools import FieldPlacers
 import copy
 
 def Solver_06df4c85():
@@ -54,7 +54,8 @@ def Solver_06df4c85():
                     objB = objs[j]
                     placeObjs(field, [objA, objB])
                     fillSpacesBetween(field, objA, objB, k)
-        field._placer = placer
+        fp = FieldPlacers()
+        field._placer = fp.handlers.overlap_with_transparent
         field.place(grid.bounding_rect[0], Field(grid.rect_obj))
         return field
     ta = toolsAgregate()
@@ -66,7 +67,8 @@ def solve_070dd51e(inp):
     ta = solver.process.ta
     groups =solver.handlers.grouper(objs, lambda x:x.value)
     field = solver.handlers.get_empty_field(inp)
-    field._placer = solver.handlers.placer
+    fp = FieldPlacers()
+    field._placer = fp.handlers.overlap_with_transparent
     quesObjs= []
     for k in groups:
         assert len(groups[k]) == 2

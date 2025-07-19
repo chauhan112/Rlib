@@ -5,7 +5,7 @@ from ..Fields import Field
 def toolsAgregate():
     from src.rlib.timeline.t2025.July.arc_agi_2.solvers.Solver0607ce86 import Solver0607ce86
     from src.rlib.timeline.t2025.July.arc_agi_2.solvers.Solver05f2a901 import Solver05f2a901
-    from src.rlib.timeline.t2025.July.arc_agi_2.solvers.solver05a7bcf2 import FieldPlacers, get_cells_till, cells_in_between
+    from .moreTools import FieldPlacers, get_cells_till, cells_in_between
     from src.rlib.timeline.t2025.July.arc_agi_2.solvers.solverExtend import SolverExtender045e512c, Solver05269061
     noiseRemover = Solver0607ce86()
     moveto = Solver05f2a901()
