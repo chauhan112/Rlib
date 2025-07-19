@@ -105,8 +105,6 @@ class Solver017c7c7b:
             if j == len(arr):
                 break
         return True
-
-
     def find_min_period(self, arr: List[List[int]]):
         arrToString = lambda row: "".join(map(str, row))
         arrString = list(map(arrToString, arr))
@@ -118,7 +116,6 @@ class Solver017c7c7b:
             else:
                 j += 1
         return 0
-    
     def getField(self, arr: List[List[int]]):
         def place(firstPoint, arr):
             assert isinstance(firstPoint, tuple), "firstPoint must be of type tuple"
@@ -152,6 +149,7 @@ class Solver017c7c7b:
         return res
 
 def sol_025d127b(inp):
+    from .objectedness import Main as GridMain
     def isBase(ob, parentObj):
         (bcpx, bcpy) = parentObj.shape
         _, (ox, oy) = ob.bounding_rect
@@ -193,8 +191,6 @@ def sol_025d127b(inp):
         return res
     res = Field([])
     res.set_shape(ArrayTools.shape(inp))
-    from src.objectedness import Main as GridMain
-
     objs = GridMain.get_objs(inp, True)
     for ob in objs:
         mob = move_top(ob)
