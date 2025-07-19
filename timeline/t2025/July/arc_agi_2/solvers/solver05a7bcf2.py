@@ -1,4 +1,4 @@
-from basic import Main as ObjMaker
+from ...arc_agi_2 import ObjMaker
 from ..twoD_tools import Vector
 from enum import Enum
 from typing import List
@@ -6,6 +6,7 @@ from ..tools import ArrayTools, ColorMap, Field
 import copy
 from ..objectedness import Main as GridMain, GridObject
 import numpy as np
+
 def LinesTools():
     def orientation(obj: GridObject):
         (x1, y1) = obj.bounding_rect[0]

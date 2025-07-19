@@ -1,18 +1,18 @@
 import numpy as np
 from typing import Set, Tuple, List
+from enum import Enum
+
 class Labels:
     train ="train"
     test = "test"
     input="input"
     output="output"
-from enum import Enum
 class ColorMap(Enum):
     BLACK = 0
     RED = 2
     YELLOW = 4
     LIGHT_BLUE = 8
     GREEN = 3
-
 class ArcQuestion:
     def __init__(self, question):
         self.question = question
@@ -27,7 +27,6 @@ class ArcQuestion:
             assert res.isEqual(Field(ob[Labels.output])), (ob[Labels.output], res.get())
     def getTestOutput(self, solver):
         return [{"output": solver(ob[Labels.input]).arr} for ob in self.question[Labels.test]]
-
 class ArrayTools:
     def flipVertically(arr):
         return arr[::-1]
