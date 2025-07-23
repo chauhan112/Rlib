@@ -38,7 +38,7 @@ class _Tools:
                 from RegexDB import RegexDB
                 cwd = Temp._cwd()
                 sep = "\\\\" if os.sep =="\\" else "/"
-                match = RegexDB.isThereRegexMatch(sep.join(["cloud", "timeline", "20\d\d", "\d{1,2}\. "]),cwd)
+                match = RegexDB.isThereRegexMatch(sep.join(["cloud", "timeline", r"20\d\d", r"\d{1,2}\. "]),cwd)
                 return match
             
             def _cwd():
@@ -48,7 +48,7 @@ class _Tools:
             def monthPath():
                 cwd = Temp._cwd()
                 sep = "\\\\" if os.sep =="\\" else "/"
-                val = RegexDB.regexSearch( ".*"+ sep.join(["cloud", "timeline", "20\d\d", "\d{1,2}\. "]) +  "[a-zA-Z]+", 
+                val = RegexDB.regexSearch( ".*"+ sep.join(["cloud", "timeline", r"20\d\d", r"\d{1,2}\. "]) +  "[a-zA-Z]+", 
                                     cwd)
                 if(len(val) != 0):
                     return val[0]

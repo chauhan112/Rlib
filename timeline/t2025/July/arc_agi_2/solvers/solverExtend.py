@@ -1,8 +1,8 @@
-from src.twoD_tools import Vector, ExtendTools, BoundingRect
 from collections import namedtuple
 from ..objectedness import GridObject, Main as GridMain
-from ..tools import ArrayTools, Field
-from basic import Main as ObjMaker
+from ..tools import ArrayTools, Vector, ExtendTools, BoundingRect
+from ...arc_agi_2 import ObjMaker
+from ..Fields import Field
 
 DirRes = namedtuple("DirRes", ["val", "rect", "arr", "dir"])
 class SolverExtenderTools:
