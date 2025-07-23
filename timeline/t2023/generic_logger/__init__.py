@@ -480,9 +480,7 @@ class LoggerSearch(ISearch):
         pass
     def concatenated_search(self, listOfDicFilters, reg, case):
         res = self._data
-        asdndn = {}
-        exec(f"dfsdfda={listOfDicFilters}",None,asdndn)
-        tosearch = asdndn['dfsdfda']
+        tosearch = eval(listOfDicFilters)
         for val in tosearch:
             if type(val) == str:
                 res = self._search_in_index(val, reg, case, res)
