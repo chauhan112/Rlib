@@ -482,9 +482,9 @@ class LoggerSearch(ISearch):
         res = self._data
         tosearch = eval(listOfDicFilters)
         for val in tosearch:
-            if type(val) == str:
+            if isinstance(val, str):
                 res = self._search_in_index(val, reg, case, res)
-            elif type(val) == dict:
+            elif isinstance(val, dict):
                 res = self._search_in_fields(val, reg, case, res)
         return res
 class LoggerDataCRUDController:
