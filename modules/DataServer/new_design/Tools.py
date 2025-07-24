@@ -21,7 +21,7 @@ class IMessage:
         pass
 class GMessage(IMessage, IUnique):
     def get_id(self):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         return CryptsDB.generateUniqueId()
     def get_files(self):
         return []

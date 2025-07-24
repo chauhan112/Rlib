@@ -7,7 +7,7 @@ from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum,
 from timeline.t2024.ui_lib.refactored_key_value_adder import Main as KVMain
 from useful.basic import Main as ObjMaker
 import copy
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 import json
 from timeline.t2024.antif import ExecFilterers
 from timeline.t2023.generic_logger.components import GComponent

@@ -2,7 +2,7 @@ import sqlite3
 from Database import DB, DBResources
 from SerializationDB import SerializationDB
 import time, os
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from LibPath import resourcePath
 
 class _BinaryDumper:

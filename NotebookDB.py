@@ -70,7 +70,7 @@ class NotebookDB:
 
     def getSummaryInfos():
         from ModuleDB import ModuleDB
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         device = ModuleDB.laptopName()
         if(NotebookDB.id_ is None):
             NotebookDB.id_ = CryptsDB.generateUniqueId()

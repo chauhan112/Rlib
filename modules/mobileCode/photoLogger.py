@@ -31,7 +31,7 @@ class PhotoLogger:
             cont.add(val)
         self.reader.add(name, cont, overwrite= True)
     def search(self, word, case = False, reg= False):
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         content = self.reader.readAll()
         res = []
         for ph in content:

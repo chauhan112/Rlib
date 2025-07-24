@@ -7,7 +7,7 @@ class TestDB:
         print(k)
 
     def pickleTest():
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         from SerializationDB import SerializationDB
         data = {"a": "somtezh"}
         name = CryptsDB.generateRandomName()

@@ -1,5 +1,5 @@
 from WordDB import WordDB
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 class ListDB:
     def sortDicBasedOnValue(dic):
         return { k: v for k, v in sorted(dic.items(), key=lambda item: item[1]) }

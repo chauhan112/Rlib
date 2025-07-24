@@ -5,7 +5,7 @@ from timeline.t2023.generic_logger import FieldsManagerV2, SupportedTypes, NewRe
 from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SingleField, MetaCRUDUI, UpdateMenu, GenericDateTime
 from SearchSystem import MultilineStringSearch
 from TimeDB import TimeDB
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from timeline.t2023.sql_crud import SqlCRUD
 from timeline.t2024.ui_lib.refactored_key_value_adder import DicListCRUD
 from timeline.t2024.antif import ExecFilterers

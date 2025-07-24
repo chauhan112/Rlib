@@ -1,7 +1,7 @@
 import ipywidgets as widgets
 from timeline.t2023.generic_logger.components import SingleButtonController
 from modules.Explorer.personalizedWidgets import CustomOutput
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from timeline.t2023.searchSystem import Main as SWP
 import os
 from timeline.t2023.links_crud_ui import SearchEngine

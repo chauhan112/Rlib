@@ -25,7 +25,7 @@ class LabCodeDisplayer(IJupyterCodeDisplayer):
         from pygments.lexers import get_lexer_by_name
         from IPython.display import IFrame, display
         import os
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         from TimeDB import TimeDB
         lexer = get_lexer_by_name(lang, stripall=True)
         name = CryptsDB.generateRandomName() + ".html"

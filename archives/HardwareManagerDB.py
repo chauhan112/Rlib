@@ -22,7 +22,7 @@ class HardwareManagerDB:
             def position():
                 class Temp:
                     def forObjects():
-                        from ComparerDB import ComparerDB
+                        from useful.ComparerDB import ComparerDB
                         gg = GeneralSearchEngine(HardwareManagerDB.crud()._load(),  
                                 searchFunc = lambda word,cont,case, reg: GeneralSearchEngine.tools().iterate(
                                         cont, ifFunc = lambda i,val, con: ComparerDB.has(word= word, content =con[val]['position'], 

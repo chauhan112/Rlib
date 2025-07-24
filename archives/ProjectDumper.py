@@ -3,7 +3,7 @@ from BinaryDumper import BinaryDumper
 import sqlite3
 from Path import Path
 from Database import DBResources,DB
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from RegexDB import RegexDB
 from Database import Table
 

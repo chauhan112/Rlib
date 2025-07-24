@@ -1,5 +1,5 @@
 from modules.Logger.Interfaces import ILogger
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 
 class FoodEatingLogger(ILogger):
     def __init__(self, timeOfEating=0, light=True, content =[], misc=None, drinks=[]):

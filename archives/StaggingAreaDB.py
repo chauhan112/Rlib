@@ -68,7 +68,7 @@ class StaggingAreaDB:
         a.bar(1, 2)
         a.foobar(1, 2, 3)
     def getPdfPageAsImage(pdfPath, pageNr):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         from pdf2image import convert_from_path
         from Pdf_Database import PDF
         from Path import Path

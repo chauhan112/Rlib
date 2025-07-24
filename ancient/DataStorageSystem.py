@@ -28,7 +28,7 @@ class _Tools:
                 try:
                     dbName = Path.joinPath(targetFolder, File.getFileContent(name))
                 except: 
-                    from CryptsDB import CryptsDB
+                    from useful.CryptsDB import CryptsDB
                     dbName = CryptsDB.generateRandomName() + ".pkl"
                     File.createFileInsideNonExistingFolder(name, dbName)
                     dbName = Path.joinPath(targetFolder, dbName)

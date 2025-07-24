@@ -5,7 +5,7 @@ from timeline.t2023.generic_logger.components import SingleButtonController
 from useful.basic import NameSpace
 from SearchSystem import MultilineStringSearch
 from timeline.t2023.searchSystem import Main as SearchWithPagination
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 import ipywidgets as widgets
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps

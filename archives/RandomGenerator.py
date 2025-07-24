@@ -1,6 +1,6 @@
 from OpsDB import IOps
 import os, random
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 
 class RandomPathGenerator(IOps):
     def __init__(self, length=5, folders=[], files=[] ):
@@ -8,7 +8,7 @@ class RandomPathGenerator(IOps):
         self.folders = folders
         self.files = files
         ext = [".txt", '.py', '.java', '.cpp']
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         if len(folders) == 0:
             self.folders = [CryptsDB.generateRandomName(5) for _ in range(5)]
         if len(files) == 0:

@@ -1,4 +1,4 @@
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from FileDatabase import File
 from LibPath import *
 import os

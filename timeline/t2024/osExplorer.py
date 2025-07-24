@@ -6,7 +6,7 @@ from enum import Enum
 import threading
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from modules.Explorer.model import OSFileExplorer, ExplorerUtils
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 import os
 from timeline.t2023.searchSystem import NotepadOpener
 from FileDatabase import File

@@ -146,7 +146,7 @@ public:
     def runCppCode(content = None):
         if(content is None):
             print("Give cell number to run or content")
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         from OpsDB import OpsDB
         name = CryptsDB.generateRandomName(10) + ".cpp"
         File.createFile(name, content)

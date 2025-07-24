@@ -64,7 +64,7 @@ class ClipboardDB:
         return pdfName
     
     def saveImage(name=""):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         if(name ==""):
             name = CryptsDB.generateRandomName(20) + ".png"
         image = ClipboardDB.getImage()

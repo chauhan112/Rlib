@@ -105,7 +105,7 @@ class TreeCrudModel(GParentable):
         return path.replace("\\", "/")
     def getCurrentTree(self):
         if self.currentTree is None:
-            from CryptsDB import CryptsDB
+            from useful.CryptsDB import CryptsDB
             name = CryptsDB.generateRandomName()
             path = os.path.dirname(self.reader.path) +os.sep + name
             self.load(path)

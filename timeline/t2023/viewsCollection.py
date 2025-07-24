@@ -3,7 +3,7 @@ import ipywidgets as widgets
 from modules.Explorer.personalizedWidgets import CustomOutput
 from timeline.t2023.links_crud_ui import SearchEngine, ButtonViewWithPagination
 from SearchSystem import MultilineStringSearch
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 
 class ListContentSearch(MultilineStringSearch):
     def __init__(self, content, allRes = False):

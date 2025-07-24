@@ -2,7 +2,7 @@ from useful.basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import Pagination
 import math
 from modules.Explorer.model import ExplorerUtils
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from timeline.t2024.osExplorer import Main as OSMain
 from timeline.t2024.Array import Array
 

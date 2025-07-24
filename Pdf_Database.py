@@ -171,7 +171,7 @@ class PDF:
         dst.save(outPdfName)
 
     def getPdfPageAsImage(pdfPath, pageNr):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         from Path import Path
         from LibsDB import LibsDB
         import os

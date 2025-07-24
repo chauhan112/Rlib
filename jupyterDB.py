@@ -307,7 +307,7 @@ class jupyterDB:
             def applyOnCopied(self,func):
                 self.copy(func(self.text()))
             def image2Text(self,img = None):
-                from CryptsDB import CryptsDB
+                from useful.CryptsDB import CryptsDB
                 from ancient.ImageProcessing import ImageProcessing as im
                 if (img is None):
                     img = self.img()

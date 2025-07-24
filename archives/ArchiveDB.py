@@ -130,7 +130,7 @@ class ArchiveDB:
     def getLinks(content = None):
         from htmlDB import htmlDB
         from OpsDB import OpsDB
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         from WordDB import WordDB
         from RegexDB import RegexDB
         from TreeDB import TreeDB

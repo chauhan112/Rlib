@@ -126,7 +126,7 @@ class HelperFunctions:
         return res.replace(lineBr, "\n")
 
     def replaceContent(groups, noNewLine):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         replaceId = f"{CryptsDB.generateRandomName()}comment"
         idNr = 1
         newContent = ""
@@ -156,7 +156,7 @@ class HelperFunctions:
 
     def stringEncoder(content):
         from WordDB import WordDB
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         lineBr = "<" +CryptsDB.generateRandomName()+">"
         noNewLine = content.replace("\n", lineBr)
         k = WordDB.searchWordWithRegex('"""',noNewLine )

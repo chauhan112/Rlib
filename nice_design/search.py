@@ -59,7 +59,7 @@ class TextListSearch(ISearch):
         self._break = True
     def search(self, word, case=False, reg=False):
         lines = self._collector.get_container()
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         for i, line in lines:
             if ComparerDB.has(word, line, case, reg):
                 self._collector.add_to_results(i)

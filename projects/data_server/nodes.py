@@ -1,6 +1,6 @@
 from projects.data_server.lib import IPortal, Contact, PathPortal, Message
 from modules.DataServer.FileObserve import ChangeModel, FilesLister, ChangeType
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 import os
 from Path import Path
 from FileDatabase import File

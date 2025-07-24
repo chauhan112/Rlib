@@ -132,7 +132,7 @@ class Scheduler:
             def add():
                 class Te:
                     def _run(t, funcName = "", ):
-                        from CryptsDB import CryptsDB
+                        from useful.CryptsDB import CryptsDB
                         if(funcName == ""):
                             funcName = CryptsDB.generateUniqueId()
                         Scheduler.jobs[funcName] = t

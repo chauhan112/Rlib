@@ -1,5 +1,5 @@
 from useful.basic import NameSpace
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 class ControllerModel:
     def create_columns(tableName, struc):

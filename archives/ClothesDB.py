@@ -5,7 +5,7 @@ class ClothesDB:
     storageID = "e22b70edc6ce4879b98c0d44f47cc85a"
     loc = "clothes"
     def add(name, location="", status= ClothStatus.washed, usecaseTime=[], misc={}):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         uuid = CryptsDB.generateUniqueId()
         pkl = ClothesDB._read()
         pkl.add([ClothesDB.loc,uuid], {'name':name,'location':location, 'status':status.name, 

@@ -1,7 +1,7 @@
 from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils, ComponentsLib
 import math
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from useful.basic import NameSpace, addToNameSpace
 def Constants():
     constants = NameSpace()

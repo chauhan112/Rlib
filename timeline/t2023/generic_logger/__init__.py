@@ -5,10 +5,10 @@ from timeline.t2023.searchSystem import Main as SearchWithPagination
 from PickleCRUDDB import PickleCRUDOps
 from enum import Enum
 from SearchSystem import ISearch
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from SerializationDB import SerializationDB
 from LibsDB import LibsDB
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
 from useful.basic import BasicController, LoggerSystem
 from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SearchComponent, ObjMaker, SingleField, UpdateMenu

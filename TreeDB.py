@@ -47,7 +47,7 @@ class TreeDB:
     def drawioPages(filePath):
         from WordDB import WordDB
         from RegexDB import RegexDB
-        from CompressDB import CompressDB
+        from useful.CompressDB import CompressDB
         content = File.getFileContent(filePath)
         beginRanges = WordDB.searchWordWithRegex("<diagram .*?>", content)
         endRanges = WordDB.searchWordWithRegex("</diagram>", content)
@@ -169,7 +169,7 @@ class ForestDB:
         return computers[key]
 
     def search(word, case =True,  reg = False):
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         from RegexDB import RegexDB
         from WidgetsDB import WidgetsDB
         re = SerializationDB.readPickle(Path.joinPath(ForestDB.getForestPath(), "searchCached.pkl"))

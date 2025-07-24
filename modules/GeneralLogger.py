@@ -1,5 +1,5 @@
 import os, shutil
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from Path import Path
 
 class PathWorkspace:
@@ -118,7 +118,7 @@ class NFile(IItem):
     
 class LogFactory:
     def create(title, contentList, tag):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         uudi = CryptsDB.generateUniqueId()
         return LogItem(uudi, title, contentList, tag)
 

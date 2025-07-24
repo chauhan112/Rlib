@@ -16,7 +16,7 @@ class _StorageSytem:
         self.storageIndex = GPickleCRUD(Path.joinPath(self.path, "storageIndex.pkl"))
 
     def createAnIndex(self, updateStorage = False):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         idx = CryptsDB.generateUniqueId()
         if(updateStorage):
             self.storageIndex.add(idx, self._getStorage())

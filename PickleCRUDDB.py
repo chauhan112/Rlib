@@ -4,7 +4,7 @@ from Path import Path
 from ListDB import ListDB
 from SearchSystem import SearchEngine, ContainerSetable
 import os
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from jupyterDB import jupyterDB
 class PickleCRUD:
     def __init__(self, name, loc = [], loadFromMain= True):

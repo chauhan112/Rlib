@@ -10,7 +10,7 @@ class CSSClassable:
         self.className = None
     def assign_random_class_name(self):
         if self.className is None:
-            from CryptsDB import CryptsDB
+            from useful.CryptsDB import CryptsDB
             self.className = "css" +  CryptsDB.generateUniqueId()
 class TextWidget(anywidget.AnyWidget):
     _esm = """export function render({ model, el }) {

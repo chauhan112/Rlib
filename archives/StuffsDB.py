@@ -1,7 +1,7 @@
 class StuffDB:
     storageID = "a5d1718c84594634a87ec32da17a984a"
     def add(name, location="", properties= [], usecases=[], misc={}):
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         uuid = CryptsDB.generateUniqueId()
         pkl = StuffDB._read()
         pkl.add(["stuffs",uuid], {'name':name,'location':location, 'usecases':usecases,

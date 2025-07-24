@@ -11,7 +11,7 @@ FileOpener = Enum("FileOpener","texWork Notepad")
 class LatexDocument(LatexFileExplorer):
     def __init__(self, filename):
         from TimeDB import TimeDB
-        from CryptsDB import CryptsDB
+        from useful.CryptsDB import CryptsDB
         
         self.content = {}
         self.header = ""

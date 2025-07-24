@@ -284,7 +284,7 @@ class FileModel:
     def get_current_file(self):
         val = self._reader.read(self._last_read_str)
         if val is None:
-            from CryptsDB import CryptsDB
+            from useful.CryptsDB import CryptsDB
             name = CryptsDB.generateRandomName()
             path = os.sep.join([self._working_dir, name]) + ".pkl"
             SerializationDB.pickleOut({}, path)

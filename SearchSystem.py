@@ -1,5 +1,5 @@
 from InterfaceDB import ISearchSystem
-from ComparerDB import ComparerDB
+from useful.ComparerDB import ComparerDB
 from FileDatabase import File
 import os
 
@@ -318,7 +318,7 @@ class GSearch:
             self._search = GSearch._default
     
     def _default(word, container, case = False, reg = False):
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         return GeneralSearchEngine.tools().iterate(container, 
                             ifFunc = lambda i, val, con: ComparerDB.has(word, val, case, reg))
     
@@ -481,7 +481,7 @@ class CmdSearchEngine(ISearchEngine):
         self._callbackFunc(key)
         
     def filterRes(self,result, filtStr):
-        from ComparerDB import ComparerDB
+        from useful.ComparerDB import ComparerDB
         res = []
         for i,val in enumerate(result):
             if(ComparerDB.has(filtStr, self.resultBeautifier(val), reg=True)):

@@ -1,7 +1,7 @@
 from modules.DataServer.Interfaces import INode, IFilePortal, NameContact, IContact
 from modules.DataServer.Portals import PathPortal
 from modules.DataServer.FileObserve import WatchDogFileObserve, MutuallyExclusiveEventModel, IObserver, MyFileObserver
-from CryptsDB import CryptsDB
+from useful.CryptsDB import CryptsDB
 from Path import Path
 import os, time
 from TimeDB import TimeDB
