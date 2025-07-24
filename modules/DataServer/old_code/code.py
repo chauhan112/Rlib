@@ -1,5 +1,5 @@
 from modules.DataServer.Interfaces import INode, IGitManager, GNode
-from GitDB import IGitCommand, CommandLinePush, GitPull, GitPush
+from ancient.GitDB import IGitCommand, CommandLinePush, GitPull, GitPush
 from modules.DataServer.Server import CommandManager
 from modules.DataServer.Commands import ICommand
 

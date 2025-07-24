@@ -41,7 +41,7 @@ class DicSearchAndResultSorted:
         return False
 class NewInstructionTable:
     def __init__(self):
-        from DataStorageSystem import _Tools
+        from ancient.DataStorageSystem import _Tools
         self._table_name = "instructions"
         self.set_pickle_file(_Tools.advanceDBNameGenerator())
         d1 = DicSearchAndResultSorted()

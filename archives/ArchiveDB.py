@@ -106,7 +106,7 @@ class ArchiveDB:
         from FileDatabase import File
         from TreeDB import TreeDB
         from SerializationDB import SerializationDB
-        from DataStorageSystem import InstructionTable
+        from ancient.DataStorageSystem import InstructionTable
         from TimeDB import TimeDB
         # data storage system
         it = InstructionTable(params=globals())
@@ -176,7 +176,7 @@ class ArchiveDB:
         for i, j in pairs:
             print(f"'{getContent( linsk[j]['value']).strip().strip(':').strip()}':",f"'{getContent(linsk[i]['value'])}',")
     def linear_alg2_correct():
-        from DataStorageSystem import NotesTable
+        from ancient.DataStorageSystem import NotesTable
         from archives.HomeWorkCheckTools import LA_2_HW_Correct
         from ExplorerDB import ExplorerDB
         nt  = NotesTable()

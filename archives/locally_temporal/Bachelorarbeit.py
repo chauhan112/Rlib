@@ -1,11 +1,11 @@
 from Path import Path
 from FileDatabase import File
-from DataStorageSystem import LocalTree, FolderTable, UrlsTable,NotesTable
+from ancient.DataStorageSystem import LocalTree, FolderTable, UrlsTable,NotesTable
 import os
 from LibsDB import LibsDB
 from RegexDB import RegexDB
 from htmlDB import htmlDB
-from CodeDB import LocModel, CodeDB
+from ancient.CodeDB import LocModel, CodeDB
 from SerializationDB import SerializationDB
 
 class Bachelorarbeit:

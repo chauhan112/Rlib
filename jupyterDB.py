@@ -209,7 +209,7 @@ class jupyterDB:
                         print(f)
                 return su
             def plotLibSize(self):
-                from GraphDB import GraphDB
+                from ancient.GraphDB import GraphDB
                 from RegexDB import RegexDB
                 from OpsDB import OpsDB
 
@@ -370,7 +370,7 @@ class jupyterDB:
                         super().add([], val, True)
                     def display(self):
                         content = "\n".join(self._read())
-                        from GraphDB import GraphDB, LabCodeDisplayer
+                        from ancient.GraphDB import GraphDB, LabCodeDisplayer
                         return GraphDB.displayCode().smallNrOfLines(content, "py", LabCodeDisplayer())
 
                     def _read(self):

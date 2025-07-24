@@ -389,7 +389,7 @@ class DBSub(GSubSearchWithParent):
             display(self._sw.get())
 class DataScienceSearchGUI(GSubSearchWithParent):
     def __init__(self):
-        from DataStorageSystem import UrlsTable
+        from ancient.DataStorageSystem import UrlsTable
         from LibsDB import LibsDB
         from Path import Path
         self._gsub = GSubjectWithOptionsSearch()

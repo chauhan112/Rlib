@@ -4,7 +4,7 @@ from CryptsDB import CryptsDB
 import datetime
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2024.ui_lib.refactored_key_value_adder import ListOps
-from GraphDB import GraphDB
+from ancient.GraphDB import GraphDB
 import copy as CopyLib
 from SerializationDB import SerializationDB
 from enum import Enum

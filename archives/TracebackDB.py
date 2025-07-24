@@ -1,4 +1,4 @@
-from CodeDB import CodeDB
+from ancient.CodeDB import CodeDB
 class TracebackDB:
     def getFunctionName(lineNr, filepath):
         pass

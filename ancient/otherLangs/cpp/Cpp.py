@@ -2,7 +2,7 @@ import re
 import os
 from LibPath import getPath
 from WordDB import WordDB
-from GraphDB import GraphDB
+from ancient.GraphDB import GraphDB
 from FileDatabase import File
 from Path import Path
 

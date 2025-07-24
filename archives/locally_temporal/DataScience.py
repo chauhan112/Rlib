@@ -191,7 +191,7 @@ class DataScience:
         from Path import FrequentPaths
         return FrequentPaths.pathAsDic()['data science']
     def links():
-        from DataStorageSystem import UrlsTable
+        from ancient.DataStorageSystem import UrlsTable
         ut = UrlsTable("data science")
         return ut
     

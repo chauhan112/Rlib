@@ -46,10 +46,10 @@ class GitSSHManager(IGitManager):
     def __init__(self, path2repo):
         self.path = path2repo
     def push(self):
-        from GitDB import GitSSHPush
+        from ancient.GitDB import GitSSHPush
         return GitSSHPush(self.path).push()
     def pull(self):
-        from GitDB import GitSSHPull
+        from ancient.GitDB import GitSSHPull
         return GitSSHPull(self.path).pull()
     def getPath(self):
         return self.path

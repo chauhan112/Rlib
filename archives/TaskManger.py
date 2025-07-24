@@ -48,7 +48,7 @@ class TaskManager:
         self._taskNames = taskNames
 
     def _load(self):
-        from DataStorageSystem import NotesTable
+        from ancient.DataStorageSystem import NotesTable
         nt  = NotesTable("task manager")
         try:
             val = nt.getContentOfThisTable()
@@ -66,7 +66,7 @@ class TaskManager:
         self._taskNames = {}
 
     def archive(self, override = False):
-        from DataStorageSystem import NotesTable
+        from ancient.DataStorageSystem import NotesTable
         nt = NotesTable("task manager")
         try:
             if(not override and self.name in nt.getContentOfThisTable()):

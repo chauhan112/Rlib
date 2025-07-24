@@ -49,7 +49,7 @@ class ParserDB:
         return ParserDB.mergeDic(ParserDB.parseBlock(newG))
     def getFunctions(content):
         from FileDatabase import File
-        from CodeDB import CodeDB
+        from ancient.CodeDB import CodeDB
         from Path import Path
         filePath = "temp.py"
         File.overWrite(filePath, content)

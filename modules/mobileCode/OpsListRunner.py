@@ -84,7 +84,7 @@ class GitPushSync(IRunnable):
     def __init__(self, path):
         self.path = path
     def run(self):
-        from GitDB import CommandLinePush
+        from ancient.GitDB import CommandLinePush
         from SerializationDB import SerializationDB
         from LibsDB import LibsDB
         content= SerializationDB.readPickle(LibsDB.picklePath("crypts"))
@@ -94,7 +94,7 @@ class GitPullSync(IRunnable):
     def __init__(self, path):
         self.path = path
     def run(self):
-        from GitDB import GitPull
+        from ancient.GitDB import GitPull
         GitPull(self.path, 'chauhan112').act()
 class OpsListRunner(IRunnable):
     def __init__(self, opsDic, controller: IRunnable = None):
