@@ -9,7 +9,7 @@ import pathlib
 from LibPath import getPath
 
 class ReactHighlightCode(ipyreact.ValueWidget):
-    _esm = pathlib.Path(os.sep.join([getPath(), "javascript", "2024", "Highlight.js"]))
+    _esm = pathlib.Path(os.sep.join([getPath(),"ancient", "otherLangs", "javascript", "2024", "Highlight.js"]))
 def CodeHighlighter():
     container = Utils.container([Utils.get_comp(dict(value="set code"), IpywidgetsComponentsEnum.Label)])
     def highlight_code_with_line_numbers(code, lexer):

@@ -2,7 +2,7 @@ from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum,
 from basic import Main as ObjMaker
 from timeline.t2024.listCrudWithFilter import SearchComplex
 import numpy as np
-from LibPath import runBasic, getPath
+from useful.LibsDB import LibsDB
 from timeline.t2024.code_highlight import CodeHighlighter
 from useful.jupyterDB import jupyterDB
 
@@ -12,7 +12,7 @@ def CopyImportsFromRunBasic():
     out = Utils.get_comp({},IpywidgetsComponentsEnum.Output)
     container = Utils.container([Utils.container([textWid, searchBtn]), out], className= "flex flex-column")
     sc = SearchComplex()
-    sc.process.values = runBasic().splitlines()
+    sc.process.values = LibsDB.runBasic().splitlines()
     valuesAsNp =np.array(sc.process.values)
     parent = None
     chl = CodeHighlighter()

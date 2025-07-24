@@ -38,7 +38,7 @@ class ParserDB:
         content = list(filter(lambda l: WordDB.searchWordWithRegex("^[0-9]+" , l.strip()), numerikContent))
         content = [(val, i) for i, val in enumerate(content)]
 
-        mapFunction = lambda l: len(WordDB.searchWordWithRegex("[0-9]+\.", l[0]))
+        mapFunction = lambda l: len(WordDB.searchWordWithRegex(r"[0-9]+\.", l[0]))
 
         g= OpsDB.grouper(mapFunction, content)
         newG = []

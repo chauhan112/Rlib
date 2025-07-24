@@ -219,7 +219,7 @@ class jupyterDB:
                         self.k = SerializationDB.readPickle(LibsDB.picklePath(name))['libSize']
 
                     def days(self):
-                        p = OpsDB.grouperValues(lambda x: RegexDB.regexSearch("\d{2}\.\d{2}\.\d{4}", x[0])[0], self.k,
+                        p = OpsDB.grouperValues(lambda x: RegexDB.regexSearch(r"\d{2}\.\d{2}\.\d{4}", x[0])[0], self.k,
                                 lambda x: float(x[-1].split(" ")[0]))
                         p = dict({x:p[x][-1] for x in p})
                         return GraphDB.plotX({'size': list(p.values())}, "libSize with days")
@@ -232,7 +232,7 @@ class jupyterDB:
                     def fitWithDays(self):
                         import matplotlib.pyplot as plt
                         import numpy as np
-                        p = OpsDB.grouperValues(lambda x: RegexDB.regexSearch("\d{2}\.\d{2}\.\d{4}", x[0])[0], self.k,
+                        p = OpsDB.grouperValues(lambda x: RegexDB.regexSearch(r"\d{2}\.\d{2}\.\d{4}", x[0])[0], self.k,
                                                         lambda x: float(x[-1].split(" ")[0]))
                         p = dict({x:p[x][-1] for x in p})
                         vals = np.array(list(p.values()))
@@ -432,7 +432,7 @@ class jupyterDB:
         from useful.FileDatabase import File
         from useful.OpsDB import OpsDB
         from timeline.t2023.programs import  ProgramManager
-        file = RegexDB.replace("[\.| |,]", TimeDB.getTimeStamp(), lambda x: "")
+        file = RegexDB.replace(r"[\.| |,]", TimeDB.getTimeStamp(), lambda x: "")
         vscode = ProgramManager.getApp("vs code")
         if not os.path.exists(path):
             os.makedirs(path)

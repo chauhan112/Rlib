@@ -31,7 +31,7 @@ class Attendence:
         return (int(day[-1]), int(day[0]), int(day[1]))
     def _parser_attendence_line(self, line):
         res = RegexDB.group_name_search(NameDicExp("", "typ", "[a-zA-Z]+",
-            NameDicExp(" *(\-)* *", "time", "[0-9]+( |:)*[0-9]*", ".*")), line)
+            NameDicExp(r" *(\-)* *", "time", r"[0-9]+( |:)*[0-9]*", ".*")), line)
         assert len(res) != 0
         return res
     def _words_to_meaning(self, word):

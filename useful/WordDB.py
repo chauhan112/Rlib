@@ -186,7 +186,7 @@ class WordDB:
         return Temp
     
     def tokenize(content):
-        return list(set([content[i:j] for i, j in WordDB.searchWordWithRegex('\w+',content)]))
+        return list(set([content[i:j] for i, j in WordDB.searchWordWithRegex(r'\w+',content)]))
         
     def commonPart(stringList):
         # inp = ['abc', 'abd']

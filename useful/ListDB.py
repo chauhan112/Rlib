@@ -62,7 +62,7 @@ class ListDB:
         from useful.RegexDB import RegexDB
         if(isinstance(container, str)):
             container = container.splitlines()
-        temp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAhead("\d\. ", ".*"),x)[0], container))
+        temp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAhead(r"\d\. ", ".*"),x)[0], container))
         result = [str(i + 1)+ ". " + val for i, val in enumerate(temp)]
         if(copyIt):
             ClipboardDB.copy2clipboard("\n".join(result))
