@@ -139,7 +139,7 @@ class Tools:
         a = lambda x: (x[1], x[0])
         return [a(x) for x in paths]
 
-from AIAlgoDB import Dijkstra
+from ancient.AIAlgoDB import Dijkstra
     
 def main(inp):
     gParams = ContentParser(inp).parse()

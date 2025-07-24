@@ -64,10 +64,9 @@ class LibsDB:
                         content += k[e] + "\n"
                 return content
             def notKeys( notKeys):
-                from AIAlgoDB import AIAlgoDB
+                from ancient.AIAlgoDB import AIAlgoDB
                 allKeys = list(Temp._content().keys())
                 ss =AIAlgoDB.incrementalSearch(allKeys)
-                resultingKeys = []
                 founds = []
                 for ele in notKeys:
                     founds += ss.search(ele)

@@ -85,22 +85,7 @@ class LatexDocument(LatexFileExplorer):
         from FileDatabase import File
         File.overWrite(self._path, self.getContent())
         
-class LatexOps:
-    def header(typ = "article" ):
-        return f"\documentclass{{{typ}}}"
-    
-    def graph(points):
-        pass
-    
-    def svg(txt):
-        pass
-    
-    def includes(libHint):
-        libs = {
-            'graphics': ""
-        }
-        from AIAlgoDB import AIAlgoDB
-        AIAlgoDB.incrementalSearch
+
 
 class TextOps:
     def bold(text):

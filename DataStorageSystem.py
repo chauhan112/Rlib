@@ -180,7 +180,6 @@ class FilePathTable(CRUD, AdvanceOps):
         self._append2Loc(childOption)
 
     def _getDB(self):
-        from AIAlgoDB import AIAlgoDB
         class DicTempSearchEngine(DicSearchEngine):
             def _callback(self, item):
                 File.openFile(self.searchSys.container[item])

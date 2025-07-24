@@ -27,7 +27,7 @@ class UrlDB:
         return Database.dbSearch(Database.urlDB(vals), word)
       
     def urlOps():
-        from AIAlgoDB import AIAlgoDB
+        from ancient.AIAlgoDB import AIAlgoDB
         from ListDB import ListDB
         class TempUrl:
             content = SerializationDB.readPickle(LibsDB.picklePath('urlDB.pkl'))

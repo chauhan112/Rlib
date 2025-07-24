@@ -628,7 +628,7 @@ class DistanceCalcWithDijektra:
         self._relation = self._info['relation']
         self._color_map = ListDB.dicOps().reverseKeyValue(infos['color'])
     def generate_path(self, to, initial_pos = None):
-        from AIAlgoDB import Dijkstra
+        from ancient.AIAlgoDB import Dijkstra
         if initial_pos is not None:
             self.set_initial_pos(initial_pos)
         self._graph = self._make_relation_distance_dic()

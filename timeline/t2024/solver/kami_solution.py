@@ -119,7 +119,7 @@ def KamiDijkstraTesting():
             md(b,e,t, dres)
         return dres
     def get_dijkstra(start, end):
-        from AIAlgoDB import Dijkstra
+        from ancient.AIAlgoDB import Dijkstra
         nm = s.process.question.process.relations
         res = s.handlers.distance_calculator(s.process.question.process.relations_dense)
         dres = s.handlers.vertices_maker(res)

@@ -112,7 +112,7 @@ class TreeDB:
                         parsedDic[path][page] = Tools.getAllWordInXml(p[page])
                 SerializationDB.pickleOut(parsedDic, Path.joinPath(Temp.path(), "searchCached.pkl"))
             def opener(key):
-                from AIAlgoDB import AIAlgoDB
+                from ancient.AIAlgoDB import AIAlgoDB
                 from SearchSystem import GSearch
                 files = Path.filesWithExtension("drawio", TreeDB.forest().path())
                 files = {os.path.basename(f)[:-1*len(".drawio")].lower(): f for f in files}
