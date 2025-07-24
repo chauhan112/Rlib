@@ -1,8 +1,7 @@
-from cpp.Cpp import Cpp
+from ancient.otherLangs.cpp.Cpp import Cpp
 from Path import Path
 from FileDatabase import File
-from IPython.display import display, Markdown
-import webbrowser
+from IPython.display import Markdown
 from SearchSystem import FilesContentSearchEngine
 import os
 from CodeDB import CodeDB

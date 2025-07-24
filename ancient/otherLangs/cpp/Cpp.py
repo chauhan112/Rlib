@@ -1,5 +1,4 @@
 import re
-from IPython.display import display, Markdown
 import os
 from LibPath import getPath
 from WordDB import WordDB

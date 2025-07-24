@@ -130,7 +130,7 @@ class StaggingAreaDB:
     def getVariableTypeDB(varname, files):
         from Database import Database, D2Server
         import os
-        from cpp.Cpp import Cpp
+        from ancient.otherLangs.cpp.Cpp import Cpp
         vartypes = {}
         for file in files:
             bas = os.path.basename(file)

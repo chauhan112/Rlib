@@ -1,4 +1,4 @@
-import os,yaml
+import os
 from ClipboardDB import ClipboardDB
 from Path import Path
 from FileDatabase import File

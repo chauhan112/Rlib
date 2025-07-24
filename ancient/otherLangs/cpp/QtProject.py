@@ -6,7 +6,7 @@ class Project:
         self.proFile = None
         
     def createFile(self, name, folder = ""):
-        from cpp.Cpp import Cpp
+        from ancient.otherLangs.cpp.Cpp import Cpp
         Path.joinPath(self._relPath(folder), name).strip("\\")
         Cpp.createCppClass(Path.joinPath(self.path, Path.joinPath(self._relPath(folder), name).strip("\\")))
         self.addTopPro(name, folder)

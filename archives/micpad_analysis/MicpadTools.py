@@ -54,7 +54,7 @@ class MicpadStuff:
         paths[val] = path
         SerializationDB.pickleOut(paths, pkl)
     def projects(typ = "r"):
-        from cpp.CppProject import CppProject
+        from ancient.otherLangs.cpp.CppProject import CppProject
         if(typ.lower() in ['r', 'rebase', 'rebased', 'latest', 'late']):
             return CppProject(MicpadStuff.rebased)
         elif(typ.lower() in ['mine', 'backup', 'mi', 'b']):
