@@ -1,11 +1,9 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from basic import Main as ObjMaker
+from ancient.ClipboardDB import ClipboardDB
+import json
 
 def ListFilterSettings():
-    import json
-    from ClipboardDB import ClipboardDB
-
-    
     titleWid = Utils.get_comp({"placeholder":"give title"}, IpywidgetsComponentsEnum.Text, className="w-auto", bind = False)
     funcINp = Utils.get_comp({"placeholder":"func content"}, IpywidgetsComponentsEnum.Textarea, className="w-auto", bind = False)
     interpretJson = Utils.get_comp({"placeholder":"paste json to copy function content"}, IpywidgetsComponentsEnum.Textarea, 

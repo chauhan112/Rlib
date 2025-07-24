@@ -14,7 +14,7 @@ class jupyterDB:
         val = "# <font face='{}' color ='{}'>{}</font>".format(fontFace, random.choice(colors),topic)
         if printIt:
             print(val)
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(val)
         return val
 
@@ -294,7 +294,7 @@ class jupyterDB:
         return Tree()
 
     def clip():
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         class Clip:
             def __init__(self):
                 pass

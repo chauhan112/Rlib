@@ -44,7 +44,7 @@ class ZipFileExplorerDisplayer(FileExplorerDisplayer):
                 self.displayLog(str(e))
 
     def copyPath(self, k):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         self.extractFile()
         fileName = self.getSelectedFile()
         p = self.explorer._extractingPath + self.explorer.sep + self.explorer._currentPath
@@ -79,7 +79,7 @@ class CopyCurrentPathOps(GButtonOps):
     def get(self):
         return self._btn
     def _callback(self, btn):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         selected = self._selection.value
         path = selected
         if ExplorerUtils.dirIcon() in selected:

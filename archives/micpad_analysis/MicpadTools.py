@@ -2,7 +2,7 @@ import os
 from Path import Path
 from Database import Database
 from SerializationDB import SerializationDB
-from ClipboardDB import ClipboardDB
+from ancient.ClipboardDB import ClipboardDB
 from LibsDB import LibsDB
 class MicpadTools:
     def total_mic_files(micpath):

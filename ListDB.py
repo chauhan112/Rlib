@@ -58,9 +58,9 @@ class ListDB:
 
     def reList(container, copyIt = True):
         # see TestDB for example and uses
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         from RegexDB import RegexDB
-        if(type(container) == str):
+        if(isinstance(container, str)):
             container = container.splitlines()
         temp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAhead("\d\. ", ".*"),x)[0], container))
         result = [str(i + 1)+ ". " + val for i, val in enumerate(temp)]
@@ -75,7 +75,7 @@ class ListDB:
             if(currentLevel == maxLevel):
                 return [[k] for k in(dic.keys())]
         for k in dic:
-            if(type(dic[k]) == dict):
+            if(isinstance(dic[k], dict)):
                 [res.append([k] + ele) for ele in ListDB.branchPath(dic[k], maxLevel, currentLevel + 1)]
             else:
                 res.append([k])

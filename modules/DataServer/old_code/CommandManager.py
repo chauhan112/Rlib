@@ -23,7 +23,7 @@ class ICommand:
 class Copy2ClipBoard(ICommand):
     def execute(self):
         assert type(self.data[0]) == str
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(self.data[0])
 
 commandList = [Copy2ClipBoard()]

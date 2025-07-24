@@ -1,5 +1,5 @@
 import os
-from ClipboardDB import ClipboardDB
+from ancient.ClipboardDB import ClipboardDB
 from Path import Path
 from FileDatabase import File
 from SerializationDB import SerializationDB
@@ -228,7 +228,6 @@ class TreeCRUD:
 
     def textWithBlueBackground(txt = 'txt'):
         from htmlDB import htmlDB
-        from ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(TreeCRUD._loadOps()['text'].replace(htmlDB.urlEncode("{}"), txt))
 
     def getObj(key):
@@ -236,7 +235,6 @@ class TreeCRUD:
 
     def copyDB(word = None):
         from Database import Database
-        from ClipboardDB import ClipboardDB
         content = SerializationDB.readPickle(TreeCRUD.getPicklePath())
         def f(x):
             ClipboardDB.copy2clipboard(x)

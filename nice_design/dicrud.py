@@ -11,7 +11,7 @@ class DictionaryCRUD:
             print("file does not exists")
     def add(self, key, value=None, overwrite = False):
         if value is None:
-            from ClipboardDB import ClipboardDB
+            from ancient.ClipboardDB import ClipboardDB
             value = ClipboardDB.getText()
         try:
             self.read(key)

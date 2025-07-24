@@ -216,7 +216,7 @@ class OSFileExplorerDisplayer(FileExplorerDisplayer):
                 self.displayLog(str(e))
 
     def copyPath(self, k):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         fileName = self.getSelectedFile()
         p = self.explorer.path
         if(fileName != ''):

@@ -276,7 +276,7 @@ class LocalTree:
         self.pklPath = miniForestPath
         
     def add(self, name,overwrite = False):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         k = self._reader()
         if(name in k and not overwrite):
             raise IOError("Name already exits")
@@ -289,7 +289,7 @@ class LocalTree:
     def search(self, word, reg = False):
         from Database import D1Database
         from WidgetsDB import WidgetsDB
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         trees = self._reader()
         vals = list(trees.keys())
         db = D1Database(vals)

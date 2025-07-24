@@ -116,7 +116,7 @@ def OSExplorerCustomized():
         selected = oe.views.lister.outputs.layout.value
         oe.process.osExpOps.process.notepadOpener.openIt(s.process.root_path +os.sep + selected, 0)
     def onCopyPath(w):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         selected = oe.views.lister.outputs.layout.value
         ClipboardDB.copy2clipboard(s.process.root_path +os.sep+ selected)    
     def set_files(files):

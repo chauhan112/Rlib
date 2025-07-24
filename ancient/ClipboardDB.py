@@ -1,4 +1,3 @@
-from SystemInfo import SystemInfo
 import os
 
 class ICopy:

@@ -66,7 +66,7 @@ class ImageProcessing:
         img = open_cv_image[:, :, ::-1].copy()
         return img
     def getCV2Image(img, imgTyp = 'PIL'):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         if(type(img) == str ):
             if(img != ''):
                 frame = cv2.imread(img)
@@ -105,7 +105,7 @@ class ImageProcessing:
         return newimg
     def detectFace(path = ""):
         import cv2, os
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         faces = cv2.CascadeClassifier(os.sep.join([resourcePath(),"assests", "xmls", "haarcascade_frontalface_alt.xml"]))
         if(path == ""):
             img = ClipboardDB.getImage()

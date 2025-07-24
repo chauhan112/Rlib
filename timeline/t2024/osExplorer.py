@@ -259,7 +259,7 @@ def MoreFunctionalities():
     copyPathBtn = Utils.get_comp({"description": "copy path"}, IpywidgetsComponentsEnum.Button, className="w-auto")
     parent = None
     def copyPathCallback(w):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         selected = s.process.parent.views.lister.outputs.layout.value
         path2Copy = os.path.abspath(s.process.parent.process.model.path)
         if type(selected)== str:

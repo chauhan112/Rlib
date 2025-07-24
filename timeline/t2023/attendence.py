@@ -197,7 +197,7 @@ class TimeCalculatorController:
         elif self._view.contentType.value == "text":
             content = self._view.contentwid.value
         elif self._view.contentType.value == "clipboard":
-            from ClipboardDB import ClipboardDB
+            from ancient.ClipboardDB import ClipboardDB
             content = ClipboardDB.getText()
         self._model.set_ol_content(content)
     def _on_generate_func(self, btn):

@@ -26,7 +26,7 @@ class MarkdownToolsDB:
         else:
             k = "<ul>"+ "".join(lists)+"</ul>"
             
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(k)
         return k
     

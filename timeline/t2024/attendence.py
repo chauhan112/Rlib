@@ -1,7 +1,7 @@
 import os
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from basic import Main as ObjMaker
-from ClipboardDB import ClipboardDB
+from ancient.ClipboardDB import ClipboardDB
 from timeline.t2023.attendence import StringEnum
 import json
 from timeline.t2024.Array import Array

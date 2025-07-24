@@ -14,7 +14,7 @@ class PathServer(GSearchEngine):
         self.copy = copy
     
     def display(self, key):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         path = self.paths[key]
         if(type(path) == type(lambda x: x)):
             path = path()

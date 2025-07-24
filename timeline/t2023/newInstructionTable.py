@@ -2,13 +2,11 @@ from timeline.t2023.searchSystem import Main as SearchWithPagination
 from timeline.t2023.advance_searcher import Main as AdvanceSearchEngine
 from timeline.t2023.generic_logger.components import SingleButtonController
 from SearchSystem import DicSearch
-from modules.Explorer.personalizedWidgets import CustomOutput
 from ModuleDB import ModuleDB
 from modules.SearchSystem.modular import HideableWidget
-from IPython.display import display
 import ipywidgets as widgets
 from PickleCRUDDB import PickleCRUDOps
-from ClipboardDB import ClipboardDB
+from ancient.ClipboardDB import ClipboardDB
 from LibsDB import LibsDB
 from SerializationDB import SerializationDB
 import os

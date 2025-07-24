@@ -129,8 +129,6 @@ class ArchiveDB:
             loggerTimer = TimeDB.setTimer().regularlyUpdateTime(10*60, logger)
     def getLinks(content = None):
         from htmlDB import htmlDB
-        from Crypts import DecryptDB
-        from ClipboardDB import ClipboardDB
         from OpsDB import OpsDB
         from ComparerDB import ComparerDB
         from WordDB import WordDB

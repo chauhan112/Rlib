@@ -26,7 +26,7 @@ class Tools:
         return stamp+ "  "+clockTime
         
     def copyFromServer(waitsFor = 60):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         server = GitContact("server")
         portal.sendMessage(CopyMeClipCommand, server)
         ti = 0

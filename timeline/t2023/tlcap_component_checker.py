@@ -203,7 +203,7 @@ class UICompSearcherController:
         self._ui.copyFilePath.on_click(self._copy_file_path)
         # self._ui.openModules.on_click(self._open_imported_modules)
     def _copy_file_path(self, wid):
-        from ClipboardDB import ClipboardDB
+        from ancient.ClipboardDB import ClipboardDB
         ClipboardDB.copy2clipboard(os.path.abspath(self._ui.drop.value))
         self._ui.out.clear_output()
         with self._ui.out:
