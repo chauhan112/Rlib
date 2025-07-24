@@ -5,7 +5,7 @@ from timeline.t2024.tailwind.twcrudOps import DictionaryModel
 from timeline.t2024.listCrudWithFilter import SearchComplex
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from timeline.t2024.ui_lib.refactored_key_value_adder import Main as KVMain
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 import copy
 from ComparerDB import ComparerDB
 import json

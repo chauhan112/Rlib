@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent, KeyValueComponent,ResultDisplayers, FieldComponent
 from timeline.t2023.generic_logger import FieldsManagerV2, SupportedTypes, NewRenderer, LoggerSearch, LoggerButtonNameDecider 
 from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SingleField, MetaCRUDUI, UpdateMenu, GenericDateTime

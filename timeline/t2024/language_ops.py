@@ -1,6 +1,6 @@
 from timeline.t2024.tailwind.tailwind_config_modify import LanguageParserV2
 from timeline.t2024.Array import Array
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 def LanguageOps():
     def removeCommentsJs(content):
         # removes comment from javascript code. keywords: js, javascript, comment

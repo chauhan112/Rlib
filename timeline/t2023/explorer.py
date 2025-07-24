@@ -1,6 +1,6 @@
 import ipywidgets as widgets
 import os
-from basic import NameSpace, BasicController
+from useful.basic import NameSpace, BasicController
 from timeline.t2023.generic_logger.components import SingleButtonController
 from modules.Explorer.model import OSFileExplorer
 from modules.GUIs.model import KeyManager

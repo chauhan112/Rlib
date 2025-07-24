@@ -1,6 +1,6 @@
 import ipywidgets as widgets
 from timeline.t2023.generic_logger.components import SingleButtonController
-from basic import BasicController, NameSpace
+from useful.basic import BasicController, NameSpace
 import datetime
 class SubTasksView:
     def __init__(self):

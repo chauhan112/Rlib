@@ -147,7 +147,7 @@ class Client(ICloudNode, PathSet):
 class Main:
     timer = None
     def sync_check( start=True):
-        from Logger import GenericLogger
+        from ancient.Logger import GenericLogger
         s = Server()
         pp = PathPortal("cl")
         s.set_path("cl/server")

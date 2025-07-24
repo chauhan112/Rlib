@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 from OpsDB import IOps
 import pandas as pd
-from ImageProcessing import IImage
+from ancient.ImageProcessing import IImage
 import cv2, os
 from Path import Path
 from RegexDB import RegexDB, NameDicExp
@@ -230,7 +230,7 @@ class MakeAnimationForCase(IOps):
         out_path = os.sep.join([self._out_folder, self._case_id])
         if not os.path.exists(out_path):
             os.makedirs(out_path)
-        from ImageProcessing import MakeAnimation
+        from ancient.ImageProcessing import MakeAnimation
         cases = list(filter(lambda x: self._case_id in x, self._kp.png_files))
         progressBar = WidgetsDB.progressBar(len(cases))
         for i, f in enumerate(cases):

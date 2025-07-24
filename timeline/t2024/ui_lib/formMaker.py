@@ -1,6 +1,6 @@
 import datetime
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 def TextInput():
     container = Utils.get_comp({}, IpywidgetsComponentsEnum.Text)
     def set_value(value):

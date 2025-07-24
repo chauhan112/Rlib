@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2024.Array import Array
 from jupyterDB import jupyterDB
 import numpy as np

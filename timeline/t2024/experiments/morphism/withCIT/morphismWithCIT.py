@@ -1,4 +1,4 @@
-from basic import NameSpace, LoggerSystem
+from useful.basic import NameSpace, LoggerSystem
 from enum import Enum
 from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget
 import ipywidgets as widgets

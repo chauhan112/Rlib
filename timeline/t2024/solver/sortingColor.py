@@ -1,6 +1,6 @@
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 import cv2
-from ImageProcessing import ImageProcessing, Contour, CVImage
+from ancient.ImageProcessing import ImageProcessing, Contour, CVImage
 import numpy as np
 from skimage import color
 

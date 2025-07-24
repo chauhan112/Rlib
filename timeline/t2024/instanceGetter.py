@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers, SearchComponent
 from timeline.t2024.listCrudWithFilter import SearchComplex
 def SearchWithResultKeys():

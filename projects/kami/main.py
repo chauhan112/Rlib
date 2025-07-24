@@ -1,7 +1,7 @@
 from projects.kami.kami import PictureSplitMethod, KamiNeborDetector, NumberKamiImage, CV2ContourDetector
 from projects.kami.kami import KamiPart, IFontWriter,ExportQuestion, QuestionFromPickle, KamiObjs
 from projects.kami.kami import DistanceCalcWithDijektra, KamiSolverTreeMethod, ImageSplitterIntoBlocks
-from ImageProcessing import ColorBoundFromPickle
+from ancient.ImageProcessing import ColorBoundFromPickle
 from modules.Explorer.personalizedWidgets import IBox, GenerateNRowsBox
 from SerializationDB import SerializationDB
 GRID_SIZE = (28,10)
@@ -83,7 +83,7 @@ class Main:
                 eq.export(outfile)
         return Temp
     def color_bound_detector(img_path, out_file_name= None):
-        from ImageProcessing import ManualColorBoundFromImageCV2
+        from ancient.ImageProcessing import ManualColorBoundFromImageCV2
         mcbc = ManualColorBoundFromImageCV2(img_path)
         vals = mcbc.get_bounds()
         if out_file_name is None:

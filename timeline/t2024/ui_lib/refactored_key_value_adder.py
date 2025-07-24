@@ -1,7 +1,7 @@
 from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils, ComponentsLib
-from basic import NameSpace
+from useful.basic import NameSpace
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
-from basic import Main as ObMakr
+from useful.basic import Main as ObMakr
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2024.generic_logger.generic_loggerV3 import AddCancelBtns
 import copy

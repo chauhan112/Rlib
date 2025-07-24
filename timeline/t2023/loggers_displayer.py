@@ -8,7 +8,7 @@ class AssignedOps:
         self.ASSIGNED = "assigned"
     def _make_view(self):
         import ipywidgets as widgets
-        from basic import NameSpace 
+        from useful.basic import NameSpace 
         from timeline.t2023.generic_logger.components import SingleButtonController 
         self._view = NameSpace()
         self._view.people = widgets.Dropdown(layout = {"width": "auto"})

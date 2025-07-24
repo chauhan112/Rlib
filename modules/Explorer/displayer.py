@@ -9,7 +9,7 @@ class IExt:
         raise NotImplementedError("abstract method")
 def NewCodeDisplayer():
     from timeline.t2024.code_highlight import CodeHighlighter
-    from basic import Main as ObjMaker
+    from useful.basic import Main as ObjMaker
     from FileDatabase import File
     chl = CodeHighlighter()
     lang = "py"
@@ -59,7 +59,7 @@ class ExplorerFileDisplayer:
         from FileDatabase import File
         from ModuleDB import ModuleDB
         from NotebookDB import NotebookDB
-        from ImageProcessing import ImageProcessing, ShowImage
+        from ancient.ImageProcessing import ImageProcessing, ShowImage
         from ExplorerDB import ExplorerDB
         from LibsDB import LibsDB
         from SerializationDB import SerializationDB

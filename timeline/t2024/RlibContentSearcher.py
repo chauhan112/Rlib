@@ -4,7 +4,7 @@ from SerializationDB import SerializationDB
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2023.copy_search_reload import FilesSearch
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent
 import os
 from timeline.t2023.searchSystem import NotepadOpener

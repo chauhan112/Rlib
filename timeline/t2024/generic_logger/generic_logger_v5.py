@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2023.generic_logger.components import GComponent
 from timeline.t2024.ui_lib.refactored_key_value_adder import Main as KVMain
 from timeline.t2024.listCrudWithFilter import Main as LMain

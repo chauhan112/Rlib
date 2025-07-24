@@ -1,6 +1,6 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from timeline.t2024.Array import Array
-from basic import Main as ObjMaker, ObjectOps
+from useful.basic import Main as ObjMaker, ObjectOps
 import string
 def DropdownWithFilter():
     title = Utils.get_comp({"placeholder":"filter title"}, IpywidgetsComponentsEnum.Text, className="w-fit")

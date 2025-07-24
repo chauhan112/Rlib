@@ -308,7 +308,7 @@ class jupyterDB:
                 self.copy(func(self.text()))
             def image2Text(self,img = None):
                 from CryptsDB import CryptsDB
-                from ImageProcessing import ImageProcessing as im
+                from ancient.ImageProcessing import ImageProcessing as im
                 if (img is None):
                     img = self.img()
                 name = CryptsDB.generateUniqueId() + ".png"

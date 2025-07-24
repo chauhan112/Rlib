@@ -1,4 +1,4 @@
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 
 def SameRenderer():
     from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils, ComponentsLib

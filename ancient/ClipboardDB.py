@@ -80,7 +80,7 @@ class ClipboardDB:
     
     def imageText():
         from Path import Path
-        from ImageProcessing import ImageProcessing as im
+        from ancient.ImageProcessing import ImageProcessing as im
         name = ClipboardDB.saveImage()
         text = im.image2text(name)
         Path.delete([name])

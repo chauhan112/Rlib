@@ -1,4 +1,4 @@
-from basic import NameSpace
+from useful.basic import NameSpace
 from enum import Enum
 from types import SimpleNamespace
 from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget

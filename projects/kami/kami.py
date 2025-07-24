@@ -4,7 +4,7 @@ from modules.Explorer.DictionaryExplorer import Node
 import os
 from SerializationDB import SerializationDB
 from OpsDB import IOps
-from ImageProcessing import CVImage, MatplotImage, IColorBoundSelector
+from ancient.ImageProcessing import CVImage, MatplotImage, IColorBoundSelector
 class IKamiObj:
     def get_id(self):
         pass
@@ -61,7 +61,7 @@ class DrawContour(IOps):
 #         File.deleteFiles([file])
     def save(self, name):
         import cv2
-        from ImageProcessing import ImageProcessing
+        from ancient.ImageProcessing import ImageProcessing
         img_data = ImageProcessing.getCV2Image(self._img, 'PIL')
         cv2.drawContours(img_data, self._contours, self._cnt_nr, self._color, self._size)
         if not name.endswith(".png"):
@@ -84,7 +84,7 @@ class CV2ContourDetector(IContourDetector):
     def add_color_bound(self, lower, upper):
         self._bounds.append((lower, upper))
     def get_contour(self):
-        from ImageProcessing import Contour
+        from ancient.ImageProcessing import Contour
         for bound in self._bounds:
             self._contour += Contour.getAllContours(self._img, bound)
         self._contour = Contour.filterContourWithArea(self._contour, self._min_area)
@@ -878,7 +878,7 @@ class RemoveLowerPartOfLevel(IOps):
     def set_image(self, img):
         self._img = MatplotImage()
         self._img.set_image(img)
-from ImageProcessing import ImageRequiring
+from ancient.ImageProcessing import ImageRequiring
 class TestColorBound(IOps, ImageRequiring):
     def set_color_bound_pickle(self, pickle):
         self._pkl = pickle
@@ -889,7 +889,7 @@ class TestColorBound(IOps, ImageRequiring):
             low, upp = self._color_map[color]
             self._display_img(low, upp)
     def _display_img(self, low, upp):
-        from ImageProcessing import ApplyMask
+        from ancient.ImageProcessing import ApplyMask
         am = ApplyMask()
         am.set_image(self._img_path)
         am.set_mask(low, upp)

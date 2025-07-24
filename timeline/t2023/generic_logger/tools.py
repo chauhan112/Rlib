@@ -1,6 +1,6 @@
 from IPython.display import HTML
 from timeline.t2023.generic_logger import IModifier
-from basic import NameSpace
+from useful.basic import NameSpace
 from modules.SearchSystem.modular import HideableWidget
 from modules.Explorer.personalizedWidgets import CustomOutput
 class ModelData:

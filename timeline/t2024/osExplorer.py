@@ -1,4 +1,4 @@
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 import subprocess
 from SystemInfo import SystemInfo
 import platform

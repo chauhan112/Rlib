@@ -1,7 +1,7 @@
 from modules.GUIs.PickleOps import PickleOpsModel
 from ListDB import ListDB
 import ipywidgets as widgets
-from basic import NameSpace
+from useful.basic import NameSpace
 
 class StringInfoEnums:
     LAST_DIR_LIST = "treeList"

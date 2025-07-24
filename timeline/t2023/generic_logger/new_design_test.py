@@ -2,7 +2,7 @@ from timeline.t2023.generic_logger import SupportedTypes, LoggerButtonNameDecide
 from modules.SearchSystem.modular import HideableWidget
 from TimeDB import TimeDB
 from timeline.t2023.generic_logger.components import SingleButtonController
-from basic import NameSpace
+from useful.basic import NameSpace
 from SearchSystem import MultilineStringSearch
 from timeline.t2023.searchSystem import Main as SearchWithPagination
 from CryptsDB import CryptsDB

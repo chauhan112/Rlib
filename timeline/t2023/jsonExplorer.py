@@ -1,6 +1,6 @@
 class JsonExplorer:
     def __init__(self):
-        from basic import NameSpace
+        from useful.basic import NameSpace
         self._res = NameSpace()
     def key_clicked(self, btn, *param):
         cnt = self._cnt

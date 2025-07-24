@@ -1,4 +1,4 @@
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 def ConversionTool():
     def sizeReduce(size_bytes):
         import math

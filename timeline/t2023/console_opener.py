@@ -6,7 +6,7 @@ from SerializationDB import SerializationDB
 import threading
 import subprocess
 import platform
-from basic import NameSpace
+from useful.basic import NameSpace
 class Functionality:
     def console_open(self, path):
         device = self.app.controller.utils.device_unique_identifier()

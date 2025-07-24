@@ -49,7 +49,7 @@ class OpsGroupMaker:
         
         
 from timeline.t2023.advance_pickle_crud import Main as DicExplorer
-from basic import NameSpace
+from useful.basic import NameSpace
 import ipywidgets as widgets
 from modules.SearchSystem.modular import HideableWidget
 

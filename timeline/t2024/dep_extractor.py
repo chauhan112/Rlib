@@ -5,7 +5,7 @@ from CryptsDB import CryptsDB
 from FileDatabase import File
 from ListDB import ListDB
 from ancient.ClipboardDB import ClipboardDB
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from timeline.t2023.dep_extractor.dependency_extractor import AstTools, DicOps
 class GlobalData:
     all_imports = {}

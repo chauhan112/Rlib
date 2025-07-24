@@ -209,7 +209,7 @@ class ArchiveDB:
     def reminder_timer():
         def reminder():
             from TimeDB import TimeDB
-            from ImageProcessing import ICOPath
+            from ancient.ImageProcessing import ICOPath
             hour = TimeDB.nowTime()[0]
             hour = hour - 9
             if(hour % 3 == 0):

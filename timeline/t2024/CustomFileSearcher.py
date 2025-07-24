@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 from SearchSystem import FilesContentSearch
 from timeline.t2023.searchSystem import NotepadOpener
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers

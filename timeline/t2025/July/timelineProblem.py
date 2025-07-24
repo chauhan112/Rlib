@@ -3,7 +3,7 @@ import bisect
 from collections import namedtuple
 State = namedtuple("State", ["bg", "map"])
 TestCase = namedtuple("TestCase", ["name", "before", "op", "results"])
-from basic import Main as ObjMaker
+from useful.basic import Main as ObjMaker
 class IntervalMap:
     def __init__(self, val_begin):
         self.val_begin = val_begin
