@@ -1,8 +1,8 @@
 import lizard
 import os
-from FileDatabase import File
-from WordDB import WordDB
-from SerializationDB import SerializationDB
+from useful.FileDatabase import File
+from useful.WordDB import WordDB
+from useful.SerializationDB import SerializationDB
 
 class CodeDB:
     def parseFile(filePath):
@@ -56,7 +56,7 @@ class CodeDB:
     def unCommentPython(regex, content):
         class Tmep:
             def remove_comments(content):
-                from PyCodeUtils import PyCodeUtils
+                from useful.PyCodeUtils import PyCodeUtils
                 return PyCodeUtils.pyCommentRemover(content)
 
             def extract_content(regex, content):
@@ -156,7 +156,7 @@ class ClassModel:
                 dic = self.content[name]['methods']
                 return sum([dic[x]['ccn'] for x in dic])/ Temp.noOfMethods(name)
             def allMethods(name, displayIt = True):
-                from htmlDB import htmlDB
+                from useful.htmlDB import htmlDB
                 methods =list(self.content[name]['methods'])
                 if(not displayIt):
                     return methods
@@ -256,14 +256,14 @@ class PyAnalyseCode(IAnalyser):
             File.createFileInsideNonExistingFolder(
                 os.sep.join([self.to_path, "source", f'{f.replace(common_part, "")}']) , File.getFileContent(f))
     def uncomment(self):
-        from PyCodeUtils import PyCodeUtils
+        from useful.PyCodeUtils import PyCodeUtils
         for f in self._pyfiles:
             content = PyCodeUtils.pyCommentRemover(File.getFileContent(f))
             File.createFileInsideNonExistingFolder(
                 os.sep.join([self.to_path, "uncomment", f'{f.replace(common_part, "")}']), content)
     
     def get_size(self, path = None):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         if path is None:
             path = self.to_path
         else:

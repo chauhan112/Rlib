@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 
 def LoadOrSaveComp():
     keysOption = Utils.get_comp({"options": ["add",'update',"delete"]},IpywidgetsComponentsEnum.Dropdown, className = "w-auto", bind = False)
@@ -15,9 +15,9 @@ def LoadOrSaveComp():
     return s
 def HochschuleResultsViewer():
     from timeline.t2024.generic_crud import Main
-    from LibsDB import LibsDB
+    from useful.LibsDB import LibsDB
     from timeline.t2024.tailwind.twcrudOps import DictionaryModel
-    from jupyterDB import jupyterDB
+    from useful.jupyterDB import jupyterDB
     af = Main.crud_with_renderer()
     lsc = LoadOrSaveComp()
     cf = af.process.cf
@@ -40,7 +40,7 @@ def HochschuleResultsViewer():
         cf.process.model.handlers.set_data({})
     def onLoadFromClip(w):
         content = jupyterDB.clip().text()
-        from htmlDB import htmlDB
+        from useful.htmlDB import htmlDB
         b = htmlDB.getParsedData(content)
         founds = htmlDB.searchOnSoup(dict(tagName="tr", attr= dict(role="row")), b)#len()
         t = []

@@ -1,6 +1,6 @@
 import pyautogui as pg
 import time
-from FileDatabase import File
+from useful.FileDatabase import File
 
 class Image:
     def set_img_path(self, name: str):

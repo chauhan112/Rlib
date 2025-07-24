@@ -1,11 +1,11 @@
 import os
 import shutil
 import webbrowser
-from ListDB import ListDB
+from useful.ListDB import ListDB
 from useful.ComparerDB import ComparerDB
 from LibPath import *
-from SerializationDB import SerializationDB
-from SearchSystem import GSearchEngine, JupyterNotebookSE, DicSearch
+from useful.SerializationDB import SerializationDB
+from useful.SearchSystem import GSearchEngine, JupyterNotebookSE, DicSearch
 
 class PathServer(GSearchEngine):
     def __init__(self,pathDic, copy=False):
@@ -41,7 +41,7 @@ class Path:
         print(file + " does not exists")
 
     def openExplorerAt(path = None):
-        from SystemInfo import SystemInfo
+        from useful.SystemInfo import SystemInfo
         if(path is None):
             path = os.getcwd()
         command = 'explorer "{}"'
@@ -170,7 +170,7 @@ class Path:
                 copy_tree(f, destinationFolder)
 
     def paths(word = '', copy = False):
-        from PickleCRUDDB import PickleCRUD
+        from useful.PickleCRUDDB import PickleCRUD
         class PathOps(PickleCRUD):
             def __init__(self):
                 name = 'paths'
@@ -183,7 +183,7 @@ class Path:
         return PathOps()
     
     def changeSeparator(path):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         return WordDB.replaceWithRegex(r"\\+", "<sjdfsdj>", WordDB.replaceWithRegex("/+","<sjdfsdj>",  
             path)).replace("<sjdfsdj>", os.sep)
     
@@ -198,7 +198,7 @@ class Path:
                 Temp._common(path, files, name)
                 
             def _common(path, files, name):
-                from TimeDB import TimeDB
+                from useful.TimeDB import TimeDB
                 if(name is None):
                     name = TimeDB.getTimeStamp().replace(",", "")
                     
@@ -245,8 +245,8 @@ class Path:
                         
         return Temp
     def _programPaths():
-        from jupyterDB import jupyterDB
-        from ModuleDB import ModuleDB
+        from useful.jupyterDB import jupyterDB
+        from useful.ModuleDB import ModuleDB
         return FrequentPaths.readPicklePath()['programs'][ModuleDB.laptopName()]
     
     
@@ -266,8 +266,8 @@ class FrequentPaths:
         
     def pathAsDic():
         paths = {}
-        from LibsDB import LibsDB
-        from WordDB import WordDB
+        from useful.LibsDB import LibsDB
+        from useful.WordDB import WordDB
 
         content = FrequentPaths.getContent()
         for key in content:
@@ -290,7 +290,7 @@ class FrequentPaths:
         return Path.joinPath(str(p.home()), "Desktop")
 
     def _otherPaths():
-        from TreeDB import ForestDB
+        from useful.TreeDB import ForestDB
         paths = {}
         paths['here'] = os.getcwd()
         paths['forest'] = ForestDB.getForestPath()

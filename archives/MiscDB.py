@@ -2,11 +2,11 @@ import datetime
 class MiscDB:
     def nepal_flag(height = '100'):
         from IPython.display import SVG
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         k = SVG(url='https://upload.wikimedia.org/wikipedia/commons/9/9b/Flag_of_Nepal.svg')
         return SVG(WordDB.replaceWithRegex("height=\"\d+\"", f"height=\"{height}\"", k.data))
     def compileFiles(files):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         cmds = []
         for file in files:
             cmds.append(f"""g++ -Wall -g -c '{file}' -o '{file[:-4]+ ".o"}'""")

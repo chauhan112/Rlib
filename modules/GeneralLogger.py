@@ -1,6 +1,6 @@
 import os, shutil
 from useful.ComparerDB import ComparerDB
-from Path import Path
+from useful.Path import Path
 
 class PathWorkspace:
     def __init__(self, rootPath):
@@ -27,7 +27,7 @@ class PathWorkspace:
         Path.delete([self._path(filePath)])
     
     def showAsExplorer(self):
-        from ExplorerDB import ExplorerDB
+        from useful.ExplorerDB import ExplorerDB
         return ExplorerDB.osFileExplorer(self._rootPath)
 
 class CloudWorkspace(PathWorkspace):
@@ -35,7 +35,7 @@ class CloudWorkspace(PathWorkspace):
         super().__init__(self._cloudPath())
 
     def _cloudPath(self):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         return Path.joinPath(LibsDB.cloudPath(), 'Global', 'code', 'resources')
     
 class LocalCloudEquivalentPath(PathWorkspace):
@@ -129,7 +129,7 @@ class GeneralLogger:
         self._indexed = None
         
     def _read(self):
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(self.storageID)
     
     def add(self,element: LogItem, overwrite = False):
@@ -137,7 +137,7 @@ class GeneralLogger:
                             'tags': element.tags}, overwrite)
         
     def db(self,tag=''):
-        from SearchSystem import GeneralSearchEngine, GSearch
+        from useful.SearchSystem import GeneralSearchEngine, GSearch
         
         content = self._dataCrud.getContent()
         tags = set(map(lambda x: x.strip(), tag.split(",")))

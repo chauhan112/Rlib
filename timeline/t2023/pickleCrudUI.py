@@ -1,5 +1,5 @@
 import ipywidgets as widgets
-from PickleCRUDDB import PickleCRUD
+from useful.PickleCRUDDB import PickleCRUD
 from IPython.display import display
 import os
 class Model:

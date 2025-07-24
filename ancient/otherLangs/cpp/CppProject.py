@@ -1,8 +1,8 @@
 from ancient.otherLangs.cpp.Cpp import Cpp
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 from IPython.display import Markdown
-from SearchSystem import FilesContentSearchEngine
+from useful.SearchSystem import FilesContentSearchEngine
 import os
 from ancient.CodeDB import CodeDB
 
@@ -49,5 +49,5 @@ class CppProject:
         Path.openExplorerAt(self.path)
         
     def cmd(self, moreCommands=[]):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         OpsDB.cmd().onthread(["c:", f'cd "{self.path}"', "start"])

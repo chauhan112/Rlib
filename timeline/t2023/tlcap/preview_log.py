@@ -95,7 +95,7 @@ class PreviewApplication(IStep):
         if not onThread:
             self._run()
             return 
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         OpsDB.runOnThread(self._run)
     def _run(self):
         start = time.time()

@@ -1,9 +1,9 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.osExplorer import OSExplorer
 from timeline.t2024.ListResultDisplayer import ListResultDisplayer
-from jupyterDB import jupyterDB
-from SerializationDB import SerializationDB
+from useful.jupyterDB import jupyterDB
+from useful.SerializationDB import SerializationDB
 
 def MisConceptsFilterer():
     lrd = ListResultDisplayer()

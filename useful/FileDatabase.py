@@ -68,9 +68,9 @@ class File:
         os.rename(oldName, newName)
 
     def program(name, directOpen = False):
-        from LibsDB import LibsDB
-        from SerializationDB import SerializationDB
-        from Database import Database
+        from useful.LibsDB import LibsDB
+        from useful.SerializationDB import SerializationDB
+        from useful.Database import Database
         programs = SerializationDB.readPickle(LibsDB.picklePath("paths"))['programs']
         if(directOpen):
             File.openFile(programs[name])
@@ -89,7 +89,7 @@ class File:
 
 class FileOpener:
     def _open(filePath, typ = None, lineNr = 0):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         if(typ is None):
             typ = FileOpener.getType(filePath)
         k = FileOpener.program()
@@ -99,7 +99,7 @@ class FileOpener:
             FileOpener.normalOpen(filePath)
 
     def program():
-        from Path import Path
+        from useful.Path import Path
         return Path._programPaths()
 
     def normalOpen(filePath):
@@ -137,7 +137,7 @@ class MarkDownFileOpenerApp(IFileOpenerApp):
 
     def openIt(self, path):
         content = File.textAround(path, self.lineNr,self.around)
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         from IPython.display import display
         display(ModuleDB.colorPrint('python', content))
 
@@ -145,9 +145,9 @@ class NotepadAppTextOpener(IFileOpenerApp, GDataSetable):
     def __init__(self, notepadExePath=None):
         self.notepadExePathWithParams = f'"{notepadExePath}"'+' "{}" -n{}'
         if(notepadExePath is None):
-            from SerializationDB import SerializationDB
-            from ModuleDB import ModuleDB
-            from LibsDB import LibsDB
+            from useful.SerializationDB import SerializationDB
+            from useful.ModuleDB import ModuleDB
+            from useful.LibsDB import LibsDB
             dic = SerializationDB.readPickle(LibsDB.picklePath("paths"))
             path = dic['programs'][ModuleDB.laptopName()]['notepad++']
             self.notepadExePathWithParams = f'"{path}"'+' "{}" -n{}'
@@ -155,7 +155,7 @@ class NotepadAppTextOpener(IFileOpenerApp, GDataSetable):
 
     def openIt(self, path):
         lineNr= self.data
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         cmd = self.notepadExePathWithParams.format(path, lineNr)
         OpsDB.cmd().onthread([cmd])
 
@@ -167,16 +167,16 @@ class ChromeAppPdfOpener(IFileOpenerApp):
         self.set_chrome(chromeExe)
 
     def openIt(self, path):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         urlPath = path.replace(os.sep, "/")
         fpu = f"file:///{urlPath}#page={self.pageNr}"
         OpsDB.cmd().onthread(f'"{self.chromeExe}" "{fpu}"')
     def set_chrome(self, chrome):
         self.chromeExe = chrome
     def _get_chrome(self):
-        from SerializationDB import SerializationDB
-        from ModuleDB import ModuleDB
-        from LibsDB import LibsDB
+        from useful.SerializationDB import SerializationDB
+        from useful.ModuleDB import ModuleDB
+        from useful.LibsDB import LibsDB
         dic = SerializationDB.readPickle(LibsDB.picklePath("paths"))
         return dic['programs'][ModuleDB.laptopName()]['chrome']
 
@@ -189,7 +189,7 @@ class ChromeHtmlFileOpenerWithHashTag(ChromeAppPdfOpener):
         
 class AnyFileOpener(IFileOpenerApp):
     def openIt(self, path):
-        from SystemInfo import SystemInfo
+        from useful.SystemInfo import SystemInfo
         if(os.path.exists(path)):
             if(SystemInfo.isLinux()):
                 os.system(f"xdg-open '{path}'")
@@ -203,7 +203,7 @@ class LinuxOpensuseVSCodeOpener(IFileOpenerApp):
     def __init__(self):
         self.set_linenr(0)
     def openIt(self, path):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         OpsDB.cmd().run(f'code --goto "{path}:{self._nr}"')
     def set_linenr(self, nr):
         self._nr = nr

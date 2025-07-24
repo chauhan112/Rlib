@@ -1,7 +1,7 @@
 class StaggingAreaDB:
     def translate(path):
-        from SerializationDB import SerializationDB
-        from ListDB import ListDB
+        from useful.SerializationDB import SerializationDB
+        from useful.ListDB import ListDB
         def _translate(path):
             pkl = SerializationDB.readPickle(path)
             newPkl = {}
@@ -36,7 +36,7 @@ class StaggingAreaDB:
                 arr.append(name)
         return arr
     def getAllLinesContainingFromImport(contentList):
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         lines = []
         for line in contentList:
             if(RegexDB.isThereRegexMatch(RegexDB.lookAheadAndBehind("from ", " import", ".*" ),line)):
@@ -70,8 +70,8 @@ class StaggingAreaDB:
     def getPdfPageAsImage(pdfPath, pageNr):
         from useful.CryptsDB import CryptsDB
         from pdf2image import convert_from_path
-        from Pdf_Database import PDF
-        from Path import Path
+        from useful.Pdf_Database import PDF
+        from useful.Path import Path
         tempPdf = CryptsDB.generateRandomName(20) + ".pdf"
         print(tempPdf)
         PDF.extractPdf(pdfPath, tempPdf, (pageNr-1,pageNr))
@@ -79,15 +79,15 @@ class StaggingAreaDB:
         Path.delete([tempPdf])
         return image
     def simpleCommentRemoverPython(content):
-        from  ListDB import ListDB
-        from RegexDB import RegexDB
+        from  useful.ListDB import ListDB
+        from useful.RegexDB import RegexDB
         lines = content.split("\n")
         filer = [RegexDB.isThereRegexMatch("[ \n]#", i) for i in lines]
         filer = [not i for i in filer]
         py = [line for i, line in enumerate(lines) if(filer[i])]
         return "\n".join(ListDB.listFilter(lambda x: len(x.strip())>0, py))
     def describeProject(path = "."):
-        from Path import Path
+        from useful.Path import Path
         files = Path.filesWithExtension("py", path)
         print(Path.getSize(files))
     def commaSeperate(val):
@@ -116,7 +116,7 @@ class StaggingAreaDB:
                     print("class: " + className + ", method: " + methodName)
     def zipPathGrouper(paths, sep ="/"):
         from collections import defaultdict
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         tree = lambda : defaultdict(tree)
         def add(t, path):
             for node in path:
@@ -128,7 +128,7 @@ class StaggingAreaDB:
             add(tr, fp.split("/"))
         return tr
     def getVariableTypeDB(varname, files):
-        from Database import Database, D2Server
+        from useful.Database import Database, D2Server
         import os
         from ancient.otherLangs.cpp.Cpp import Cpp
         vartypes = {}
@@ -157,9 +157,9 @@ class StaggingAreaDB:
         import cProfile
         return cProfile.run(functionCallAsString)
     def startDrawio():
-        from OpsDB import OpsDB
-        from NetworkingDB import NetworkingDB
-        from LibsDB import LibsDB
+        from useful.OpsDB import OpsDB
+        from ancient.NetworkingDB import NetworkingDB
+        from useful.LibsDB import LibsDB
         import webbrowser
         OpsDB.runOnThread(NetworkingDB.startAPythonServer, [LibsDB.cloudPath() + r"\Global\code\Code Godown\drawio-master\drawio-master\drawio-master\src\main\webapp",
                     8001])
@@ -231,7 +231,7 @@ class StaggingAreaDB:
         func(*parameters)
     def PickleOps(path):
         import ipywidgets as widgets
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         class Temp:
             pass
         res = widgets.HBox([])
@@ -286,7 +286,7 @@ class StaggingAreaDB:
                 dependentClasses[cls] = set(dependency[cls])
         return dependentClasses
     def uninstallPackages(packages = [], env='base', showOut= True):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         cmds = [f'conda activate {env}']
         for pa in packages:
             cmds.append(f'pip uninstall {pa} -y')
@@ -294,7 +294,7 @@ class StaggingAreaDB:
         if(showOut):
             print(out + "\n" + err)
     def installPackages(setupFiles = [], env='base', showOut= True):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         cmds = [f'conda activate {env}',]
         for f in setupFiles:
             absF = os.path.abspath(f)
@@ -312,8 +312,8 @@ class StaggingAreaDB:
                 break
 class TempUrlFileManager:
     def __init__(self, filename):
-        from SerializationDB import SerializationDB
-        from Database import Database
+        from useful.SerializationDB import SerializationDB
+        from useful.Database import Database
         self.filename = filename
     def addUrl(self, title, value):
         val = self.read()

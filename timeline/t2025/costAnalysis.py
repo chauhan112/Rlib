@@ -1,7 +1,7 @@
-import htmlDB import htmlDB
+import useful.htmlDB as htmlDB import useful.htmlDB as htmlDB
 class MyTransactions:
     def set_file(self, file):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         self.set_content(File.getFileContent(file))
     def set_content(self, content):
         self._content = content
@@ -9,7 +9,7 @@ class MyTransactions:
         self.rows = list(filter(lambda x: "class" in x.attrs and "hasSEPADetails" in x.attrs["class"], bfs_soup(self._pdata.tbody, 1)))
         self.parsed_row = list(map(self.getKeyVal, self.rows))
     def get_from_clipboard(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         self.set_content(jupyterDB.clip().copy())
     def getKeyVal(self, rowTd):
         res = {}

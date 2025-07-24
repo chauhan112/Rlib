@@ -1,4 +1,4 @@
-from WordDB import WordDB
+from useful.WordDB import WordDB
 import re
 class ComparerDB:
     def inCompare(leftIn, right, case = False):

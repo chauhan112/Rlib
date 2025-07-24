@@ -1,6 +1,6 @@
-from InterfaceDB import ISearchSystem
+from ancient.InterfaceDB import ISearchSystem
 from useful.ComparerDB import ComparerDB
-from FileDatabase import File
+from useful.FileDatabase import File
 import os
 
 
@@ -82,7 +82,7 @@ class SearchEngine:
         self._tooltip_func = func
 
     def displayItem(self,key, name, callbackFunc, tooltip=None):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         b = WidgetsDB.mButton(name, key, callbackFunc)
         b.tooltip = tooltip
         return b
@@ -207,7 +207,7 @@ class FilesContentSearchEngine(SearchEngine):
         self._runCallback(resItem[0], resItem[1])
 
     def _openApp(self, path, lineNr):
-        from FileDatabase import NotepadAppTextOpener
+        from useful.FileDatabase import NotepadAppTextOpener
         app = NotepadAppTextOpener()
         app.setData(lineNr)
         app.openIt(path)
@@ -243,7 +243,7 @@ class UrlSearchEngine(DicSearchEngine):
         return self.searchSys.container[item]
     
     def _callback(self, key):
-        from TreeDB import TreeDB
+        from useful.TreeDB import TreeDB
         TreeDB.openWebLink(self.searchSys.container[key])
 
 class CodeDumperSearch:
@@ -268,14 +268,14 @@ class CodeDumperEngine(SearchEngine):
         return str(item[1] )
     
     def _callback(self, item):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         from IPython.display import display
         content = self.searchSys.container[item[0]][item[1]]
         display(ModuleDB.colorPrint('python', content))
         
 class PdfSearch(FilesContentSearch):
     def getContent(self, path):
-        from Pdf_Database import PDF
+        from useful.Pdf_Database import PDF
         try:
             return PDF.readPdf(path)
         except Exception as e:
@@ -286,9 +286,9 @@ class PdfSearchEngine(FilesContentSearchEngine):
     def __init__(self, pdfs, cols = 6):
         super().__init__(pdfs, PdfSearch,cols)
     def _callback(self, resItem):
-        from OpsDB import OpsDB
-        from jupyterDB import jupyterDB
-        from ModuleDB import ModuleDB
+        from useful.OpsDB import OpsDB
+        from useful.jupyterDB import jupyterDB
+        from useful.ModuleDB import ModuleDB
         file, pageNr = resItem
         k = jupyterDB.pickle().read("paths")
         urlPath = os.path.abspath(file).replace(os.sep, "/")
@@ -301,7 +301,7 @@ class FoldersExplorerDisplayer(DicSearchEngine):
     def __init__(self, folders):
         super().__init__({os.path.basename(f):f for f in folders})
     def _callback(self, item):
-        from ExplorerDB import ExplorerDB
+        from useful.ExplorerDB import ExplorerDB
         display(ExplorerDB.osFileExplorer(self.searchSys.container[item]))        
 
 class GSearch:
@@ -382,7 +382,7 @@ class JupyterNotebookSE(ISearchEngine):
         self._nCols = nCols 
         
     def display(self, result):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         import ipywidgets as widgets
         disp = WidgetsDB.getGrid(self._nCols)
         for res in result:
@@ -403,7 +403,7 @@ class JupyterNotebookResultReplaceableSE(ISearchEngine):
         self.container =container
         
     def display(self, result):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         output = WidgetsDB.searchEngine().resultWidget()
         output.searchRes.clear_output()
         output.display()
@@ -426,7 +426,7 @@ class JupyterNotebookResultReplaceableSE(ISearchEngine):
         return self.buttonName(item)
     
     def displayItem(self,key, name, callbackFunc, tooltip=None):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         b = WidgetsDB.mButton(name, key, callbackFunc)
         b.tooltip = tooltip
         return b

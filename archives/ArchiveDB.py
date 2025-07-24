@@ -1,6 +1,6 @@
 class ArchiveDB:
     def resizeAllFiles(files, numberOFLines = 30):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         for f in files:
             content = File.getFileContent(f).split("\n")[:numberOFLines]
             content = "\n".join(content)
@@ -12,7 +12,7 @@ class ArchiveDB:
             os.rename(f, newName)
     def filesWithNames(names, path = None, walk = False):
         import os
-        from Path import Path
+        from useful.Path import Path
         if(path is None):
             path = os.getcwd()
         files = Path.getFiles(path, walk)
@@ -24,14 +24,14 @@ class ArchiveDB:
         content = ArchiveDB.getFileContentAsDictionary()
         return list(content.keys())
     def getFileContentAsDictionary():
-        from Path import Path
-        from FileDatabase import File
+        from useful.Path import Path
+        from useful.FileDatabase import File
         path = Path.joinPath(resourcePath(),"treeDB.yaml")
         content = yaml.safe_load(File.getFileContent(path))
         return content
     def overwritePrototype(content):
-        from Path import Path
-        from FileDatabase import File
+        from useful.Path import Path
+        from useful.FileDatabase import File
         file = Path.joinPath(resourcePath(), "Prototype.ipynb")
         File.overWrite(file, content)
     def toQtPath(path):
@@ -99,21 +99,21 @@ class ArchiveDB:
             values.append(arr[i])
         return values
     def runBasic():
-        from Path import Path
-        from jupyterDB import jupyterDB
-        from Database import Database
-        from UrlDB import UrlDB
-        from FileDatabase import File
-        from TreeDB import TreeDB
-        from SerializationDB import SerializationDB
+        from useful.Path import Path
+        from useful.jupyterDB import jupyterDB
+        from useful.Database import Database
+        from ancient.UrlDB import UrlDB
+        from useful.FileDatabase import File
+        from useful.TreeDB import TreeDB
+        from useful.SerializationDB import SerializationDB
         from ancient.DataStorageSystem import InstructionTable
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         # data storage system
         it = InstructionTable(params=globals())
         modb = Database.moduleDB()
         jupyterDB.libSize()
         from IPython.display import HTML, display
-        from NotebookDB import NotebookDB
+        from archives.NotebookDB import NotebookDB
         # code logging
         display(NotebookDB.currentRunningNotebookName())
         loggingTimeLogs = []
@@ -128,12 +128,12 @@ class ArchiveDB:
         except:
             loggerTimer = TimeDB.setTimer().regularlyUpdateTime(10*60, logger)
     def getLinks(content = None):
-        from htmlDB import htmlDB
-        from OpsDB import OpsDB
+        from useful.htmlDB import htmlDB
+        from useful.OpsDB import OpsDB
         from useful.ComparerDB import ComparerDB
-        from WordDB import WordDB
-        from RegexDB import RegexDB
-        from TreeDB import TreeDB
+        from useful.WordDB import WordDB
+        from useful.RegexDB import RegexDB
+        from useful.TreeDB import TreeDB
         def filterCells(soup):
             noOfParents = RegexDB.regexSearch(RegexDB.lookAheadAndBehind("parent=\"",'" style=', "\d+" ), str(soup))
             nr = set(noOfParents)
@@ -178,7 +178,7 @@ class ArchiveDB:
     def linear_alg2_correct():
         from ancient.DataStorageSystem import NotesTable
         from archives.HomeWorkCheckTools import LA_2_HW_Correct
-        from ExplorerDB import ExplorerDB
+        from useful.ExplorerDB import ExplorerDB
         nt  = NotesTable()
         print(nt.read(['LA2', 'log']))
         exp = ExplorerDB.osFileExplorer(Path.convert2CloudPath(nt.read(['LA2', "hw", "path"])))
@@ -208,7 +208,7 @@ class ArchiveDB:
         return newVal
     def reminder_timer():
         def reminder():
-            from TimeDB import TimeDB
+            from useful.TimeDB import TimeDB
             from ancient.ImageProcessing import ICOPath
             hour = TimeDB.nowTime()[0]
             hour = hour - 9
@@ -224,8 +224,8 @@ class ArchiveDB:
     def _driveStartPath():
         import sys
         import string
-        from ListDB import ListDB
-        from jupyterDB import jupyterDB
+        from useful.ListDB import ListDB
+        from useful.jupyterDB import jupyterDB
         
         class Cache:
             def readVal(indexName):
@@ -255,12 +255,12 @@ class ArchiveDB:
         Cache.writeVal("value", a)
         return a
     def syntax(word = None):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         from IPython.display import display
-        from ModuleDB import ModuleDB
-        from SerializationDB import SerializationDB
-        from Database import Database
-        from SearchSystem import DicSearchEngine
+        from useful.ModuleDB import ModuleDB
+        from useful.SerializationDB import SerializationDB
+        from useful.Database import Database
+        from useful.SearchSystem import DicSearchEngine
         class CppCodeDisplayerSearcher(DicSearchEngine):
             def _callback(self, item):
                 display(ModuleDB.colorPrint("cpp", self.searchSys.container[item]))
@@ -322,7 +322,7 @@ class StartUpOpsEditor:
             return widgets.HBox(wList)
         return widgets.VBox(wList)
     def _displayOutput(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         from IPython.display import display
         with self.out:
             display(jupyterDB.startUp().Ops().both().display())
@@ -390,7 +390,7 @@ class Redesign:
         Redesign.index += 1
 def redesignOps():
     from IPython.display import display
-    from WidgetsDB import WidgetsDB
+    from useful.WidgetsDB import WidgetsDB
     import ipywidgets as widgets
     class Temp:
         def add(x):
@@ -481,7 +481,7 @@ class OldScieboDB:
                 f.append(Path.joinPath(path, file))
         return f
     def _conflictedNameToBasename( filename):
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         return RegexDB.regexSearch(RegexDB.lookBehind(" \(conflicted copy", ".*"),
                                    filename)[0] + ".pkl"
     def _solvePickleConflict(conflictedFile, baseFile):
@@ -580,7 +580,7 @@ class ZipExplorerWithLargeNumberOfContent(ZipFileExplorer):
         self._reset()
         super().__init__(path)
     def _reset(self):
-        from DataStructure import DataStructure
+        from useful.DataStructure import DataStructure
         self.section = DataStructure.nestedNamespace({
             'status': False,
             'size': self.sectionSize,

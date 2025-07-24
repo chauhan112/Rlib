@@ -55,7 +55,7 @@ class StuffDB:
                 return val
         return Tem
     def search():
-        from SearchSystem import DicSearchEngine
+        from useful.SearchSystem import DicSearchEngine
         pkl = StuffDB._read()
         content = pkl.getContent()['stuffs']
         class Temp:
@@ -76,7 +76,7 @@ class StuffDB:
                 return dic
         return Temp
     def _read():
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(StuffDB.storageID)
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget
 import ipywidgets as widgets

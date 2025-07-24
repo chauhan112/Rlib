@@ -1,6 +1,6 @@
-from Path import Path
+from useful.Path import Path
 import os
-from TimeDB import TimerDB
+from useful.TimeDB import TimerDB
 import fnmatch
 class FilesGetter:
     def __init__(self):
@@ -107,7 +107,7 @@ class FileSyncLC:
         if toVal:
             self.views.components.toComp.outputs.layout.value = toVal
     def get_infos():
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         app_name = "sync react files"
         laptopName = ModuleDB.laptopName()
         fromKey = laptopName + "-from"

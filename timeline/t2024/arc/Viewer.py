@@ -1,5 +1,5 @@
-from FileDatabase import File
-from useful.basic import Main as ObjMaker
+from useful.FileDatabase import File
+from basic import Main as ObjMaker
 def PlotterModel():
     import matplotlib.pyplot as plt
     colors = ['#000000', '#1E93FF', '#F93C31', '#4FCC30', '#FFDC00',

@@ -3,7 +3,7 @@ import os
 
 class LibsDB:
     def cloudPath():
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         return RegexDB.regexSearch(".*cloud", getPath())[0].replace("\\",os.sep)
     
     def picklePath(val = None):
@@ -35,7 +35,7 @@ class LibsDB:
         """
         class Temp:
             def display():
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 name = "runBasic"
                 k = jupyterDB.pickle().read(name)
                 code = ""
@@ -44,12 +44,12 @@ class LibsDB:
                 return jupyterDB.displayer(code)
             
             def crud():
-                from PickleCRUDDB import PickleCRUD
+                from useful.PickleCRUDDB import PickleCRUD
                 pi = PickleCRUD("runBasic")
                 return pi
             
             def _content():
-                from SerializationDB import SerializationDB
+                from useful.SerializationDB import SerializationDB
                 k = SerializationDB.readPickle(LibsDB.picklePath("runBasic.pkl"))
                 return k
             
@@ -76,7 +76,7 @@ class LibsDB:
                 return allKeys
             def ui():
                 from timeline.t2023.advance_pickle_crud import Main
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 lay, cont = Main.keyValueCrud({})
                 cont._basic.set_scope(jupyterDB._params)
                 cont.set_file(LibsDB.picklePath("runBasic.pkl"))

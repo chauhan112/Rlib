@@ -56,7 +56,7 @@ class CommonNamedBody(IElement, GDataSetable):
         return self._attr
 
     def get_dependency(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         res = []
         for ele in self.data.body:
             if isinstance(ele, ast.ClassDef):
@@ -275,7 +275,7 @@ class ReturnAst(GUsesElement, IReturnable):
 
 class Main:
     def parse(content: str =None, file_path: str=None):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         if content is None:
             content = File.getFileContent(file_path)
         p = ast.parse(content)

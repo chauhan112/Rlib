@@ -19,7 +19,7 @@ class SyntaxContent(BaseModel):
     created_date = DateTimeField(default=datetime.datetime.now)
     updated_date = DateTimeField(default=datetime.datetime.now)
 
-from useful.basic import NameSpace
+from basic import NameSpace
 ns = NameSpace()
 ns.SyntaxLanguage = SyntaxLanguage
 ns.SyntaxContent = SyntaxContent

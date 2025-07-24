@@ -1,9 +1,9 @@
-from jupyterDB import jupyterDB
-from ExplorerDB import ExplorerDB
-from SerializationDB import SerializationDB
+from useful.jupyterDB import jupyterDB
+from useful.ExplorerDB import ExplorerDB
+from useful.SerializationDB import SerializationDB
 import os
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 
 class ICloudCommand:
     def act(self):
@@ -14,7 +14,7 @@ class ConflictedFileList(ICloudCommand):
         self.path = conflictedDir
     
     def act(self):
-        from Path import Path
+        from useful.Path import Path
         files = Path.getFiles(self.path, False)
         files = list(filter(lambda x: "conflicted copy" in x, files))
         return files
@@ -23,7 +23,7 @@ class ConflictedBaseFile(ICloudCommand):
     def __init__(self, filePath):
         self.path = os.path.abspath(filePath)
     def act(self):
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         return RegexDB.regexSearch(RegexDB.lookBehind(" \(conflicted copy", ".*"),
                                    self.path)[0] + ".pkl"
 
@@ -35,7 +35,7 @@ class ISolveConflictedFile:
     
 class CodeDumperConflictSolver(ISolveConflictedFile):
     def solve(self):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         baseFile = ConflictedBaseFile(self.file).act()
         mainVal = SerializationDB.readPickle(baseFile)
         conVal = SerializationDB.readPickle(self.file)
@@ -80,7 +80,7 @@ class CodeDumperConflictSolver(ISolveConflictedFile):
     
 class LibSizeConflictSolver(ISolveConflictedFile):
     def solve(self):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         baseFile = ConflictedBaseFile(self.file).act()
         base = SerializationDB.readPickle(baseFile)
         val = set(SerializationDB.readPickle(self.file)['libSize']).union(

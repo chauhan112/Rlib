@@ -1,5 +1,5 @@
-from ListDB import ListDB
-from SerializationDB import SerializationDB
+from useful.ListDB import ListDB
+from useful.SerializationDB import SerializationDB
 from modules.Logger.Interfaces import IDumperWriter
 import os
 
@@ -12,11 +12,11 @@ class PickleWriter(IDumperWriter):
         self.readAll()
         self.overwrite= overwrite
     def readAll(self):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         self.content= SerializationDB.readPickle(self.path)
         return self.content
     def _write(self):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         SerializationDB.pickleOut(self.content, self.path)
     def delete(self, loc):
         loc = self._makeLoc(loc)

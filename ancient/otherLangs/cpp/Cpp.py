@@ -1,10 +1,10 @@
 import re
 import os
 from LibPath import getPath
-from WordDB import WordDB
+from useful.WordDB import WordDB
 from ancient.GraphDB import GraphDB
-from FileDatabase import File
-from Path import Path
+from useful.FileDatabase import File
+from useful.Path import Path
 
 class Cpp:
     def uncomment(content):
@@ -147,7 +147,7 @@ public:
         if(content is None):
             print("Give cell number to run or content")
         from useful.CryptsDB import CryptsDB
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         name = CryptsDB.generateRandomName(10) + ".cpp"
         File.createFile(name, content)
         OpsDB.cmd().run(["g++ "+ name])

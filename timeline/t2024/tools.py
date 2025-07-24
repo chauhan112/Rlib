@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 def ConversionTool():
     def sizeReduce(size_bytes):
         import math
@@ -13,7 +13,7 @@ def ConversionTool():
     return s
 def FileTools():
     def size(filepaths):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         conversionTool = ConversionTool()
         return conversionTool.handlers.sizeReduce(sum(map(File.size, filepaths)))
     s = ObjMaker.variablesAndFunction(locals())
@@ -22,8 +22,8 @@ def YearManagerTools():
     import os
     import calendar
     import datetime
-    from SerializationDB import SerializationDB
-    from LibsDB import LibsDB
+    from useful.SerializationDB import SerializationDB
+    from useful.LibsDB import LibsDB
     from timeline.t2023.tools import TimelineDB
 
     def createIpynbFiles(year):

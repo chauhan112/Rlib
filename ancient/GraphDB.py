@@ -6,7 +6,7 @@ class NotebookCodeDisplayer(IJupyterCodeDisplayer):
     def display(self , content, lang="python"):
         import ipywidgets as widgets
         from IPython.display import HTML
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         left = widgets.Output()
         out = widgets.Output()
         lines = content.splitlines()
@@ -26,7 +26,7 @@ class LabCodeDisplayer(IJupyterCodeDisplayer):
         from IPython.display import IFrame, display
         import os
         from useful.CryptsDB import CryptsDB
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         lexer = get_lexer_by_name(lang, stripall=True)
         name = CryptsDB.generateRandomName() + ".html"
         with open(name, "w") as f:
@@ -244,7 +244,7 @@ class GraphDB:
             def matPlotManyParams(dic, sortDic = False, rotate = 0, xLabel= "", yLabel ="", 
                    barLabel = False, filterFunc = lambda x: True, changeFigSize = False):
                 import matplotlib.pyplot as plt
-                from ListDB import ListDB
+                from useful.ListDB import ListDB
                 dic = {key: dic[key] for key in dic if filterFunc(key)}
                 if(sortDic):
                     dic = ListDB.sortDicBasedOnValue(dic)

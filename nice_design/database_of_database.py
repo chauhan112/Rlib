@@ -4,12 +4,12 @@ from nice_design.search import TelegramChannels
 from modules.GUIs.search_guis import CodeDumperSearchGUI, FileSearchGUI, SyntaxSearchGUI, BachelorSubjectSearchGUI,\
     CodesGodownSearch
 from modules.Explorer.personalizedWidgets import SearchWidget
-from SearchSystem import DicSearch
-from Database import Database
+from useful.SearchSystem import DicSearch
+from useful.Database import Database
 from nice_design.interfaces import IDatabaseGUI, IAbout
-from TreeDB import ForestDB
+from useful.TreeDB import ForestDB
 from modules.Logger.ideas import IdeasSearchEngine
-from PickleCRUDDB import PickleSearchEngine
+from useful.PickleCRUDDB import PickleSearchEngine
 
 class DefaultDatabaseGUI(IAbout, IDatabaseGUI):
     def __init__(self):
@@ -26,7 +26,7 @@ class DefaultDatabaseGUI(IAbout, IDatabaseGUI):
 
 class DatabaseOfDatabases:
     def __init__(self):
-        from UrlDB import UrlDB
+        from ancient.UrlDB import UrlDB
         self._default_db = DefaultDatabaseGUI()
         self._dbs = {
             'rlib module':( Database.moduleDB, 'search in Rlib codes'),

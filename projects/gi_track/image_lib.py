@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-from OpsDB import IOps
+from useful.OpsDB import IOps
 import pandas as pd
 from ancient.ImageProcessing import IImage
 import cv2, os
-from Path import Path
-from RegexDB import RegexDB, NameDicExp
+from useful.Path import Path
+from useful.RegexDB import RegexDB, NameDicExp
 
 class IImageReader:
     def get_data(self):
@@ -226,7 +226,7 @@ class MakeAnimationForCase(IOps):
     def set_out_folder(self, folder):
         self._out_folder = folder
     def execute(self):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         out_path = os.sep.join([self._out_folder, self._case_id])
         if not os.path.exists(out_path):
             os.makedirs(out_path)

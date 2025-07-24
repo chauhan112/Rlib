@@ -85,8 +85,8 @@ class GitPushSync(IRunnable):
         self.path = path
     def run(self):
         from ancient.GitDB import CommandLinePush
-        from SerializationDB import SerializationDB
-        from LibsDB import LibsDB
+        from useful.SerializationDB import SerializationDB
+        from useful.LibsDB import LibsDB
         content= SerializationDB.readPickle(LibsDB.picklePath("crypts"))
         usr, pss = content['git user'], content['git token']
         CommandLinePush(usr,pss,self.path).push()
@@ -111,7 +111,7 @@ class OpsListRunner(IRunnable):
         if (cdVal == ".."):
             exp.dicExp.cd("..")
             return
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         content = ListDB.dicOps().get(exp.dicExp._content, exp.dicExp.currentPath + [cdVal])
         if (type(content) == dict):
             exp.dicExp.cd(cdVal)

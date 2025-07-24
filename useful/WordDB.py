@@ -1,6 +1,6 @@
 import re
 import yaml
-from FileDatabase import File
+from useful.FileDatabase import File
 import difflib
 
 class WordDB:
@@ -108,9 +108,9 @@ class WordDB:
                 print (text)
 
     def formatSyntax(word = None):
-        from Database import Database
-        from SerializationDB import SerializationDB
-        from LibsDB import LibsDB
+        from useful.Database import Database
+        from useful.SerializationDB import SerializationDB
+        from useful.LibsDB import LibsDB
         
         val = SerializationDB.readPickle(LibsDB.picklePath("GeneralDB.pkl"))['string format']
         db = Database.getDB( [str(i)  for i in list(range(len(val)))], val, 

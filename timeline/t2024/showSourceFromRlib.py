@@ -1,10 +1,10 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.listCrudWithFilter import SearchComplex
 import numpy as np
 from LibPath import runBasic, getPath
 from timeline.t2024.code_highlight import CodeHighlighter
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 
 def CopyImportsFromRunBasic():
     textWid = Utils.get_comp({"placeholder":"search"}, IpywidgetsComponentsEnum.Text, className="w-auto", bind = False)

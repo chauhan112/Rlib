@@ -2,10 +2,10 @@ from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum,
 import ast
 import os
 from useful.CryptsDB import CryptsDB
-from FileDatabase import File
-from ListDB import ListDB
+from useful.FileDatabase import File
+from useful.ListDB import ListDB
 from ancient.ClipboardDB import ClipboardDB
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2023.dep_extractor.dependency_extractor import AstTools, DicOps
 class GlobalData:
     all_imports = {}
@@ -602,7 +602,7 @@ def RenameSameNameClasses():
         else:
             print("error a different type of node was detected", node)
     def rename():
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         clsToFiles = OpsDB.group(s.process.riac.process.resolved, lambda x: x[1])
         toRename = list(filter(lambda x: len(clsToFiles[x]) > 1, clsToFiles))
         for clsName in toRename:

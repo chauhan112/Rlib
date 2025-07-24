@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 from modules.Explorer.DictionaryExplorer import Node
 import os
-from SerializationDB import SerializationDB
-from OpsDB import IOps
+from useful.SerializationDB import SerializationDB
+from useful.OpsDB import IOps
 from ancient.ImageProcessing import CVImage, MatplotImage, IColorBoundSelector
 class IKamiObj:
     def get_id(self):
@@ -623,7 +623,7 @@ class DistanceCalcWithDijektra:
     def set_pkl_path(self, pkl):
         self.set_info(QuestionFromPickle(pkl).get_info())
     def set_info(self, infos):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         self._info = infos
         self._relation = self._info['relation']
         self._color_map = ListDB.dicOps().reverseKeyValue(infos['color'])
@@ -650,7 +650,7 @@ class DistanceCalcWithDijektra:
             c += self._graph[path[i-1]][path[i]]
         return c
     def _make_relation_distance_dic(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         dic = {}
         for key in self._relation:
             dic[key] = {}
@@ -741,7 +741,7 @@ class KamiGraphTreeMakerWithColor(IOps):
             n.extra_info.depth = 0
         return self._node_map[key]
     def set_info(self, info):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         ListDB.dicOps().reverseKeyValue(info['color'])
         self._graph = info['relation']
         self._color_map = ListDB.dicOps().reverseKeyValue(info['color'])
@@ -795,7 +795,7 @@ class KamiSolverTreeMethod(ISolverStrategy):
         MinDepthInverseCalculator(n).execute()
         return n
     def _optimized(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         from modules.Explorer.DictionaryExplorer import Graph2NodeTreeMakerBreadthFirstSearch
         res ={}
         for key in self._graph:
@@ -827,7 +827,7 @@ class KamiSolverTreeMethod(ISolverStrategy):
         res = set(res)
         return list(res.difference(given))
     def set_info(self, info):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         ListDB.dicOps().reverseKeyValue(info['color'])
         self._graph = info['relation']
         self._color_map = ListDB.dicOps().reverseKeyValue(info['color'])
@@ -1042,8 +1042,8 @@ class NumberKamiImageFromSplitPickle(IOps):
         self._color_map = color_map
     def _make_node_map(self):
         self._node_map.clear()
-        from SerializationDB import SerializationDB
-        from ListDB import ListDB
+        from useful.SerializationDB import SerializationDB
+        from useful.ListDB import ListDB
         vals = SerializationDB.readPickle(self._ques_pkl)
         rel = vals['relation']
         color_map = ListDB.dicOps().reverseKeyValue(vals['color'])

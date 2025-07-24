@@ -1,11 +1,11 @@
 from enum import Enum
 from BinaryDumper import BinaryDumper
 import sqlite3
-from Path import Path
-from Database import DBResources,DB
+from useful.Path import Path
+from useful.Database import DBResources,DB
 from useful.CryptsDB import CryptsDB
-from RegexDB import RegexDB
-from Database import Table
+from useful.RegexDB import RegexDB
+from useful.Database import Table
 
 class DType(Enum):
     text = 1
@@ -52,7 +52,7 @@ class ProjectDumper:
         return ProjectDumper.db.project().table().read("name")
 
     def createNewProject(name):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         ProjectDumper.db.project().table().addVal([name, TimeDB.getTimeStamp()])
         
     def select(name):
@@ -110,14 +110,14 @@ class ProjectDumper:
                                                f"where {Tools.keyCol()}='{oldkeyName}' and project_id={projectID}")
             
             def copy(hashID):
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 jupyterDB.clip().copy(BinaryDumper.read(hashID))
             
             def makeDic(twoDArray):
                 return {a:b for a,b in twoDArray}
             
             def search(typ, projectID):
-                from SearchSystem import DicSearchEngine
+                from useful.SearchSystem import DicSearchEngine
                 tw = ProjectDumper.db.keys().table().read("name, hashID", 
                                         f"where active=1 and type={typ} and project_id={projectID}")
                 dic = Tools.makeDic(tw)
@@ -127,7 +127,7 @@ class ProjectDumper:
             
         class Temp:
             def text():
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 class Tem:
                     def add( title = None, val = "", overwrite = False):
                         if(title is not None):

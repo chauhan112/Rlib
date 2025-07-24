@@ -1,12 +1,12 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from useful.CryptsDB import CryptsDB
 import datetime
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2024.ui_lib.refactored_key_value_adder import ListOps
 from ancient.GraphDB import GraphDB
 import copy as CopyLib
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 from enum import Enum
 import json
 
@@ -49,7 +49,7 @@ def ParseLoc():
                 res.append([int(seg)])
         return res
     def parse_shortcuts(txt):
-        from RegexDB import RegexDB,NameDicExp
+        from useful.RegexDB import RegexDB,NameDicExp
         func = lambda string: RegexDB.group_name_search(NameDicExp(" *-", "op", "c|d|l|r|h", NameDicExp(" *", "name", r"\w*", 
                                     NameDicExp(" *", "params", ".*", ""))),string)
         return func(txt)

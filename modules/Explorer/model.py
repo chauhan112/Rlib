@@ -56,7 +56,7 @@ class FileExplorerWithPaths:
 
 class ZipFileExplorer(FileExplorerWithPaths):
     def __init__(self, zipPath):
-        from ZiptoolDB import ZiptoolDB
+        from useful.ZiptoolDB import ZiptoolDB
         self.tool = ZiptoolDB
         if(type(zipPath) == list):
             raise IOError("Give zip path")
@@ -66,7 +66,7 @@ class ZipFileExplorer(FileExplorerWithPaths):
         super().__init__(paths)
     
     def dirList(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         files = []
         folders = set([])
         paths = ListDB.listFilter(lambda x: x.startswith(self._currentPath), self.paths)
@@ -215,7 +215,7 @@ class ZipExplorerWithFilter(ZipFileExplorer):
 
 class ZipExplorer(IExplorer):
     def __init__(self, zipPath):
-        from ZiptoolDB import ZiptoolDB
+        from useful.ZiptoolDB import ZiptoolDB
         self.tool = ZiptoolDB
         from modules.FileAnalyser.FileAnalyser import FileList2Dic
         from modules.mobileCode.CmdCommand import DicList
@@ -237,7 +237,7 @@ class ZipExplorer(IExplorer):
         self.sep = "/"
         
     def dirList(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         vals = self._currentList[self._from: self._from+self.deltaVal]
         folders = []
         files = []

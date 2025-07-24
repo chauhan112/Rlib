@@ -1,6 +1,6 @@
-from PickleCRUDDB import PickleCRUD
-from Path import Path
-from SerializationDB import SerializationDB
+from useful.PickleCRUDDB import PickleCRUD
+from useful.Path import Path
+from useful.SerializationDB import SerializationDB
 class GPickleCRUD(PickleCRUD):
     def _load(self):
         self.content = SerializationDB.readPickle(self.pklName)

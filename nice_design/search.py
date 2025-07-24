@@ -69,7 +69,7 @@ class TextListSearch(ISearch):
         self._collector = collector
 class TextSearch(ISearch):
     def search(self, regex):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         for found in WordDB.searchWordWithRegex(regex, self._collector.get_container()):
             self._collector.add_to_results(found)
     def set_res_collector(self, collector: IResultCollector):
@@ -100,7 +100,7 @@ class ProximitySearch(TextSearch):
         right_founds = Main.textSearch(regex, right_content)
         self._add_logic(left_founds, right_founds, l, r)
     def _add_logic(self, left_founds, right_founds, l, r):
-        from MathObjectDB import Range
+        from ancient.MathObjectDB import Range
         if len(left_founds) != 0:
             a = left_founds[-1]
             if len(right_founds) != 0:
@@ -124,9 +124,9 @@ class TelegramHtmlSearch(ISearch):
     def set_htmls(self, html_files):
         self._files = html_files
     def search(self, word, case = False, reg = False):
-        from SearchSystem import DicSearch
+        from useful.SearchSystem import DicSearch
         from modules.SearchSystem.modular import GDisplayableResult, JupyterResultDisplayer, DisplayNElement
-        from FileDatabase import ChromeHtmlFileOpenerWithHashTag
+        from useful.FileDatabase import ChromeHtmlFileOpenerWithHashTag
         if not self._is_parsed:
             self._load_files()
         cr = ChromeHtmlFileOpenerWithHashTag()
@@ -148,8 +148,8 @@ class TelegramHtmlSearch(ISearch):
         
         
     def _load_files(self):
-        from FileDatabase import File
-        from htmlDB import htmlDB
+        from useful.FileDatabase import File
+        from useful.htmlDB import htmlDB
         self._collector.set_container({})
         for file in self._files:
             soup = htmlDB.getParsedData(File.getFileContent(file))
@@ -168,7 +168,7 @@ class TelegramChannels:
     def search(self, word, case=False, reg=False):
         import os
         from modules.SearchSystem.modular import JupyterResultDisplayer, GDisplayableResult, DisplayNElement
-        from SearchSystem import DicSearch
+        from useful.SearchSystem import DicSearch
         cpaths = os.listdir(self._tpath)
         dic = {a:a for a in cpaths}
         ds = DicSearch(dic)
@@ -180,7 +180,7 @@ class TelegramChannels:
     def get(self):
         return self.db
     def _callback(self, val):
-        from Path import Path
+        from useful.Path import Path
         from nice_design.search import TelegramHtmlSearch
         from modules.Explorer.personalizedWidgets import Main
         htmls = Path.filesWithExtension("html", Path.joinPath(self._tpath, val))

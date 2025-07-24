@@ -9,8 +9,8 @@ class IExt:
         raise NotImplementedError("abstract method")
 def NewCodeDisplayer():
     from timeline.t2024.code_highlight import CodeHighlighter
-    from useful.basic import Main as ObjMaker
-    from FileDatabase import File
+    from basic import Main as ObjMaker
+    from useful.FileDatabase import File
     chl = CodeHighlighter()
     lang = "py"
     def set_language(lang):
@@ -35,8 +35,8 @@ class DisplayInMd(IExt):
         if keyword is None:
             self.keyword = ext
     def display(self):
-        from ModuleDB import ModuleDB
-        from FileDatabase import File
+        from useful.ModuleDB import ModuleDB
+        from useful.FileDatabase import File
         dp = NotebookGeneralDisplayer(lambda path: ModuleDB.colorPrint(self.keyword, 
                                 File.getFileContent(path)))
         dp.setPath(self.path)
@@ -44,7 +44,7 @@ class DisplayInMd(IExt):
         
 class DefaultOpener(IExt):
     def display(self):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         File.openFile(self.path)
     
 class ExplorerFileDisplayer:
@@ -56,13 +56,13 @@ class ExplorerFileDisplayer:
         self.ncd = NewCodeDisplayer()
     def _defaultDisplayer(self):
         extDic= {}
-        from FileDatabase import File
-        from ModuleDB import ModuleDB
-        from NotebookDB import NotebookDB
+        from useful.FileDatabase import File
+        from useful.ModuleDB import ModuleDB
+        from archives.NotebookDB import NotebookDB
         from ancient.ImageProcessing import ImageProcessing, ShowImage
-        from ExplorerDB import ExplorerDB
-        from LibsDB import LibsDB
-        from SerializationDB import SerializationDB
+        from useful.ExplorerDB import ExplorerDB
+        from useful.LibsDB import LibsDB
+        from useful.SerializationDB import SerializationDB
         data = SerializationDB.readPickle(LibsDB.picklePath("GeneralDB"))
         standardContentFiles = data['files_to_read']
         for ext in standardContentFiles:
@@ -105,7 +105,7 @@ class ExplorerFileDisplayer:
             
 class IpywidgetsDisplayer:
     def __init__(self, explorer, exts = {}):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         self.explorer = explorer
         self.inputArea, self.outputArea = WidgetsDB.ioArea()
         self.displayer = ExplorerFileDisplayer(exts)
@@ -194,14 +194,14 @@ class FileExplorerDisplayer(IpywidgetsDisplayer):
 
 class OSFileExplorerDisplayer(FileExplorerDisplayer):
     def __init__(self, path = None):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         super().__init__(path, OSFileExplorer, 'OS File Explorer')
         ch = list(self.inputArea.fileOps.children)
         self._openExplorerBtn = WidgetsDB.button('Open in explorer', self.openExpl)
         self.inputArea.fileOps.children = tuple(ch[:2] + [self._openExplorerBtn] + [ch[-1]])
         
     def openExpl(self, btn):
-        from Path import Path
+        from useful.Path import Path
         Path.openExplorerAt(self.explorer.path)
 
     def displayFileElement(self, change):

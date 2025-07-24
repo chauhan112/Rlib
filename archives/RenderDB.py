@@ -1,4 +1,4 @@
-from WordDB import WordDB
+from useful.WordDB import WordDB
 
 class MatrixCalculate:
     def __init__(self):

@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 import cv2
 from ancient.ImageProcessing import ImageProcessing, Contour, CVImage
 import numpy as np

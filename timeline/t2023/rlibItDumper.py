@@ -8,7 +8,7 @@ def codeSearch():
         display(GNotebookLayoutController.instances[key])
         return
     from modules.Explorer.personalizedWidgets import Main as GUIMaker
-    from Database import Database
+    from useful.Database import Database
     GNotebookLayoutController.instances[key] = GUIMaker.gui_for_db(Database.moduleDB())
     display(GNotebookLayoutController.instances[key])
 
@@ -18,7 +18,7 @@ def apps():
     from IPython.display import display
     from LibPath import getPath
     from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
-    from jupyterDB import  jupyterDB
+    from useful.jupyterDB import  jupyterDB
     import os
     names = jupyterDB.pickle().read("temps")['2023']['app names']
     dic = {v: v for v in names}
@@ -46,7 +46,7 @@ def picGui():
 def overrideKey():
     key = "overrideKey"
     from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
-    from jupyterDB import jupyterDB
+    from useful.jupyterDB import jupyterDB
     from IPython.display import display
     if key in GNotebookLayoutController.instances:
         display(GNotebookLayoutController.instances[key])
@@ -54,7 +54,7 @@ def overrideKey():
     from timeline.t2023.tools import Confirmer
     cc = Confirmer()
     from timeline.t2023.searchSystem import Main as SWP
-    from SearchSystem import DicSearch
+    from useful.SearchSystem import DicSearch
     from timeline.t2023.generic_logger.components import SingleButtonController
     from timeline.t2023.advance_searcher import Main as SWAO
     class Abc:
@@ -80,13 +80,13 @@ def overrideKey():
 def refreshKey():
     key = "refreshKey"
     from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
-    from jupyterDB import jupyterDB
+    from useful.jupyterDB import jupyterDB
     from IPython.display import display
     if key in GNotebookLayoutController.instances:
         display(GNotebookLayoutController.instances[key])
         return
     from timeline.t2023.searchSystem import Main as SWP
-    from SearchSystem import DicSearch
+    from useful.SearchSystem import DicSearch
     from timeline.t2023.generic_logger.components import SingleButtonController
     from timeline.t2023.advance_searcher import Main as SWAO
     class Abc:
@@ -96,7 +96,7 @@ def refreshKey():
             return btn.layout
         def _cliek(self, wid):
             ley = wid.description
-            from PickleCRUDDB import PickleCRUDOps
+            from useful.PickleCRUDDB import PickleCRUDOps
             pops = PickleCRUDOps()
             pops.set_pickle_file(Path.filesWithExtension("pkl","_rajaDB")[-1])
             pops.set_always_sync(True)
@@ -125,8 +125,8 @@ def urlsOps():
     from modules.rlib_notebook_tools.instructions_tool import GElement, GNotebookLayoutController
     from IPython.display import display
     import ipywidgets as widgets
-    from UrlDB import UrlDB
-    from LibsDB import LibsDB
+    from ancient.UrlDB import UrlDB
+    from useful.LibsDB import LibsDB
     from modules.GUIs.urlCRUD import Main
     key = "urls"
     if key in GNotebookLayoutController.instances:
@@ -180,7 +180,7 @@ def ggn():
         return
     import os
     from timeline.t2024.generic_logger.generic_loggerV4 import Main
-    from LibsDB import LibsDB
+    from useful.LibsDB import LibsDB
     filename = os.sep.join([LibsDB.cloudPath(), 'timeline', '2024', '05_May', "logger_transformed.sqlite"])
     cnt = Main.generic_logger(filename)
     cnt.process.container.views.container.outputs.layout

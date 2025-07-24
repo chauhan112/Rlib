@@ -1,6 +1,6 @@
 from timeline.t2024.tailwind.twcrudOps import DictionaryModel
 from sqlitedict import SqliteDict
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 def SqliteModelV3():
     dm = DictionaryModel()
     filePath = "test.sqlite"

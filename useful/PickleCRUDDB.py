@@ -1,11 +1,11 @@
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
-from Path import Path
-from ListDB import ListDB
-from SearchSystem import SearchEngine, ContainerSetable
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
+from useful.Path import Path
+from useful.ListDB import ListDB
+from useful.SearchSystem import SearchEngine, ContainerSetable
 import os
 from useful.ComparerDB import ComparerDB
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 class PickleCRUD:
     def __init__(self, name, loc = [], loadFromMain= True):
         self._loadFromMainFolder = loadFromMain
@@ -63,7 +63,7 @@ class PickleCRUD:
     def getContent(self):
         return self.read([])
     def searchInDB(word= None):
-        from Database import Database
+        from useful.Database import Database
         db = PickleSearchEngine()
         return Database.dbSearch(db, word)
 class DictypePickle(PickleCRUD):
@@ -122,8 +122,8 @@ class PickleSearchEngine(SearchEngine):
         return os.path.basename(",".join(item[1]))
     def _callback(self, item):
         path, keys = item
-        from SerializationDB import SerializationDB
-        from ExplorerDB import ExplorerDB
+        from useful.SerializationDB import SerializationDB
+        from useful.ExplorerDB import ExplorerDB
         k = SerializationDB.readPickle(path)
         ExplorerDB.dicExplorer(k)
 class RunBasicOps:
@@ -162,7 +162,7 @@ class ICRUD:
         pass
     def readAll(self):
         pass
-from ListDB import ListDB
+from useful.ListDB import ListDB
 class PickleCRUDOps(ICRUD):
     def __init__(self):
         self._content = None

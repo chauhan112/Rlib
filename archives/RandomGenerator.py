@@ -1,4 +1,4 @@
-from OpsDB import IOps
+from useful.OpsDB import IOps
 import os, random
 from useful.CryptsDB import CryptsDB
 

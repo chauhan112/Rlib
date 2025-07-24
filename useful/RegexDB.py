@@ -1,8 +1,8 @@
-from WordDB import WordDB
+from useful.WordDB import WordDB
 import os
-from LibsDB import LibsDB
-from SerializationDB import SerializationDB
-from Database import Database
+from useful.LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.Database import Database
 class NameDicExp:
     def __init__(self, beforename, name:str,name_reg:str, aftername):
         temp = [beforename, name,name_reg, aftername]

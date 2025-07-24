@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers, SearchComponent
 from timeline.t2024.listCrudWithFilter import SearchComplex
 def SearchWithResultKeys():
@@ -33,7 +33,7 @@ def SearchWithResultKeys():
     return s
 def InstanceGetter():
     from timeline.t2024.ui_lib.refactored_key_value_adder import EventBasic
-    from jupyterDB import jupyterDB
+    from useful.jupyterDB import jupyterDB
     
     srk = SearchWithResultKeys()
     container = srk.views.container

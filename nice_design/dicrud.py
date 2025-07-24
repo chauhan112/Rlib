@@ -1,5 +1,5 @@
-from SerializationDB import SerializationDB
-from ListDB import ListDB
+from useful.SerializationDB import SerializationDB
+from useful.ListDB import ListDB
 import os
 class DictionaryCRUD:
     def __init__(self, filePaht=None):

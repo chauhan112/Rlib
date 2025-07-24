@@ -1,5 +1,5 @@
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
 from IPython.display import HTML
 class SoftwareEngineering:
     def links():

@@ -1,8 +1,8 @@
 from modules.SearchSystem.modular import HideableWidget
 from modules.Explorer.personalizedWidgets import CustomOutput
 import ipywidgets as widgets
-from PickleCRUDDB import PickleCRUDOps
-from SearchSystem import ISearch, DicSearch
+from useful.PickleCRUDDB import PickleCRUDOps
+from useful.SearchSystem import ISearch, DicSearch
 from modules.GUIs.model import KeyManager
 class LinksManagerView:
     def __init__(self):
@@ -58,7 +58,7 @@ class LinksManagerController:
         name = self._view.addKeyWid.value.strip()
         val = self._view.addValueWid.value.strip()
         if self._view.addIsVarWid.value:
-            from jupyterDB import jupyterDB
+            from useful.jupyterDB import jupyterDB
             val = jupyterDB._params[val]
         for v in [name, val]:
             if v == "":
@@ -103,7 +103,7 @@ class LinksManagerController:
         HideableWidget.showIt(self._view.deleteConfirmBtn)
         self._delele_last_key = btn.description
     def _link_open(self, btn):
-        from TreeDB import TreeDB
+        from useful.TreeDB import TreeDB
         urlAdd = self._pcrud.read(btn.description)
         TreeDB.openWebLink(urlAdd)
         self._view.cout.clear()

@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.experiments.keyValueWithSearchAndFilter import SearchFnc
 def LoggerSearchWithSort():
     searcher = SearchFnc()

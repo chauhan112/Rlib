@@ -2,9 +2,9 @@ from modules.DataServer.Interfaces import INode, IFilePortal, NameContact, ICont
 from modules.DataServer.Portals import PathPortal
 from modules.DataServer.FileObserve import WatchDogFileObserve, MutuallyExclusiveEventModel, IObserver, MyFileObserver
 from useful.CryptsDB import CryptsDB
-from Path import Path
+from useful.Path import Path
 import os, time
-from TimeDB import TimeDB
+from useful.TimeDB import TimeDB
 class Tools:
     def generate_time_id():
         return time.time()

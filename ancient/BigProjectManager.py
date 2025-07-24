@@ -16,5 +16,5 @@ class BigProjectManager:
         File.createFile(Path.joinPath(pjPath, "main.py"))
         BigProjectManager.path = pjPath
     def explorer():
-        from ExplorerDB import ExplorerDB
+        from useful.ExplorerDB import ExplorerDB
         return ExplorerDB.osFileExplorer(BigProjectManager.path)

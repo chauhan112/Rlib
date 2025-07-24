@@ -5,14 +5,14 @@ from useful.ComparerDB import ComparerDB
 from timeline.t2023.searchSystem import Main as SWP
 import os
 from timeline.t2023.links_crud_ui import SearchEngine
-from RegexDB import RegexDB
-from ModuleDB import ModuleDB
+from useful.RegexDB import RegexDB
+from useful.ModuleDB import ModuleDB
 from timeline.t2023.searchSystem import NotepadOpener
-from jupyterDB import jupyterDB
-from SearchSystem import MultilineStringSearch
-from Path import Path
+from useful.jupyterDB import jupyterDB
+from useful.SearchSystem import MultilineStringSearch
+from useful.Path import Path
 from LibPath import getPath
-from FileDatabase import File
+from useful.FileDatabase import File
 class SearchCopyReloadView:
     def __init__(self):
         self.operations = widgets.Dropdown(options = ["search","copy", "load"], layout=widgets.Layout(width='auto') )

@@ -1,4 +1,4 @@
-from useful.basic import NameSpace
+from basic import NameSpace
 from useful.CryptsDB import CryptsDB
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 class ControllerModel:

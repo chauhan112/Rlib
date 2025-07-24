@@ -10,7 +10,7 @@ FileOpener = Enum("FileOpener","texWork Notepad")
 
 class LatexDocument(LatexFileExplorer):
     def __init__(self, filename):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         from useful.CryptsDB import CryptsDB
         
         self.content = {}
@@ -71,7 +71,7 @@ class LatexDocument(LatexFileExplorer):
         SerializationDB.pickleOut(self.content, self._backUpPath)
         
     def openFile(self, typ = FileOpener.texWork):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         prg = Path._programPaths()#['texWorks']
         tex = prg["texWorks"]
         pah = prg["notepad++"]
@@ -82,7 +82,7 @@ class LatexDocument(LatexFileExplorer):
         OpsDB.cmd().onthread([st])
     
     def _write(self):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         File.overWrite(self._path, self.getContent())
         
 

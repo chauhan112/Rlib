@@ -1,9 +1,9 @@
-from Path import Path
-from Database import Database
+from useful.Path import Path
+from useful.Database import Database
 
 class Android:
     def _path():
-        from Path import FrequentPaths
+        from useful.Path import FrequentPaths
         path = FrequentPaths.pathAsDic()['sixth semester']
         return Path.joinPath(path, "Android")
     def fileNameSearch(word=None):

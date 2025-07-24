@@ -1,7 +1,7 @@
-from Database import Database
-from WidgetsDB import WidgetsDB
+from useful.Database import Database
+from useful.WidgetsDB import WidgetsDB
 import ipywidgets as widgets
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 from IPython.display import display, HTML
 
 class Separ:
@@ -185,10 +185,10 @@ class CategorizerLayout:
 
 class DataScience:
     def _pathDB(filepaths):
-        from SearchSystem import FilePathsSearchEngine
+        from useful.SearchSystem import FilePathsSearchEngine
         return FilePathsSearchEngine(filepaths)
     def getPath():
-        from Path import FrequentPaths
+        from useful.Path import FrequentPaths
         return FrequentPaths.pathAsDic()['data science']
     def links():
         from ancient.DataStorageSystem import UrlsTable
@@ -196,7 +196,7 @@ class DataScience:
         return ut
     
     def docs():
-        from Path import Path
+        from useful.Path import Path
         class Temp:
             def contentDB():
                 return Database.pdfDB(Temp._files())
@@ -206,7 +206,7 @@ class DataScience:
                         path = Path.joinPath(DataScience.getPath(), r"ops\exam_prep\solutions")
                         return Path.filesWithExtension(ext, path)
                     def htmlForm():
-                        from FileDatabase import File
+                        from useful.FileDatabase import File
                         return Database.textFilesDB(Temp._files(), callbackFunc= lambda file, lineNr: File.openFile(file))
                     def pdfForm():
                         return Database.pdfDB(Temp._files("pdf"))
@@ -221,13 +221,13 @@ class DataScience:
         return Temp
 
     def exercises():
-        from Path import Path
-        from FileDatabase import File
+        from useful.Path import Path
+        from useful.FileDatabase import File
         class Temp:
             def openExplorer(showContent = False):
-                from ExplorerDB import ExplorerDB
-                from jupyterDB import jupyterDB
-                from TreeDB import TreeDB
+                from useful.ExplorerDB import ExplorerDB
+                from useful.jupyterDB import jupyterDB
+                from useful.TreeDB import TreeDB
                 exp = ExplorerDB.osFileExplorer(Path.joinPath(DataScience.getPath(), "ops"))
                 exp.setFileDisplayer("html", File.openFile)
                 if(not showContent):

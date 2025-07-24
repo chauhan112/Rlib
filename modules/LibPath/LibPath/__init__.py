@@ -28,6 +28,6 @@ def computerName():
 
 def runBasic(*args):
     insertPath()
-    from LibsDB import LibsDB
+    from useful.LibsDB import LibsDB
     return LibsDB.runBasic(*args)
 

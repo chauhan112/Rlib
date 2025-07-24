@@ -1,9 +1,9 @@
 from modules.DataServer.Interfaces import IContact, IMessage
 from modules.DataServer.Tools import Tools
 import os
-from SerializationDB import SerializationDB
-from Path import Path
-from FileDatabase import File
+from useful.SerializationDB import SerializationDB
+from useful.Path import Path
+from useful.FileDatabase import File
 
 class IPortal:
     def write(self, message:IMessage, to: IContact):

@@ -1,8 +1,8 @@
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 import os
-from WordDB import WordDB
-from ListDB import ListDB
+from useful.WordDB import WordDB
+from useful.ListDB import ListDB
 class Nodejs:
     def createNodejsFolderStructure(path = None):
         nodejs_folder_structure = ['routes',
@@ -32,7 +32,7 @@ class Nodejs:
             print(line)
 
     def syntax(word=None):
-        from Database import Database
+        from useful.Database import Database
         synts = {
             'import path' : "const path = require('path')",
             'run dev' : "npm run dev",

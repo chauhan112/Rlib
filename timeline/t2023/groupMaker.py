@@ -1,5 +1,5 @@
-from Path import Path
-from SerializationDB import SerializationDB
+from useful.Path import Path
+from useful.SerializationDB import SerializationDB
 from timeline.t2023.treeOps import Main
 
 class OpsGroupMaker:
@@ -49,7 +49,7 @@ class OpsGroupMaker:
         
         
 from timeline.t2023.advance_pickle_crud import Main as DicExplorer
-from useful.basic import NameSpace
+from basic import NameSpace
 import ipywidgets as widgets
 from modules.SearchSystem.modular import HideableWidget
 

@@ -20,7 +20,7 @@ class Array:
         return Array(list(zip(range(len(self.array)), self.array)))
     def reshape(self, size:int):
         col = len(self.array) // size
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         return Array(ListDB.reshape(self.array, (col, size)))
     def count(self):
         return len(self.array)

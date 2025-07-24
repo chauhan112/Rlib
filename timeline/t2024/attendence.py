@@ -1,15 +1,15 @@
 import os
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from ancient.ClipboardDB import ClipboardDB
 from timeline.t2023.attendence import StringEnum
 import json
 from timeline.t2024.Array import Array
-from FileDatabase import File
-from htmlDB import htmlDB
-from TimeDB import TimeDB
-from OpsDB import OpsDB
-from ListDB import ListDB
+from useful.FileDatabase import File
+from useful.htmlDB import htmlDB
+from useful.TimeDB import TimeDB
+from useful.OpsDB import OpsDB
+from useful.ListDB import ListDB
 from datetime import datetime, timedelta
 import ipywidgets as widgets
 
@@ -92,7 +92,7 @@ def AttendenceFirstRow():
     def filePathChanged(w):
         val = s.views.filePathWid.outputs.layout.value.strip()
         if os.path.exists(val) and os.path.isdir(val):
-            from Path import Path
+            from useful.Path import Path
             files = Path.getFiles(val)
             s.views.selectFilesWid.outputs.layout.options = files
             s.views.selectFilesWid.show()

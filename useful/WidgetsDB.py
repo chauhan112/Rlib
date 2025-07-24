@@ -150,7 +150,7 @@ class WidgetsDB:
         layout = widgets.HBox([inputs, outputDisplay])
         if displayLayout:
             display(layout)
-        from DataStructure import DataStructure
+        from useful.DataStructure import DataStructure
         k = {
             'title': title,
             'pathsList': dropdown,

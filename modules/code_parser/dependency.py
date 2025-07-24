@@ -1,5 +1,5 @@
-from OpsDB import IOps
-from FileDatabase import File
+from useful.OpsDB import IOps
+from useful.FileDatabase import File
 import ast
 
 class IDependent:
@@ -62,7 +62,7 @@ class DepClassAsDic(IOps):
         return classes_dep
     def _mod_ast(self, file):
         from modules.code_parser.ast_parser import ModuleAst
-        from FileDatabase import File
+        from useful.FileDatabase import File
         content = File.getFileContent(file)
         ma = ModuleAst()
         ma.setData(ast.parse(content))
@@ -74,7 +74,7 @@ class AstParseView(IViewClass):
         self._name = name
         self._reg = None
     def get_dependent_classes(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         res = []
         for func in self._class_content:
             for de in self._class_content[func]:
@@ -94,7 +94,7 @@ class MakeGraph(IOps):
     def setFile(self, file):
         self.file = file
     def execute(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         pypa_cls_dic = DepClassAsDic([self.file]).execute()[self.file]
         tzes= []
         for cls in pypa_cls_dic:
@@ -110,7 +110,7 @@ class MakeGraphManyFiles(MakeGraph):
     def setFiles(self, files):
         self.files = files
     def execute(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         dcad = DepClassAsDic(self.files)
         pypa_cls_dics = dcad.execute()
         tzes= []
@@ -145,7 +145,7 @@ class GDependency(IDependency):
 
 class FilesDependency(GDependency):
     def get_dependencies(self):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         deps = self._imports_only()
         filter_deps = self._filter_imports_with_file(deps)
         common_part = WordDB.commonPart(list(filter_deps.keys()))

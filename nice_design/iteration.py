@@ -1,4 +1,4 @@
-from InterfaceDB import EmptyClass
+from ancient.InterfaceDB import EmptyClass
 class IFunc:
     def get_key(self):
         pass
@@ -217,7 +217,7 @@ class GChildMaker(IChildMaker):
         return self._id_getter_func(self, value)
     def set_id_getter_func(self, func):
         self._id_getter_func = func
-from OpsDB import IOps
+from useful.OpsDB import IOps
 class MakeGraphFromIterator(IOps):
     def __init__(self, add_parent_info = True):
         self._node_map = {}

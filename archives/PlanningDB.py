@@ -1,22 +1,22 @@
-from TimeDB import TimeDB
-from WordDB import WordDB
+from useful.TimeDB import TimeDB
+from useful.WordDB import WordDB
 class PlanningDB:
     def copyTemporalPlanDataStructure():
         class Tem:
             def waterFall(big = True):
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 jupyterDB.treeTool().waterFall(big)
                 
             def statusLogger():
-                from jupyterDB import jupyterDB
+                from useful.jupyterDB import jupyterDB
                 name = "TreeCRUD"
                 k = jupyterDB.pickle().read(name)
                 val = WordDB.replace().replace("8oiAQrjl6QbD", TimeDB.getTimeStamp(), k['brain status'])
                 jupyterDB.clip().copy(val)
                 
             def weekDataStructure(nextWeek = 0):
-                from jupyterDB import jupyterDB
-                from WordDB import WordDB
+                from useful.jupyterDB import jupyterDB
+                from useful.WordDB import WordDB
                 import datetime
                 val = jupyterDB.pickle().read("TreeCRUD")["week plan"]
                 l = datetime.datetime.now().weekday() + 1
@@ -25,10 +25,10 @@ class PlanningDB:
                                     [TimeDB.getTimeStamp(i) for i in range(7*nextWeek-l, 7*(nextWeek + 1)-l, 1)], val))
             
             def monthDataStructure(deltaM = 0):
-                from TimeDB import TimeDB
-                from jupyterDB import jupyterDB
+                from useful.TimeDB import TimeDB
+                from useful.jupyterDB import jupyterDB
                 import datetime
-                from RegexDB import RegexDB
+                from useful.RegexDB import RegexDB
                 name = TimeDB.names().ofMonth()[TimeDB.month()+ deltaM-1]
                 class MonthdateReplacer:
                     def __init__(self, dates):

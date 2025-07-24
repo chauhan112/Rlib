@@ -1,6 +1,6 @@
 import inspect
-from WidgetsDB import WidgetsDB
-from ModuleDB import ModuleDB
+from useful.WidgetsDB import WidgetsDB
+from useful.ModuleDB import ModuleDB
 import ipywidgets as widgets
 from modules.Explorer.personalizedWidgets import CustomOutput
 from timeline.t2023.generic_logger.components import SingleButtonController

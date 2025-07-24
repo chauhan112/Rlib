@@ -1,6 +1,6 @@
 import json
 import re
-from FileDatabase import File
+from useful.FileDatabase import File
 import csv
 
 class SearchInDictionary:

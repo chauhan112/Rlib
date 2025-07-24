@@ -1,4 +1,4 @@
-from WordDB import WordDB
+from useful.WordDB import WordDB
 from useful.ComparerDB import ComparerDB
 class ListDB:
     def sortDicBasedOnValue(dic):
@@ -59,7 +59,7 @@ class ListDB:
     def reList(container, copyIt = True):
         # see TestDB for example and uses
         from ancient.ClipboardDB import ClipboardDB
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         if(isinstance(container, str)):
             container = container.splitlines()
         temp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAhead("\d\. ", ".*"),x)[0], container))

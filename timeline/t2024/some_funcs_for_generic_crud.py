@@ -1,7 +1,7 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_crud import AdvanceCRUDFilterer, formMaker
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 
 def f_for_links_open_hochschule_compass():
     import webbrowser
@@ -28,7 +28,7 @@ def f_for_links_open_hochschule_compass():
 
 def f_2nd_layer():
     from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-    from useful.basic import Main as ObjMaker
+    from basic import Main as ObjMaker
     
     from timeline.t2024.generic_crud import AdvanceCRUDFilterer, formMaker
     adf = AdvanceCRUDFilterer()

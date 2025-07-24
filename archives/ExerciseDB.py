@@ -1,4 +1,4 @@
-from StorageSystem import StorageSystem
+from useful.StorageSystem import StorageSystem
 class Exercise:
     idx = "86604c9fbbf44301b93a527bd526a980"
     def suggest():
@@ -26,7 +26,7 @@ class ExerciseLogger:
     idx = "ba2af43253424d8e99013425e613a32d"
     def logInterface():
         import ipywidgets as widgets
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         class Lyout:
             def __init__(self):
                 layout = self.mainLayout()
@@ -63,7 +63,7 @@ class ExerciseLogger:
         return Lyout()
 
     def log(name, val, valLabel = "times"):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         date, time = TimeDB.today()
         pkl = ExerciseLogger._read()
         try: 

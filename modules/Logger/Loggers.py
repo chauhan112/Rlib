@@ -3,7 +3,7 @@ from useful.CryptsDB import CryptsDB
 
 class FoodEatingLogger(ILogger):
     def __init__(self, timeOfEating=0, light=True, content =[], misc=None, drinks=[]):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         self.timeOfEating = timeOfEating
         if(type(timeOfEating) == int):
             (y, m, day), (h, mi, sec) =TimeDB.today()
@@ -21,7 +21,7 @@ class FoodEatingLogger(ILogger):
 class StatusLogger(ILogger):
     def __init__(self,time=0, sleep='7:00 hr', weight=69.5, productivityInPer=60, 
                  spiritedInPercent=85, happinessInPercent=85, health=60):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         self.when = TimeDB.getTimeStamp(time)
         self.sleep = sleep
         self.weight = weight

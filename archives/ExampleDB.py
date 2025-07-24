@@ -1,8 +1,8 @@
 from ParserDB import ParserDB
-from WordDB import WordDB
-from OpsDB import OpsDB
+from useful.WordDB import WordDB
+from useful.OpsDB import OpsDB
 import yaml
-from FileDatabase import File
+from useful.FileDatabase import File
 from LibPath import *
 
 class ExampleDB:

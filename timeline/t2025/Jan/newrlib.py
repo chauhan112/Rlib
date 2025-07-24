@@ -1,6 +1,6 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
-from LibsDB import LibsDB
+from basic import Main as ObjMaker
+from useful.LibsDB import LibsDB
 def NewRlibItTools():
     import os
     from timeline.t2024.ui_lib.refactored_key_value_adder import Main

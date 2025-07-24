@@ -141,7 +141,7 @@ class IFileFolderOps(IOps):
 
 class RenameOps(IFileFolderOps, GDataSetable):
     def execute(self):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         old, new = self.data
         File.rename(old, new)
 

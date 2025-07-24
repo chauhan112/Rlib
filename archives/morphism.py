@@ -4,7 +4,7 @@ from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget
 from timeline.t2024.ui_lib.components.widgetComponents import DataStructureForEventSystem
 import ipywidgets as widgets
 from pymitter import EventEmitter
-from DataStructure import DataStructure
+from useful.DataStructure import DataStructure
 from types import SimpleNamespace
 
 class IpywidgetsComponentsEnum(Enum):

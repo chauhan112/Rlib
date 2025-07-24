@@ -2,8 +2,8 @@ from projects.data_server.lib import IPortal, Contact, PathPortal, Message
 from modules.DataServer.FileObserve import ChangeModel, FilesLister, ChangeType
 from useful.CryptsDB import CryptsDB
 import os
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 from enum import Enum
 class ServerOps(Enum):
     FileUploaded = 0

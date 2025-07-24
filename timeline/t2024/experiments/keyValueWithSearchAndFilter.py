@@ -1,6 +1,6 @@
 from IPython.display import display
 from useful.ComparerDB import ComparerDB
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2024.ui_lib.refactored_key_value_adder import Main as KVMain
 from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils

@@ -1,14 +1,14 @@
 from timeline.t2023.generic_logger import NewRenderer, StringEnums, SupportedTypes, IModifier
-from useful.basic import NameSpace
+from basic import NameSpace
 from timeline.t2023.generic_logger.components import SingleButtonController
 import ipywidgets as widgets
 from modules.SearchSystem.modular import HideableWidget
 from timeline.t2023.generic_logger.tools import LogReader
 import datetime
 from modules.Explorer.personalizedWidgets import CustomOutput
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
-from useful.basic import NameSpace
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
+from basic import NameSpace
 import re
 from timeline.t2023.generic_logger.components import KeyValueInput
 

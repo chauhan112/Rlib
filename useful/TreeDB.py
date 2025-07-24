@@ -1,10 +1,10 @@
 import os
 from ancient.ClipboardDB import ClipboardDB
-from Path import Path
-from FileDatabase import File
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
-from SearchSystem import SearchEngine, DicSearch
+from useful.Path import Path
+from useful.FileDatabase import File
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
+from useful.SearchSystem import SearchEngine, DicSearch
 import urllib
 import webbrowser
 
@@ -12,8 +12,8 @@ class TreeDB:
     def decodeContent(content = ''):
         if(content == ''):
             content = ClipboardDB.getText()
-        from ModuleDB import ModuleDB
-        from htmlDB import htmlDB
+        from useful.ModuleDB import ModuleDB
+        from useful.htmlDB import htmlDB
 
         class Temp:
             def __init__(self, content ):
@@ -45,8 +45,8 @@ class TreeDB:
             webbrowser.open(link)
 
     def drawioPages(filePath):
-        from WordDB import WordDB
-        from RegexDB import RegexDB
+        from useful.WordDB import WordDB
+        from useful.RegexDB import RegexDB
         from useful.CompressDB import CompressDB
         content = File.getFileContent(filePath)
         beginRanges = WordDB.searchWordWithRegex("<diagram .*?>", content)
@@ -84,8 +84,8 @@ class TreeDB:
             def path():
                 return ForestDB.getForestPath()
             def search(word, reg = False):
-                from Database import D1Database
-                from WidgetsDB import WidgetsDB
+                from useful.Database import D1Database
+                from useful.WidgetsDB import WidgetsDB
                 trees = SerializationDB.readPickle(LibsDB.picklePath("abstraction"))
                 vals = list(trees.keys())
                 db = D1Database(vals)
@@ -96,7 +96,7 @@ class TreeDB:
             def cache():
                 class Tools:
                     def getAllWordInXml(xmlString):
-                        from RegexDB import RegexDB
+                        from useful.RegexDB import RegexDB
                         tmp = list(map(lambda x: RegexDB.regexSearch(RegexDB.lookAheadAndBehind(">", "</", ".*"),x)[0],
                             RegexDB.regexSearch("<span .*?</span>", xmlString)))
                         tmp += RegexDB.regexSearch(RegexDB.lookAheadAndBehind('value="', '"', ".*?"), xmlString)
@@ -113,7 +113,7 @@ class TreeDB:
                 SerializationDB.pickleOut(parsedDic, Path.joinPath(Temp.path(), "searchCached.pkl"))
             def opener(key):
                 from ancient.AIAlgoDB import AIAlgoDB
-                from SearchSystem import GSearch
+                from useful.SearchSystem import GSearch
                 files = Path.filesWithExtension("drawio", TreeDB.forest().path())
                 files = {os.path.basename(f)[:-1*len(".drawio")].lower(): f for f in files}
                 founds = AIAlgoDB.incrementalSearch(files.keys()).search(key)
@@ -170,8 +170,8 @@ class ForestDB:
 
     def search(word, case =True,  reg = False):
         from useful.ComparerDB import ComparerDB
-        from RegexDB import RegexDB
-        from WidgetsDB import WidgetsDB
+        from useful.RegexDB import RegexDB
+        from useful.WidgetsDB import WidgetsDB
         re = SerializationDB.readPickle(Path.joinPath(ForestDB.getForestPath(), "searchCached.pkl"))
         founds = []
         for file in re:
@@ -203,8 +203,8 @@ class TreeCRUD:
         return TreeCRUD._replaceTimeStamp(manger)
 
     def _replaceTimeStamp(content, deltaDay = 0):
-        from TimeDB import TimeDB
-        from htmlDB import htmlDB
+        from useful.TimeDB import TimeDB
+        from useful.htmlDB import htmlDB
         import re
         return re.sub('(Sun|Mon|Tues|Wednes|Thurs|Fri|Satur)day%2C%20\\d+\\.\\d+\\.\\d+',
             htmlDB.urlEncode(TimeDB.getTimeStamp(deltaDay)), content)
@@ -227,14 +227,14 @@ class TreeCRUD:
         return LibsDB.picklePath("TreeCRUD")
 
     def textWithBlueBackground(txt = 'txt'):
-        from htmlDB import htmlDB
+        from useful.htmlDB import htmlDB
         ClipboardDB.copy2clipboard(TreeCRUD._loadOps()['text'].replace(htmlDB.urlEncode("{}"), txt))
 
     def getObj(key):
         return TreeCRUD._loadOps()[key]
 
     def copyDB(word = None):
-        from Database import Database
+        from useful.Database import Database
         content = SerializationDB.readPickle(TreeCRUD.getPicklePath())
         def f(x):
             ClipboardDB.copy2clipboard(x)
@@ -244,7 +244,7 @@ class TreeCRUD:
             db.search(word)
         return db
     def code_content(content, encode=True):
-        from htmlDB import htmlDB
+        from useful.htmlDB import htmlDB
         if encode:
             return htmlDB.urlEncode(content)
         return htmlDB.urlDecode(content)
@@ -263,7 +263,7 @@ class TreeSearchEngine(SearchEngine):
 
 
 
-from OpsDB import IOps
+from useful.OpsDB import IOps
 from modules.mobileCode.CmdCommand import GDataSetable
 
 class IElement:

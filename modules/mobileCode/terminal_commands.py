@@ -1,7 +1,7 @@
 from modules.mobileCode.terminal_explorer import AdvanceCommandExplorer, AdvanceNode, Main as TExpMain
 from modules.FileAnalyser.FileAnalyser import Creator, ICreator
-from InterfaceDB import EmptyClass
-from OpsDB import IOps
+from ancient.InterfaceDB import EmptyClass
+from useful.OpsDB import IOps
 
 class ICommand:
     def callback(self):
@@ -81,7 +81,7 @@ class ExampleCommand:
         cmd: ICommand = a.get_info()['callable']
         cmd.callback()
     def example1():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         dic = {
             'basics': {
                 'start-up': {

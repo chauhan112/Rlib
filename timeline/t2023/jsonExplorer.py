@@ -1,6 +1,6 @@
 class JsonExplorer:
     def __init__(self):
-        from useful.basic import NameSpace
+        from basic import NameSpace
         self._res = NameSpace()
     def key_clicked(self, btn, *param):
         cnt = self._cnt
@@ -47,7 +47,7 @@ class JsonExplorer:
         cnt._basic._view.outputSection.clear()
     def set_file(self, file):
         self._file_path = file
-        from FileDatabase import File
+        from useful.FileDatabase import File
         import json
         self._data = json.loads(File.getFileContent(file))
         from timeline.t2023.advance_pickle_crud import Main

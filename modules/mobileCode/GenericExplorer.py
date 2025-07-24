@@ -38,7 +38,7 @@ class ListRenderer(IRenderer):
             self._printFormatted('|', j+i+1, file)
 
     def _printFormatted(self, pre, i, word):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         forma = WordDB.formatting()
         print(pre + f'{forma.integer(i,3)}. {forma.word(word, 15)}')
 
@@ -139,8 +139,8 @@ class Main:
         class Temp:
             def from_path(path):
                 from modules.FileAnalyser.FileAnalyser import GFiller, SizeFillerStrategy, NumberFillerStrategy
-                from DataStructure import MaxDepthInverseCalculator
-                from Path import Path
+                from useful.DataStructure import MaxDepthInverseCalculator
+                from useful.Path import Path
                 gr, root = Temp.from_files(Path.getFiles(path, True))
                 sf = GFiller()
                 sf.set_graph_root(root)
@@ -152,13 +152,13 @@ class Main:
                 return gr, root
 
             def from_file_nodes_pickle(pkl):
-                from SerializationDB import SerializationDB
+                from useful.SerializationDB import SerializationDB
                 val = SerializationDB.readPickle(pkl)
                 nodes = val['nodes']
                 root = nodes[val['root']]
                 return nodes, root
             def from_dynamic_explorer_pickle(pkl):
-                from SerializationDB import SerializationDB
+                from useful.SerializationDB import SerializationDB
                 Main.explorer(root=SerializationDB.readPickle(pkl))
             def from_files(files):
                 from modules.FileAnalyser.FileAnalyser import Creator, GNode, Files2NodeGraph

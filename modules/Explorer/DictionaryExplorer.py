@@ -1,7 +1,7 @@
-from InterfaceDB import EmptyClass
+from ancient.InterfaceDB import EmptyClass
 from modules.Explorer.personalizedWidgets import WidgetsIpyExplorerDisplayer
 from modules.Explorer.model import IExplorer
-from OpsDB import IOps
+from useful.OpsDB import IOps
 class Node:
     def __init__(self, idd):
         self.idd = idd

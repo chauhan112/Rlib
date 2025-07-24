@@ -1,7 +1,7 @@
 class PyCodeUtils:
     def encodedParser(content):
         import yaml
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         
         def spaceCount(line):
             val = RegexDB.regexSearch("^( |\t)+",line)
@@ -73,8 +73,8 @@ class PyCodeUtils:
         return out
 
     def getFunctionNames(pyFileContent):
-        from PyCodeUtils import PyCodeUtils
-        from RegexDB import RegexDB
+        from useful.PyCodeUtils import PyCodeUtils
+        from useful.RegexDB import RegexDB
         uncommentedContent = PyCodeUtils.pyCommentRemover(pyFileContent)
         return RegexDB.regexSearch(RegexDB.lookAheadAndBehind("def ", ":", ".*"),uncommentedContent )
     
@@ -155,7 +155,7 @@ class HelperFunctions:
         return p
 
     def stringEncoder(content):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         from useful.CryptsDB import CryptsDB
         lineBr = "<" +CryptsDB.generateRandomName()+">"
         noNewLine = content.replace("\n", lineBr)
@@ -194,7 +194,7 @@ class HelperFunctions:
         return string
 
     def removePyCommentsWithHash(content):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         lines = content.split("\n")
         newLines = []
         for line in lines:

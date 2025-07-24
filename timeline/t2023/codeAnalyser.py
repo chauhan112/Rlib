@@ -16,7 +16,7 @@ class CodeAnalyserController:
         self._view.depthplot.set_clicked_func(self._depth_ana)
     def _depth_ana(self, wid):
         path = self._view.filepath.value.strip()
-        from FileDatabase import File
+        from useful.FileDatabase import File
         if path:
             code = File.getFileContent(path)
             mp = TypeScriptParser.parse_layers3(TypeScriptParser.remove_single_line_comments(TypeScriptParser.remove_empty_lines(code)))

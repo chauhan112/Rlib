@@ -1,10 +1,10 @@
-from FileDatabase import File
+from useful.FileDatabase import File
 from LibPath import *
 import os
-from Path import Path
-from Database import Database
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
+from useful.Path import Path
+from useful.Database import Database
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
 
 class jupyterDB:
     _dbdbs = None
@@ -74,7 +74,7 @@ class jupyterDB:
         return desk
 
     def createJupyterNotebook(name):
-        from NotebookDB import NotebookDB
+        from archives.NotebookDB import NotebookDB
         cells = SerializationDB.readPickle(LibsDB.picklePath("oldInfos.pkl"))['jupyterDB']['createNotebook']
         content = NotebookDB.notebookJsonContentsWithCells(cells)
         if not name.endswith(".ipynb"):
@@ -95,7 +95,7 @@ class jupyterDB:
             h, mi, se = list(map(int, c.split(":")))
             t = (y*365 + m* 31 + d) * 24* 60 * 60  + h * 60*60 + mi * 60 + se
             return t
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         timeStamp = TimeDB.getTimeStamp() + " " +  ":".join([str(i) for i in TimeDB.today()[1]])
         k = jupyterDB.pickle().read("logs")
         if compare(k['libSize'][-1][0], timeStamp) > 6*60*60:
@@ -115,7 +115,7 @@ class jupyterDB:
         print(convert_size(totalSizeInBytes), "==", round(totalSizeInBytes/1024, 2), "kb")
 
     def codeDumper():
-        from NotebookDB import NotebookDB
+        from archives.NotebookDB import NotebookDB
         class Dumper:
             def __init__(self):
                 self.fileName = NotebookDB.outFilename()
@@ -128,13 +128,13 @@ class jupyterDB:
                     return "NotebookDB.summarizeTheCoding(_ih, theNotebook)"
                 NotebookDB.summarizeTheCoding(_ih)
             def name(self, ndaysBefore = 0):
-                from TimeDB import TimeDB
+                from useful.TimeDB import TimeDB
                 return NotebookDB.outFilename(TimeDB.nDaysBefore(ndaysBefore))
             def db(self,nday = 0, filterFunc = None):
                 if(filterFunc is None):
                     basename = os.path.basename(self.name(nday * -1))
                     filterFunc = lambda x: os.path.basename(x) == basename
-                from ListDB import ListDB
+                from useful.ListDB import ListDB
                 files = list(filter(filterFunc, Path.filesWithExtension('pkl', self._dumper_path)))
                 vals = {}
                 print("files::")
@@ -186,7 +186,7 @@ class jupyterDB:
                         dateStamp = basename[:10]
                         return tuple(list(map(int, dateStamp.split("_")))[::-1])
                     def dateCheckCondition(x):
-                        from TimeDB import TimeDB
+                        from useful.TimeDB import TimeDB
                         return TimeDB.dateCheckCondition(Te.nameStamp2Date(x))
                 return Te
         return Dumper()
@@ -210,8 +210,8 @@ class jupyterDB:
                 return su
             def plotLibSize(self):
                 from ancient.GraphDB import GraphDB
-                from RegexDB import RegexDB
-                from OpsDB import OpsDB
+                from useful.RegexDB import RegexDB
+                from useful.OpsDB import OpsDB
 
                 class LibSizePlot:
                     def __init__(self):
@@ -225,7 +225,7 @@ class jupyterDB:
                         return GraphDB.plotX({'size': list(p.values())}, "libSize with days")
 
                     def changes(self):
-                        from ListDB import ListDB
+                        from useful.ListDB import ListDB
                         p = ListDB.keepUnique(list(map(lambda x: float(x[-1].split(" ")[0]), self.k)), True)
                         return GraphDB.plotX({'size': p}, "libSize with changes")
 
@@ -261,13 +261,13 @@ class jupyterDB:
             def listDir(self):
                 return os.listdir(self.dirPath)
             def search(self,word):
-                from PickleCRUDDB import PickleCRUD
+                from useful.PickleCRUDDB import PickleCRUD
                 return PickleCRUD.searchInDB(word)
         return Pkl()
 
     def treeTool():
-        from TreeDB import ForestDB, TreeCRUD, TreeDB, TreeSearchEngine
-        from TimeDB import TimeDB
+        from useful.TreeDB import ForestDB, TreeCRUD, TreeDB, TreeSearchEngine
+        from useful.TimeDB import TimeDB
         class Tree:
             def __init__(self):
                 self.dirPath = ForestDB.getForestPath()
@@ -282,7 +282,7 @@ class jupyterDB:
                 return Database.dbSearch(TreeSearchEngine(k), word)
 
             def folder(self):
-                from TreeDB import ForestDB
+                from useful.TreeDB import ForestDB
                 Path.openExplorerAt(ForestDB.getForestPath())
             def changeTimeStamp(self, dDay = 0):
                 val = jupyterDB.clip().text()
@@ -319,7 +319,7 @@ class jupyterDB:
         return Clip()
 
     def displayer(content, typ = "python"):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         return ModuleDB.colorPrint(typ, content)
 
     def startUp():
@@ -345,7 +345,7 @@ class jupyterDB:
                 sug = StartUpGUI()
                 return sug.display()
             def Ops():
-                from PickleCRUDDB import PickleCRUD
+                from useful.PickleCRUDDB import PickleCRUD
                 class IOps(PickleCRUD):
                     def __init__(self, loc = []):
                         if(type(loc) == str):
@@ -397,16 +397,12 @@ class jupyterDB:
                 return Temp
         return SetUp
 
-    def plan():
-        from PlanningDB import PlanningDB
-        return PlanningDB
-
     def localIpyLink(path, printIt = True):
         if(not path.endswith(".ipynb")):
             path += ".ipynb"
 
         path = os.path.abspath(path)
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         res = RegexDB.replace(".*timeline",path,
                                lambda x: "http://localhost:8888/notebooks").replace(os.sep, "/").replace(" ","%20")
         if(printIt):
@@ -416,7 +412,7 @@ class jupyterDB:
 
     def notifyWindow(title="Title", msg="Some Message", timeout = 2, icon=None):
         from nice_design.notification import JupyterNotifier
-        from SystemInfo import SystemInfo
+        from useful.SystemInfo import SystemInfo
         notifier = JupyterNotifier()
         notifier.set_message(msg)
         notifier.notify()
@@ -431,10 +427,10 @@ class jupyterDB:
         return jupyterDB._dbdbs
 
     def debug_a_file(path = ".debugger", inNotebook=False):
-        from TimeDB import TimeDB
-        from RegexDB import RegexDB
-        from FileDatabase import File
-        from OpsDB import OpsDB
+        from useful.TimeDB import TimeDB
+        from useful.RegexDB import RegexDB
+        from useful.FileDatabase import File
+        from useful.OpsDB import OpsDB
         from timeline.t2023.programs import  ProgramManager
         file = RegexDB.replace("[\.| |,]", TimeDB.getTimeStamp(), lambda x: "")
         vscode = ProgramManager.getApp("vs code")

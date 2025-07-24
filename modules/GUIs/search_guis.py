@@ -4,11 +4,11 @@ from modules.SearchSystem.modular import HideableWidget
 import datetime
 from modules.SearchSystem.modular import JupyterResultDisplayer
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox, SearchWidget, RCheckbox
-from OpsDB import OpsDB
-from Path import Path
-from Database import Database
+from useful.OpsDB import OpsDB
+from useful.Path import Path
+from useful.Database import Database
 import os
-from LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 class IOps:
     def callback(self):
         pass
@@ -19,7 +19,7 @@ class GOps:
         self._sw = parent._sw
 class InLastNXXX(GOps):
     def callback(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         out = self._gnrb.get_child(2).get_child(0)
         out.clear_output()
         self._hw.hide()
@@ -40,7 +40,7 @@ class Between(GOps):
             self._gnrb.get_child(1).get_child(2).on_click(self._ok_clicked)
         self._hw.show()
     def _ok_clicked(self, btn):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         fd = self._gnrb.get_child(1).get_child(0)
         td = self._gnrb.get_child(1).get_child(1)
         out = self._gnrb.get_child(2).get_child(0)
@@ -53,7 +53,7 @@ class Between(GOps):
             display(self._sw.get())
 class NDaysBefore(GOps):
     def callback(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         out = self._gnrb.get_child(2).get_child(0)
         out.clear_output()
         self._hw.hide()
@@ -183,7 +183,7 @@ class CondaEnvCrudOpsGUI:
             print(self._ops_map[ops_index].info())
 class GeneralFileSearchGUI(GOps):
     def callback(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         path = self._gnrb.get_child(0).get_child(2)
         val = self._gnrb.get_child(0).get_child(1).value.strip()
         if not path.value:
@@ -307,14 +307,14 @@ class SyntaxSearchGUI(IAbout, IDatabaseGUI):
         self._gnrb.get_child(1).add_widget(widgets.Output())
         self._gnrb.get_child(0).get_child(2).on_click(self._callback)
     def _set_ops(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         si = jupyterDB.syntax().db_ops()
         self._ops_map = {k: si.__dict__[k].db for k in si.__dict__}
         from javascript.Nodejs import Nodejs
         self._ops_map['nodejs'] = Nodejs.syntax
-        from NumericalAnalysis import NumericalAnalysis
+        from archives.NumericalAnalysis import NumericalAnalysis
         self._ops_map['sympy'] = NumericalAnalysis.sympySyntax
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         self._ops_map['regexs'] = RegexDB.regexs
     def _callback(self, btn):
         out = self._gnrb.get_child(1).get_child(0)
@@ -390,8 +390,8 @@ class DBSub(GSubSearchWithParent):
 class DataScienceSearchGUI(GSubSearchWithParent):
     def __init__(self):
         from ancient.DataStorageSystem import UrlsTable
-        from LibsDB import LibsDB
-        from Path import Path
+        from useful.LibsDB import LibsDB
+        from useful.Path import Path
         self._gsub = GSubjectWithOptionsSearch()
         self._gsub._search_btn.on_click(self._clicked)
         self._ops = {

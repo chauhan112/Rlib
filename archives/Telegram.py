@@ -1,6 +1,6 @@
-from Path import Path
+from useful.Path import Path
 from archives.coronaUpdate import get_country_confirmed_infected, getMessage
-from OpsDB import IOps
+from useful.OpsDB import IOps
 class IController:
     def __init__(self):
         self.replyMsg = ""
@@ -48,8 +48,8 @@ class ExtractHeaderFromTelegramMessageHtml(IOps):
     def set_file(self, html):
         self._html = html
     def execute(self):
-        from htmlDB import htmlDB
-        from FileDatabase import File
+        from useful.htmlDB import htmlDB
+        from useful.FileDatabase import File
         val = htmlDB.getParsedData(File.getFileContent(self._html))
         found = val.find_all('div', class_="page_header")
         found = found[0]
@@ -86,7 +86,7 @@ class TBot:
     
     def _setup():
         from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         import logging
         from telegram.ext import InlineQueryHandler
         

@@ -4,7 +4,7 @@ class ILineParser:
     def get(self):
         pass
 
-from RegexDB import RegexDB, NameDicExp
+from useful.RegexDB import RegexDB, NameDicExp
 
 class GLine(ILineParser, GDataSetable):
     def __init__(self, reg:NameDicExp):

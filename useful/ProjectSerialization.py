@@ -1,8 +1,8 @@
-from FileDatabase import File
-from SerializationDB import SerializationDB
+from useful.FileDatabase import File
+from useful.SerializationDB import SerializationDB
 import os
 from LibPath import *
-from Path import Path
+from useful.Path import Path
 
 class ProjectSerialization:
     def archive(files, name):

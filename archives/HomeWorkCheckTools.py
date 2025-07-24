@@ -1,10 +1,10 @@
 import os
 import yaml
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 import copy
 from zipfile import ZipFile 
-from Path import Path
+from useful.Path import Path
 import shutil
 
 class ZipTools:
@@ -347,7 +347,7 @@ class extractHomework:
                     
 class LA_2_HW_Correct:
     def _getStudentFilePaths(zipPath):
-        from ZiptoolDB import ZiptoolDB
+        from useful.ZiptoolDB import ZiptoolDB
         paths  = ZiptoolDB.getZipContent(zipPath)
         def check(val):
             names = LA_2_HW_Correct.getStudentIdentifier()
@@ -358,7 +358,7 @@ class LA_2_HW_Correct:
         return sorted(list(filter(check, paths)))
     
     def getStudentIdentifier():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         name = "globals"
         k = jupyterDB.pickle().read(name)
         return k['infos']['la hw correction student names']

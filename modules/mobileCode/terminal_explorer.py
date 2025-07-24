@@ -99,7 +99,7 @@ class NextPage(GCommand):
         return f"{self.idd} -> jump to page(nn val) or next page(nn) or prev page(nn -1)"
 class Main:
     def os_explorer(path: str):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         fng = Files2NodeGraph()
         c = Creator()
         c.set_creator_class(AdvanceNode)

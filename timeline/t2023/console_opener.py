@@ -1,12 +1,12 @@
 from timeline.t2023.advance_pickle_crud import Main as PickleCrudOps
 from modules.SearchSystem.modular import HideableWidget
-from LibsDB import LibsDB
-from SystemInfo import SystemInfo
-from SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
+from useful.SystemInfo import SystemInfo
+from useful.SerializationDB import SerializationDB
 import threading
 import subprocess
 import platform
-from useful.basic import NameSpace
+from basic import NameSpace
 class Functionality:
     def console_open(self, path):
         device = self.app.controller.utils.device_unique_identifier()

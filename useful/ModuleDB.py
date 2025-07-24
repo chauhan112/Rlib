@@ -1,10 +1,10 @@
 import os
 from LibPath import *
-from FileDatabase import File
-from Path import Path
+from useful.FileDatabase import File
+from useful.Path import Path
 from IPython.display import Markdown
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
 
 class ModuleDB:
     def colorPrint(filetyp, content):
@@ -16,8 +16,8 @@ class ModuleDB:
         File.createFile(Path.joinPath(getPath(), name))
 
     def addTest(testName, testContent):
-        from jupyterDB import jupyterDB
-        from ListDB import ListDB
+        from useful.jupyterDB import jupyterDB
+        from useful.ListDB import ListDB
         def createFunction(name, content):
             content = shifLines(content.strip())
             return f"""def {name}:\n{content}"""
@@ -82,12 +82,12 @@ class ModuleDB:
         return k
     
     def classDefinedInPyFile(pyFileContent):
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         return RegexDB.regexSearch(RegexDB.lookAheadAndBehind("class ", ": *\n", "[a-zA-Z0-9_\(\), ]+"), pyFileContent)
 
     def copyMyLibsUsedInFiles(filePaths, to ="."):
         def allIncludedLibraries(files):
-            from RegexDB import RegexDB
+            from useful.RegexDB import RegexDB
             all_libs = []
             for f in files:
                 content = File.getFileContent(f)
@@ -116,7 +116,7 @@ class ModuleDB:
         
     def reloadClass(clas, params = None):
         import inspect
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         moduleName=inspect.getmodule(clas).__name__
         className = clas.__name__
         # params is globals()

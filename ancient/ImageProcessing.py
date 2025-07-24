@@ -1,17 +1,17 @@
 import numpy as np
 import cv2
 import os
-from SerializationDB import SerializationDB
-from OpsDB import IOps
+from useful.SerializationDB import SerializationDB
+from useful.OpsDB import IOps
 from LibPath import *
-from FileDatabase import File
+from useful.FileDatabase import File
 
 class ImageProcessing:
     def showImgFromFile(imgPath):
         from PIL import Image
         return Image.open(imgPath)
     def image2text(imagePath):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         import pytesseract
         tesseractPath = LibsDB.cloudPath() + r"\global\code\libs\Tesseract-OCR\tesseract.exe"
         pytesseract.pytesseract.tesseract_cmd = tesseractPath
@@ -225,10 +225,10 @@ class ShowImage:
         return GIF(path)
 class ICOPath:
     def _path():
-        from Path import Path
+        from useful.Path import Path
         return Path.joinPath(resourcePath(), "assests")
     def listICOFiles():
-        from Path import Path
+        from useful.Path import Path
         path = ICOPath._path()
         return Path.filesWithExtension("ico", path)
     def getPathForFile(f):

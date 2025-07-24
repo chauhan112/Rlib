@@ -1,8 +1,8 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.eedi.filterer  import MisConceptsFilterer
 from timeline.t2024.eedi.visualizer import EediView
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 
 def WrongAns():
     ev = EediView()

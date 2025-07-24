@@ -1,5 +1,5 @@
 import nbformat as nbf
-from FileDatabase import File
+from useful.FileDatabase import File
 import os
 class NotebookDB:
     id_ = None
@@ -29,7 +29,7 @@ class NotebookDB:
 
     def convertNotebook(notebookPath, outOutFilename = None):
         from nbconvert import PythonExporter
-        from Path import Path
+        from useful.Path import Path
 
         if(outOutFilename is None):
             outOutFilename = os.path.basename(notebookPath)[:-5] + 'py'
@@ -55,7 +55,7 @@ class NotebookDB:
             nbf.write(nb, f)
 
     def summarizeTheCoding(_ih):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         import os
         device, id_ = NotebookDB.getSummaryInfos()
         ouputFile = NotebookDB.outFilename()
@@ -69,7 +69,7 @@ class NotebookDB:
         SerializationDB.pickleOut(log, ouputFile)
 
     def getSummaryInfos():
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         from useful.CryptsDB import CryptsDB
         device = ModuleDB.laptopName()
         if(NotebookDB.id_ is None):
@@ -78,7 +78,7 @@ class NotebookDB:
         return device, id_
 
     def outFilename(date = None):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         import os
         from LibPath import dumperPath
         import datetime

@@ -1,9 +1,9 @@
-from ListDB import ListDB
-from useful.basic import Main as ObjMaker
-from TimeDB import TimeDB
+from useful.ListDB import ListDB
+from basic import Main as ObjMaker
+from useful.TimeDB import TimeDB
 import os
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 def VersionSystem():
     filesAndLocation = {}
     duration = 30*60 # 30 min

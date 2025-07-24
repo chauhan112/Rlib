@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 import os
 from git import Repo, GitCommandError
 def GitFunctionality():
@@ -64,7 +64,7 @@ def libSize():
         h, mi, se = list(map(int, c.split(":")))
         t = (y*365 + m* 31 + d) * 24* 60 * 60  + h * 60*60 + mi * 60 + se
         return t
-    from TimeDB import TimeDB
+    from useful.TimeDB import TimeDB
     timeStamp = TimeDB.getTimeStamp() + " " +  ":".join([str(i) for i in TimeDB.today()[1]])
     k = jupyterDB.pickle().read("logs")
     if compare(k['libSize'][-1][0], timeStamp) > 6*60*60:

@@ -1,6 +1,6 @@
-from SearchSystem import FilesContentSearch, MultilineStringSearch
-from RegexDB import RegexDB
-from ModuleDB import ModuleDB
+from useful.SearchSystem import FilesContentSearch, MultilineStringSearch
+from useful.RegexDB import RegexDB
+from useful.ModuleDB import ModuleDB
 from timeline.t2023.searchSystem import CodeSearchEngine
 from timeline.t2023.searchSystem import Main as SWP
 from timeline.t2023.advance_searcher import Main as SWAO
@@ -13,9 +13,9 @@ class ModuleReloader:
         exec(contet)
         self._swwov._click_display_region.display(ModuleDB.colorPrint("python", contet), ipy=False, clear=True)
     def old_main(self):
-        from SearchSystem import DicSearch
-        from SerializationDB import SerializationDB
-        from LibsDB import LibsDB
+        from useful.SearchSystem import DicSearch
+        from useful.SerializationDB import SerializationDB
+        from useful.LibsDB import LibsDB
         from timeline.t2023.DBSearchGUIWithOutput import SearchWidgetWithOutputVisible
         from timeline.t2023.links_crud_ui import SearchEngine, ButtonViewWithPagination
         self.dic = SerializationDB.readPickle(LibsDB.picklePath("fromFileImportClass"))
@@ -32,7 +32,7 @@ class ModuleReloader:
         self._swwov.set_up()
         return lay
     def load_lib_files(self):
-        from Path import Path
+        from useful.Path import Path
         from LibPath import getPath
         self._fcs = FilesContentSearch(Path.filesWithExtension("py", getPath()))
         self._mss = MultilineStringSearch([])
@@ -65,7 +65,7 @@ class ModuleReloader:
             exec(contet)
             self._cnt._view.btnOutput.display(ModuleDB.colorPrint("python", contet), ipy=False, clear=True)
         else:
-            from jupyterDB import jupyterDB
+            from useful.jupyterDB import jupyterDB
             jupyterDB.clip().copy(line)
     def set_searcher(self, cnt):
         self._searcher = cnt

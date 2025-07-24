@@ -1,9 +1,9 @@
 from useful.ComparerDB import ComparerDB
-from FileDatabase import File
+from useful.FileDatabase import File
 from LibPath import *
 import os
-from SearchSystem import FilesContentSearchEngine, FilePathsSearchEngine, DicSearchEngine
-from LibsDB import LibsDB
+from useful.SearchSystem import FilesContentSearchEngine, FilePathsSearchEngine, DicSearchEngine
+from useful.LibsDB import LibsDB
 class DBResources:
     currentDB = None
     location = os.path.dirname(LibsDB.picklePath()) + os.sep + "dbs"
@@ -14,13 +14,13 @@ class DBResources:
 class DB:
     def createNewDB(dbName):
         import sqlite3
-        from Path import Path
+        from useful.Path import Path
         con = sqlite3.connect(Path.joinPath(DBResources.location, dbName))
         con.close()
     def connect2DB(dbName):
         import sqlite3
-        from Path import Path
-        from TimeDB import TimeDB
+        from useful.Path import Path
+        from useful.TimeDB import TimeDB
         DBResources.currentDB = sqlite3.connect(Path.joinPath(DBResources.location, dbName))
         DBResources.closed = False
         DBResources.name = dbName
@@ -45,7 +45,7 @@ class DB:
     def data(table, conn = None):
         return DB.execute(f"SELECT * FROM {table}")
     def showDBs():
-        from Path import Path
+        from useful.Path import Path
         return [os.path.basename(f) for f in Path.filesWithExtension("db", DBResources.location)]
     def execute(statement, conn = None):
         conn = DB._getConn(conn)
@@ -128,13 +128,13 @@ class DictionaryDatabase(DatabasePrototype):
         return founds
 class DBServer:
     def __init__(self, content, db, keyFilter = lambda x: x, displayer = print):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         self.dbHandler = db(content)
         self.keysFilter = keyFilter
         self.displayer = displayer
         self.displayContainer = WidgetsDB.getGrid(5, displayIt= False)
     def search(self, word, case = False, reg = False):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         founds = self.dbHandler.search(word, case, reg)
         self.displayContainer.clearGrid()
         for i in founds:
@@ -168,7 +168,7 @@ class D2Server(DBServer):
         super().__init__(content,D2Database, keysFilter, displayer)
         self._setKeys(keys)
     def search(self, word, case = False, reg = False):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         import ipywidgets as widgets
         founds = self.dbHandler.search(word, case, reg)
         self.displayContainer = WidgetsDB.getGrid(4)
@@ -192,19 +192,19 @@ class Database:
             return D1Server(keys, displayer, keysFilter)
         return D2Server(keys, values, displayer,  keysFilter, contentExtractionFunction)
     def pdfDB(files):
-        from SearchSystem import PdfSearchEngine
+        from useful.SearchSystem import PdfSearchEngine
         return PdfSearchEngine(files)
     def resourceDB():
-        from Path import Path
+        from useful.Path import Path
         files = Path.getFiles(resourcePath(), walk = True)
         return Database.pathDB(files)
     def moduleDB(keyWord = None, engine = None):
         from LibPath import getPath
-        from SearchSystem import FilesContentSearchEngine
-        from StaticDisplayerManager import StaticDisplayerManager
-        from Path import Path
+        from useful.SearchSystem import FilesContentSearchEngine
+        from ancient.StaticDisplayerManager import StaticDisplayerManager
+        from useful.Path import Path
         from IPython.display import display
-        from FileDatabase import NotepadAppTextOpener
+        from useful.FileDatabase import NotepadAppTextOpener
         pyfiles = Path.filesWithExtension("py", getPath())
         StaticDisplayerManager.display('total modules file number', len(pyfiles))
         if engine is None:
@@ -222,26 +222,26 @@ class Database:
         db.setCallback(lambda key, val: displayer(val))
         return db
     def urlDB(urlDic):
-        from SearchSystem import UrlSearchEngine
+        from useful.SearchSystem import UrlSearchEngine
         db = UrlSearchEngine(urlDic)
         return db
     def syntaxDB(sytaxDic, syn="python"):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         from IPython.display import display
         db = Database.dicDB(sytaxDic, displayer=lambda x : display(ModuleDB.colorPrint(syn, x)))
         return db
     def ipynbDB(files):
-        from InterfaceDB import ISearchSystem
+        from ancient.InterfaceDB import ISearchSystem
         from modules.SearchSystem.modular import JupyterResultDisplayer, IResultDisplayer, GDisplayableResult
-        from SearchSystem import FilesContentSearch, MultilineStringSearch
-        from NotebookDB import NotebookDB
+        from useful.SearchSystem import FilesContentSearch, MultilineStringSearch
+        from archives.NotebookDB import NotebookDB
         def display_content(re):
-            from ModuleDB import ModuleDB
+            from useful.ModuleDB import ModuleDB
             filanem, pos = re
             content = "\n".join(NotebookDB.getCodeCellContent(filanem))
             display(ModuleDB.colorPrint("python",content))
         def open_as_file(re):
-            from FileDatabase import File, NotepadAppTextOpener
+            from useful.FileDatabase import File, NotepadAppTextOpener
             filanem, pos = re
             temp_file = "ksdfsia12342ajsnfs.py"
             content = "\n".join(NotebookDB.getCodeCellContent(filanem))
@@ -266,8 +266,8 @@ class Database:
         jrd.set_callback(display_content)
         return Temp(Searcher(files), jrd)
     def pyRawCodeDB( files=None):
-        from Path import Path
-        from LibsDB import LibsDB
+        from useful.Path import Path
+        from useful.LibsDB import LibsDB
         if(files is None):
             rawFuncsPath = Path.joinPath(LibsDB.cloudPath(), "global", "code", "Code Godown", "funcs")
             files = Path.filesWithExtension("py", rawFuncsPath)
@@ -275,28 +275,28 @@ class Database:
     def textFilesDB(files, engine = FilesContentSearchEngine, callbackFunc = None):
         return engine(files, callBackFunc= callbackFunc)
     def videoDB(pathOrFiles, displayer = File.openFile):
-        from Path import Path
-        from ListDB import ListDB
+        from useful.Path import Path
+        from useful.ListDB import ListDB
         if(type(pathOrFiles) == str):
             ext = ["mp4", "mkv"]
             pathOrFiles =  ListDB.flatten([Path.filesWithExtension(i, pathOrFiles) for i in ext])
         db = Database.getDB(pathOrFiles, keysFilter=os.path.basename)
         return db
     def forestDB(word = None, engine = FilePathsSearchEngine):
-        from Path import Path
-        from TreeDB import ForestDB
+        from useful.Path import Path
+        from useful.TreeDB import ForestDB
         db = engine(Path.filesWithExtension("drawio", ForestDB.getForestPath()))
         return Database.dbSearch(db,word)
     def pathDB(filepaths):
         return FilePathsSearchEngine(filepaths)
     def allRunCellDB(_ih = None):
         from IPython.display import display
-        from jupyterDB import jupyterDB
-        from ListDB import ListDB
-        from SerializationDB import SerializationDB
+        from useful.jupyterDB import jupyterDB
+        from useful.ListDB import ListDB
+        from useful.SerializationDB import SerializationDB
         if(_ih is None):
             _ih = list(set(ListDB.flatten(ListDB.dicOps().flatten(SerializationDB.readPickle(jupyterDB.codeDumper().fileName)).values())))
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         lines = {f'line{i}': _ih[i] for i in range(len(_ih))}
         return Database.dicDB(lines, displayer=lambda x:display(ModuleDB.colorPrint("python",x)))
     def dbSearch(db, word):
@@ -304,7 +304,7 @@ class Database:
             db.search(word)
         return db
     def treeLinkDB(word):
-        from UrlDB import UrlDB
+        from ancient.UrlDB import UrlDB
         impLinks = UrlDB.getUrl('tree')
         db = Database.urlDB(impLinks)
         return Database.dbSearch(db, word)

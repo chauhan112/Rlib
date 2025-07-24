@@ -14,7 +14,7 @@ class TerminalDicExplorer(IExplorer):
         lastPos = ele.parent.parent.elementsDisplayer._lastPos
         exp = ele.parent.parent.lister
         lastPos.append(cdVal)
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         content = ListDB.dicOps().get(exp.dicExp._content, exp.dicExp.currentPath + [cdVal])
         if (type(content) == dict):
             exp.dicExp.cd(cdVal)

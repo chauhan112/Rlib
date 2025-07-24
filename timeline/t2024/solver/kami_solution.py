@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 
 def KamiColorObj():
     value = 0
@@ -66,7 +66,7 @@ def DepCalc():
                 break
         return max(mp.values())
     def calculate():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         kov = s.process.question.process.kcoMap
         r = {}
         for k in kov:

@@ -1,15 +1,15 @@
 import os
-from FileDatabase import File
-from OpsDB import OpsDB
-from SystemInfo import SystemInfo
+from useful.FileDatabase import File
+from useful.OpsDB import OpsDB
+from useful.SystemInfo import SystemInfo
 class GitDB:
     repo = None
     currentBranch = None
     def syntax(keyWord=None):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         name = "syntax"
         k = jupyterDB.pickle().read(name)
-        from Database import Database
+        from useful.Database import Database
         return Database.dbSearch(Database.dicDB(k['git']), keyWord)
         
     def setPath(gitPath):
@@ -124,7 +124,7 @@ class ChangedFiles(IGitCommand):
         self.path = os.path.abspath(path2repo)
     def act(self):
         from git import Repo
-        from Path import Path
+        from useful.Path import Path
         repo = Repo(self.path)
         changedFiles= [ item.a_path for item in repo.index.diff(None) ]
         res = []
@@ -154,7 +154,7 @@ class UntrackedFiles(IGitCommand):
         self.path = os.path.abspath(path2repo)
     def act(self):
         from git import Repo
-        from Path import Path
+        from useful.Path import Path
         repo = Repo(self.path)
         return [Path.joinPath(self.path,f) for f in repo.untracked_files]
 

@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 def MockTestCodeForces():
     lines = []
     def set_text(text):

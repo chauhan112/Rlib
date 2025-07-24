@@ -1,5 +1,5 @@
 from modules.Logger.Interfaces import IDumperWriter
-from FileDatabase import File
+from useful.FileDatabase import File
 import os
 class IParser:
     def read(self):
@@ -13,7 +13,7 @@ class IContentParser:
 
 class OverwritableSameKeyContentParser(IContentParser):
     def parse(self, txt):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         elementList = WordDB.regexSplit("===+", txt)
         res = {}
         for ele in elementList:
@@ -25,7 +25,7 @@ class OverwritableSameKeyContentParser(IContentParser):
 
 class DuplicatableSameKeyContentParser(IContentParser):
     def parse(self, txt):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         elementList = WordDB.regexSplit("===+", txt)
         res = {}
         for i, ele in enumerate(elementList):

@@ -1,7 +1,7 @@
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox
 import ipywidgets as widgets
-from PickleCRUDDB import PickleCRUDOps
-from SearchSystem import DicSearchEngine,UrlSearchEngine
+from useful.PickleCRUDDB import PickleCRUDOps
+from useful.SearchSystem import DicSearchEngine,UrlSearchEngine
 class IUrlOps:
     def display(self):
         pass
@@ -51,7 +51,7 @@ class AddOps(GUrlOps):
         name = self._url_anme.value.strip()
         val = self._url.value.strip()
         if self._is_var.value:
-            from jupyterDB import jupyterDB
+            from useful.jupyterDB import jupyterDB
             val = jupyterDB._params[val]
         for v in [name, val]:
             if v == "":

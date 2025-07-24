@@ -1,7 +1,7 @@
 import json
-from FileDatabase import File
-from jupyterDB import jupyterDB
-from RegexDB import RegexDB
+from useful.FileDatabase import File
+from useful.jupyterDB import jupyterDB
+from useful.RegexDB import RegexDB
 class AppDeployment:
     def __init__(self):
         self._filepath = None

@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.tailwind.twcrudOps import DictionaryModel
 from timeline.t2024.generic_logger.generic_loggerV3 import Pagination
 from modules.SearchSystem.modular import HideableWidget as WidOps

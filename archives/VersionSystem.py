@@ -1,5 +1,5 @@
 import os
-from Path import Path
+from useful.Path import Path
 class VersionSystem:
     _timer = None
     def update():
@@ -7,7 +7,7 @@ class VersionSystem:
             VersionSystem._oneFile(f)
     
     def _oneFile(file):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         class Temp:
             out = ""
             def fixDeletedFile(file):
@@ -44,7 +44,7 @@ class VersionSystem:
         pass
     
     def Ops():
-        from PickleCRUDDB import PickleCRUD
+        from useful.PickleCRUDDB import PickleCRUD
         class GitPklCRUD(PickleCRUD):
             def __init__(self):
                 super().__init__("globals", ['infos','git version system'])
@@ -60,11 +60,11 @@ class VersionSystem:
         return Temp
     
     def automate():
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         VersionSystem._timer = TimeDB.setTimer().regularlyUpdateTime(10, VersionSystem.update)
     
     def test():
-        from PickleCRUDDB import PickleCRUD
+        from useful.PickleCRUDDB import PickleCRUD
         class TestPklCRUD(PickleCRUD):
             def __init__(self):
                 super().__init__("test", [])

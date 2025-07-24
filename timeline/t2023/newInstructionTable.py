@@ -1,14 +1,14 @@
 from timeline.t2023.searchSystem import Main as SearchWithPagination
 from timeline.t2023.advance_searcher import Main as AdvanceSearchEngine
 from timeline.t2023.generic_logger.components import SingleButtonController
-from SearchSystem import DicSearch
-from ModuleDB import ModuleDB
+from useful.SearchSystem import DicSearch
+from useful.ModuleDB import ModuleDB
 from modules.SearchSystem.modular import HideableWidget
 import ipywidgets as widgets
-from PickleCRUDDB import PickleCRUDOps
+from useful.PickleCRUDDB import PickleCRUDOps
 from ancient.ClipboardDB import ClipboardDB
-from LibsDB import LibsDB
-from SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
 import os
 
 class DicSearchAndResultSorted:

@@ -1,8 +1,8 @@
-from RPygame import IPyGameObject, IPositionable, IEventable, MouseClick, ICanvas, \
+from useful.RPygame import IPyGameObject, IPositionable, IEventable, MouseClick, ICanvas, \
     IEvent, Game, StaticScreen,RegularPolygon, PolyColorChange, NonRegularPolygon, PButton
 import numpy as np
 import pygame
-from OpsDB import IOps
+from useful.OpsDB import IOps
 BOARD_SIZE = 500, 500
 class ITile:
     def get_nebors(self):
@@ -206,13 +206,13 @@ class GameModel:
         self._visited = {}
         self._obstacles_pos = set()
     def load_from_pickle(self, pkl):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         val = SerializationDB.readPickle(pkl)
         self.current = val['start-point']
         self._obstacles_pos = set(val['obstacles'])
         self._grid_model.set_radius(val['radius'])
     def export(self, name):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         if not name.endswith(".pkl"):
             name += '.pkl'
         SerializationDB.pickleOut({'obstacles': self._obstacles_pos, 'start-point': self.current,
@@ -241,7 +241,7 @@ class GameModel:
                 break
         return res
     def _get_color(self):
-        from InterfaceDB import EmptyClass
+        from ancient.InterfaceDB import EmptyClass
         ec = EmptyClass()
         ec.head = (255, 0, 0)
         ec.unvisited = (0,0, 0)

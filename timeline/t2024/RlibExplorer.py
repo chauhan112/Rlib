@@ -1,6 +1,6 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
-from LibsDB import LibsDB
+from basic import Main as ObjMaker
+from useful.LibsDB import LibsDB
 from timeline.t2024.tailwind.twcrudOps import DictionaryModel
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers
 import os

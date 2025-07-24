@@ -32,7 +32,7 @@ class WatchDogFileObserve(IObserver, IReturnable):
                 time.sleep(inst.interval)
             inst.observer.stop()
             inst.observer.join()
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         OpsDB.runOnThread(runOnThread, [self])
     def get(self):
         return self.model.get()
@@ -40,7 +40,7 @@ class ObserverModel:
     def __init__(self):
         self._info = {}
     def run(self, event):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         if event.event_type == "created":
             self._info['created'][event.src_path] = (TimeDB.modifiedTime(event.src_path), event.is_directory)
         elif event.event_type == "deleted":
@@ -80,7 +80,7 @@ class FilesLister(IFilesLister):
     def set_filter_func(self, func):
         self._filter_func = func
     def get_files(self):
-        from Path import Path
+        from useful.Path import Path
         files = Path.getFiles(self._root_dir, True)
         return list(filter(self._filter_func, files))
     def set_directory(self, path:str):
@@ -180,7 +180,7 @@ class Test:
         test_file ="asdjbasdb.py"
         print("-"*30)
         print("creating a temporary file")
-        from FileDatabase import File
+        from useful.FileDatabase import File
         File.createFile(test_file)
         print(cm.get_changes())
         cm.update()

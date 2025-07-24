@@ -5,7 +5,7 @@ import datetime
 
 class TimelineDB:
     def getMonthPath(monthNr, year = None, months = None):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         if months is None:
             months = ['1. jan',
                  '2. feb',
@@ -35,7 +35,7 @@ class TimelineDB:
         return os.sep.join([TimelineDB.getYearPath(year), m])
 
     def getYearPath(year):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         return os.sep.join([LibsDB.cloudPath().replace("\\", os.sep),'timeline', str(year)])
     
 class TimerSetView:
@@ -60,7 +60,7 @@ class TimerController:
         self._ui._make_layout()
         self._ui.setBtn.on_click(self._on_set_click)
     def _on_set_click(self, wid):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         from nice_design.notification import LinuxNotifier
         title = self._ui.titleTextWid.value
         if title.strip() == "":
@@ -71,7 +71,7 @@ class TimerController:
         ln.set_music(music)
         ln.notify()
         self._ui.out.value="done"
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         TimeDB.setTimer().oneTimeTimer(5, self._cleartime)
     def _cleartime(self):
         self._ui.out.value=""
@@ -112,9 +112,9 @@ class Confirmer:
             self._func()
 class Tools:
     def migrateRlibItValues(rlib):
-        from SerializationDB import SerializationDB
-        from TimeDB import TimeDB
-        from Path import Path
+        from useful.SerializationDB import SerializationDB
+        from useful.TimeDB import TimeDB
+        from useful.Path import Path
         m = TimeDB.month() - 2
         months = list(calendar.month_name)[1:]
         short_months_with_indices = [ "0" + str(i+1) + "_" + val[:3] if len(str(i+1)) == 1 else str(i+1) + "_" + val[:3] for i, val in enumerate(months)]

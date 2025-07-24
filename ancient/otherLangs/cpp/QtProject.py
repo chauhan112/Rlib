@@ -1,5 +1,5 @@
 import os
-from Path import Path
+from useful.Path import Path
 class Project:
     def __init__(self, path):
         self.path = path
@@ -24,9 +24,9 @@ class Project:
         raise IOError("Not unique folder found")
         
     def addTopPro(self, name, folder):
-        from RegexDB import RegexDB
-        from WordDB import WordDB
-        from FileDatabase import File
+        from useful.RegexDB import RegexDB
+        from useful.WordDB import WordDB
+        from useful.FileDatabase import File
 
         name = self._relPath(folder) + "/" + name
         name = name.strip("/")

@@ -1,11 +1,11 @@
-from ListDB import ListDB
-from SerializationDB import SerializationDB
-from FileDatabase import File
-from Database import Database
-from Path import Path, PathServer
+from useful.ListDB import ListDB
+from useful.SerializationDB import SerializationDB
+from useful.FileDatabase import File
+from useful.Database import Database
+from useful.Path import Path, PathServer
 import os
-from SearchSystem import DicSearchEngine
-from RegexDB import RegexDB
+from useful.SearchSystem import DicSearchEngine
+from useful.RegexDB import RegexDB
 
 tablesName = ["filePaths","folders","instructions","urls","notes"]
 
@@ -35,7 +35,7 @@ class _Tools:
                 return dbName
             
             def isItInMonth():
-                from RegexDB import RegexDB
+                from useful.RegexDB import RegexDB
                 cwd = Temp._cwd()
                 sep = "\\\\" if os.sep =="\\" else "/"
                 match = RegexDB.isThereRegexMatch(sep.join(["cloud", "timeline", r"20\d\d", r"\d{1,2}\. "]),cwd)
@@ -214,7 +214,7 @@ class InstructionTable(CRUD, AdvanceOps):
         return UpdatableEngine(ListDB.dicOps().flatten(self.getContentOfThisTable()), self.params)
     
     def printContent(self, key="", nextCell= False):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         if(key == ""):
             return self._printSearch(self.read([])).search("")
         content = self.read([])[key]
@@ -226,7 +226,7 @@ class InstructionTable(CRUD, AdvanceOps):
     def _printSearch(self,content):
         if self._printer is not None:
             return self._printer
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         class TempDic(DicSearchEngine):
             def _callback(self, item):
                 from IPython.display import display
@@ -239,7 +239,7 @@ class InstructionTable(CRUD, AdvanceOps):
         print(self.lastVal)
         
     def add(self, key, val =None):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         if(val is None):
             val = jupyterDB.clip().text()
         content = self.read([])
@@ -287,8 +287,8 @@ class LocalTree:
         print("Content size : " + str(len(content)))
 
     def search(self, word, reg = False):
-        from Database import D1Database
-        from WidgetsDB import WidgetsDB
+        from useful.Database import D1Database
+        from useful.WidgetsDB import WidgetsDB
         from ancient.ClipboardDB import ClipboardDB
         trees = self._reader()
         vals = list(trees.keys())
@@ -312,7 +312,7 @@ class LocalTree:
     def _fileName(self):
         if(self.pklPath is not None):
             return self.pklPath
-        from Path import Path
+        from useful.Path import Path
         path = Path.joinPath(os.path.dirname(_Tools.advanceDBNameGenerator()), "miniForest.pkl")
         if(not os.path.exists(path)):
             SerializationDB.pickleOut({}, path)

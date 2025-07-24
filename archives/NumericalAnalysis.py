@@ -1,6 +1,6 @@
-from ListDB import ListDB
+from useful.ListDB import ListDB
 import numpy as np
-from MarkdownToolsDB import MarkdownToolsDB as m
+from ancient.MarkdownToolsDB import MarkdownToolsDB as m
 
 class NumericalAnalysis:
     def bisectionFormula(func,interval,tolerance = 1e-6, maxIter = 1e6):
@@ -28,7 +28,7 @@ class NumericalAnalysis:
         return avg
             
     def sympySyntax():
-        from Database import Database
+        from useful.Database import Database
         syntaxes = {
             'unknown function' : "d = symbols(\"d\" , cls = Function)",
             'symbol' : "x = symbols('x')",
@@ -54,7 +54,7 @@ class NumericalAnalysis:
         pass
     
     def getMatrix(matStr, oneDigit = False, printed = False):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         matStr = matStr.strip().replace("−", "-").split("\n")
         regex = "[0-9\-\+]+"
         if(oneDigit):

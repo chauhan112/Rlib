@@ -1,10 +1,10 @@
-from LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from timeline.t2023.copy_search_reload import FilesSearch
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent
 import os
 from timeline.t2023.searchSystem import NotepadOpener
@@ -55,8 +55,8 @@ def SearchInRlibAndSync():
         s.process.resultDisp.views.container.show()
     def onSync(q):
         from LibPath import getPath
-        from Path import Path
-        from FileDatabase import File
+        from useful.Path import Path
+        from useful.FileDatabase import File
         allPyFiles = Path.filesWithExtension("py", getPath(), True)
         res = {}
         for f in allPyFiles:

@@ -1,9 +1,9 @@
 import os
-from Path import Path
-from Database import Database
-from SerializationDB import SerializationDB
+from useful.Path import Path
+from useful.Database import Database
+from useful.SerializationDB import SerializationDB
 from ancient.ClipboardDB import ClipboardDB
-from LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 class MicpadTools:
     def total_mic_files(micpath):
         total_files = []
@@ -36,7 +36,7 @@ class MicpadStuff:
     def addToLinks(key, val):
         MicpadStuff.addToPaths(key,val, f"{MicpadStuff.pathRes()}{os.sep}links.pkl")
     def pathDB(word = None):
-        from Path import Path
+        from useful.Path import Path
         def dis(x):
             Path.openExplorerAt(x)
             print(x)

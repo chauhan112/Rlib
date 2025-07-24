@@ -1,8 +1,8 @@
-from OpsDB import IOps
+from useful.OpsDB import IOps
 from modules.mobileCode.CmdCommand import GController, IReturnable, IDisplayElements, \
     GCommand, CmdCommandHandler, GParentable
 import os
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 class IFiller:
     def fill(self):
         pass
@@ -90,7 +90,7 @@ class FileList2Dic(IOps, GDataSetable):
         if sep is None:
             self.sep = os.sep
     def execute(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         dic = {}
         for f in self.data:
             ListDB.dicOps().addEvenKeyError(dic, f.split(self.sep), {})
@@ -99,7 +99,7 @@ class AllFilesReader(IFileListGetter, GDataSetable):
     def __init__(self, path="."):
         self.setData(path)
     def getFiles(self):
-        from Path import Path
+        from useful.Path import Path
         return Path.getFiles(self.data, True)
 class GFileListGetter(IFileListGetter):
     def __init__(self, files):
@@ -128,7 +128,7 @@ class MetaLister(IReturnable, GParentable,GDataSetable):
         vals = [content[ke][self._metaStr] for ke in arr]
         return list(zip(arr, vals))
     def currentValue(self):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         loc = []
         for ke in self.pos:
             loc.append('data')
@@ -157,7 +157,7 @@ class DisplayFileAnalyser(IDisplayElements, GCommand):
     def printFormatted(self, pre, i, word, tsize, size):
         if tsize == 0:
             tsize = .0001
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         forma = WordDB.formatting()
         print(pre + f'{forma.integer(i,3)}. {forma.word(word, 15)}-' + \
               forma.word("|" * int(20 * size / tsize), 20) + self.infoFunc(size))
@@ -255,7 +255,7 @@ class GFiller(IFiller):
         self._root = root
 class SizeFillerStrategy(IFillerStrategy):
     def fill(self, node: Node):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         ch = node.children
         if len(ch) == 0:
             try:
@@ -293,7 +293,7 @@ class Files2NodeGraph(IOps):
         self.set_node_creator(Creator())
         self._root = None
     def set_files(self, files):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         self._files = files
         self._common_part = WordDB.commonPart(self._files).strip(os.sep)
     def execute(self):
@@ -324,7 +324,7 @@ class Files2NodeGraph(IOps):
             name += '.pkl'
         SerializationDB.pickleOut({'nodes': self._node_map, 'root': self._root}, name)
     def set_path(self, folder_path: str):
-        from Path import Path
+        from useful.Path import Path
         self.set_files(Path.getFiles(folder_path, True))
 class DynamicNodeExplorer(NodeTreeExplorer):
     def __init__(self, root=None):
@@ -412,8 +412,8 @@ class FileAnalyse:
                 Temp._run(root)
         return Temp
     def zip_file(path): # from cmd, terminal
-        from ZiptoolDB import ZiptoolDB
-        from DataStructure import MaxDepthInverseCalculator
+        from useful.ZiptoolDB import ZiptoolDB
+        from useful.DataStructure import MaxDepthInverseCalculator
         from modules.mobileCode.GenericExplorer import NumberView, NoInfoView, DepthView, Main
 
         paths = ZiptoolDB.getZipContent(path)
@@ -439,7 +439,7 @@ class FileAnalyseGUI:
                 FileAnalyseGUI.explorer(path)
             def pickle(pkl):
                 from modules.Explorer.DictionaryExplorer import Main
-                from SerializationDB import SerializationDB
+                from useful.SerializationDB import SerializationDB
                 gr = SerializationDB.readPickle(pkl)
                 root = gr['data'][gr['root']]
                 dne = DynamicNodeExplorer(root)
@@ -452,8 +452,8 @@ class FileAnalyseGUI:
     def explorer(path, viewfunc=lambda x: FileAnalyser.sizeb(x.extra_info.size),
             sort_func = lambda x: x.extra_info.size, reverse = True):
         from modules.Explorer.DictionaryExplorer import Main
-        from Path import Path
-        from DataStructure import MaxDepthInverseCalculator
+        from useful.Path import Path
+        from useful.DataStructure import MaxDepthInverseCalculator
         cr = Creator()
         cr.set_creator_class(GNode)
         fng = Files2NodeGraph()

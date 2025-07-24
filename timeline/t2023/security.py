@@ -1,7 +1,7 @@
-from SerializationDB import SerializationDB
-from PickleCRUDDB import PickleCRUDOps
-from ListDB import ListDB
-from LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.PickleCRUDDB import PickleCRUDOps
+from useful.ListDB import ListDB
+from useful.LibsDB import LibsDB
 import ipywidgets as widgets
 from timeline.t2023.generic_logger.components import SingleButtonController
 

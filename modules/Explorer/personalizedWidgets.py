@@ -1,5 +1,5 @@
 from modules.Explorer.model import ExplorerUtils, DictionaryExplorer, IExplorer
-from InterfaceDB import EmptyClass
+from ancient.InterfaceDB import EmptyClass
 class IRWidget:
     def get(self):
         pass
@@ -86,7 +86,7 @@ class HRContrainableBox(Addable, IRWidget):
         self._grid = None
         self._children = []
     def set_width(self, width):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         self._width = width
         self._grid = WidgetsDB.getGrid(self._width, displayIt=False)
     def get(self):
@@ -167,7 +167,7 @@ class WidgetsIpyExplorerDisplayer(IExplorerDisplayer):
         display(self._wid.layout)
         self._fill_values()
     def _create_layout(self):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         import ipywidgets as widgets
         wid = EmptyClass()
         wid.components = EmptyClass()

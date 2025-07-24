@@ -1,5 +1,5 @@
 from timeline.t2024.experiments.morphism.withCIT.morphismWithCIT import BaseComponent, Utils, IpywidgetsComponentsEnum
-from useful.basic import NameSpace
+from basic import NameSpace
 from datetime import datetime
 class HourCalculator(BaseComponent):
     def render(self):

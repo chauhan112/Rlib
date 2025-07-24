@@ -1,5 +1,5 @@
 import os
-from OpsDB import IOps, OpsDB
+from useful.OpsDB import IOps, OpsDB
 
 class GitPortalInstantiate(IOps):
     def __init__(self, path):
@@ -19,8 +19,8 @@ class GitPortalInstantiate(IOps):
 
 class Tools:
     def detailedTimeStamp():
-        from TimeDB import TimeDB
-        from WordDB import WordDB
+        from useful.TimeDB import TimeDB
+        from useful.WordDB import WordDB
         stamp = TimeDB.getTimeStamp()
         clockTime =":".join(list(map(lambda x: WordDB.formatting().integer(x, 2, '0'), TimeDB.nowTime())))
         return stamp+ "  "+clockTime

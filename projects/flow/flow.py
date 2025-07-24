@@ -1,5 +1,5 @@
-from FileDatabase import File
-from SerializationDB import SerializationDB
+from useful.FileDatabase import File
+from useful.SerializationDB import SerializationDB
 
 class ILevel:
     def get_value(self):

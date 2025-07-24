@@ -1,7 +1,7 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent, KeyValueComponent, SingleField
-from useful.basic import Main as ObjMaker
-from TimeDB import TimeDB
+from basic import Main as ObjMaker
+from useful.TimeDB import TimeDB
 from timeline.t2023.generic_logger.components import DateInput, TimeInput, DateTimeInput
 from typing import Union
 import datetime

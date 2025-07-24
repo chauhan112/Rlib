@@ -38,7 +38,7 @@ class DataStructure:
                 writer.writerow(row)
     def readCSV(name):
         from IPython.display import display
-        from htmlDB import htmlDB
+        from useful.htmlDB import htmlDB
         import csv
         class MyCSV:
             def __init__(self,path):
@@ -166,7 +166,7 @@ class TreeIterator:
         pass
     def postOrderIterator(self):
         pass
-from OpsDB import IOps
+from useful.OpsDB import IOps
 from modules.Explorer.DictionaryExplorer import Node
 class MaxDepthInverseCalculator(IOps):
     def __init__(self, root: Node):

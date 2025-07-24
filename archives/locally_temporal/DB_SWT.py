@@ -1,9 +1,9 @@
 class DB_SWT:
     _dbs = {}
     def db():
-        from Path import FrequentPaths, Path
-        from Database import Database
-        from SearchSystem import FilePathsSearchEngine
+        from useful.Path import FrequentPaths, Path
+        from useful.Database import Database
+        from useful.SearchSystem import FilePathsSearchEngine
         class Temp:
             def docs():
                 docsPath = Path.joinPath(Temp._path(), "data")
@@ -43,8 +43,8 @@ class DB_SWT:
         return Temp
 
     def swt():
-        from Path import FrequentPaths, Path
-        from Database import Database
+        from useful.Path import FrequentPaths, Path
+        from useful.Database import Database
         class Temp:
             def docs():
                 p = Path.joinPath(Temp._path(), r"data\matse scripts")

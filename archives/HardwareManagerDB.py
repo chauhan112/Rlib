@@ -1,11 +1,11 @@
-from SearchSystem import GeneralSearchEngine
+from useful.SearchSystem import GeneralSearchEngine
 class HardwareManagerDB:
     def dbs():
         class Temp:
             def name():
                 return GeneralSearchEngine(content, callBackFunc=lambda key, con: print(con[key]))
             def properties():
-                from SearchSystem import GeneralSearchEngine, MultilineStringSearch
+                from useful.SearchSystem import GeneralSearchEngine, MultilineStringSearch
                 ppr = GeneralSearchEngine(HardwareManagerDB.crud()._load(), 
                           searchFunc=lambda word, con, case, reg: GeneralSearchEngine.tools().iterate(
                               con, 
@@ -39,7 +39,7 @@ class HardwareManagerDB:
         return Temp
     
     def crud():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         class HardwareObj:
             def __init__(self,name, objValDic):
                 self.name = name

@@ -1,9 +1,9 @@
-from Path import Path
+from useful.Path import Path
 from LibPath import getPath
 import os
-from FileDatabase import NotepadAppTextOpener
+from useful.FileDatabase import NotepadAppTextOpener
 import ipywidgets as widgets
-from SearchSystem import FilesContentSearch, ISearch
+from useful.SearchSystem import FilesContentSearch, ISearch
 from timeline.t2023.links_crud_ui import ButtonsClickView, SearchEngine
 from timeline.t2023.links_crud_ui import ButtonViewWithPagination
 

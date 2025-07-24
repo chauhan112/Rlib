@@ -3,7 +3,7 @@ import logging
 import math
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps as DO
-from ListDB import ListDB
+from useful.ListDB import ListDB
 import copy
 
 class JSONExplorerView(BaseComponent):
@@ -713,7 +713,7 @@ class DicOps:
             DO.addEventKeyError(dic, toLoc + [key], val)
 
     def locationExists(dic, loc):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         try:
             ListDB.dicOps().get(dic, loc)
             return True

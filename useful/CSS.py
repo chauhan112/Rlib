@@ -1,11 +1,11 @@
 from timeline.t2024.ui_lib.components.cssAdder import AddCSSWidget
 import os
-from LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 
 def cssUpdator(state):
     from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils
     from timeline.t2024.experiments.models import LocalStorageTableOps, ModelInitializer
-    from useful.basic import addToNameSpace
+    from basic import addToNameSpace
     ModelInitializer.initialize()
     app_name = "css_updator"
     key = "jupyter-css"
@@ -23,7 +23,7 @@ class Main:
     loaded = None
     ui = None
     def updatorLC(viewOnly=True):
-        from useful.basic import NameSpace
+        from basic import NameSpace
         state = NameSpace()
         cssUpdator(state)
         if viewOnly:

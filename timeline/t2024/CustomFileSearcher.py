@@ -1,10 +1,10 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
-from SearchSystem import FilesContentSearch
+from basic import Main as ObjMaker
+from useful.SearchSystem import FilesContentSearch
 from timeline.t2023.searchSystem import NotepadOpener
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers
 from timeline.t2024.experiments.keyValueWithSearchAndFilter import NewSearchComponent
-from Path import Path
+from useful.Path import Path
 import os
 
 def FileContentSearcher():

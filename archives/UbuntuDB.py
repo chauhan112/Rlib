@@ -1,9 +1,9 @@
 class UbuntuDB:
     def commands():
-        from SearchSystem import DicSearchEngine
-        from jupyterDB import jupyterDB
-        from Database import Database
-        from ListDB import ListDB
+        from useful.SearchSystem import DicSearchEngine
+        from useful.jupyterDB import jupyterDB
+        from useful.Database import Database
+        from useful.ListDB import ListDB
         class Temp(DicSearchEngine):
             def _callback(self, item):
                 print(self.searchSys.container[item])

@@ -111,7 +111,7 @@ class Tools:
         return start, end, res
     
     def fileContent(path: str) -> str:
-        from FileDatabase import File
+        from useful.FileDatabase import File
         return File.getFileContentt(path)
     
     def generate_path(parents, start, end):

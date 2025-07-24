@@ -1,12 +1,12 @@
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 from ancient.DataStorageSystem import LocalTree, FolderTable, UrlsTable,NotesTable
 import os
-from LibsDB import LibsDB
-from RegexDB import RegexDB
-from htmlDB import htmlDB
+from useful.LibsDB import LibsDB
+from useful.RegexDB import RegexDB
+from useful.htmlDB import htmlDB
 from ancient.CodeDB import LocModel, CodeDB
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 
 class Bachelorarbeit:
     dbPath = None
@@ -15,9 +15,9 @@ class Bachelorarbeit:
         currentCloudPath = RegexDB.regexSearch(".*cloud", path)[0]
         return path.replace(currentCloudPath, LibsDB.cloudPath())
     def explorer():
-        from ExplorerDB import ExplorerDB 
-        from jupyterDB import jupyterDB
-        from TreeDB import TreeDB
+        from useful.ExplorerDB import ExplorerDB 
+        from useful.jupyterDB import jupyterDB
+        from useful.TreeDB import TreeDB
         ba = Bachelorarbeit.reprocessCloudPath(Bachelorarbeit.path().getContentOfThisTable()['bachelorArbeit docs'])
         exp = ExplorerDB.osFileExplorer(ba)
         exp.setFileDisplayer("ipynb", lambda x: TreeDB.openWebLink(jupyterDB.localIpyLink(x, False)))
@@ -53,8 +53,8 @@ class Bachelorarbeit:
         return Temp
 
     def cmd():
-        from OpsDB import OpsDB
-        from SearchSystem import DicSearchEngine
+        from useful.OpsDB import OpsDB
+        from useful.SearchSystem import DicSearchEngine
 
         dic = {
             'otherApps': r"C:\Users\rajac\Desktop\gittest\project\otherBranch\Micapd",

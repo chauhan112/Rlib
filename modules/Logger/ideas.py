@@ -1,8 +1,8 @@
-from Path import Path
-from SearchSystem import DicSearch
+from useful.Path import Path
+from useful.SearchSystem import DicSearch
 class IdeasSearchEngine:
     def __init__(self):
-        from LibsDB import LibsDB
+        from useful.LibsDB import LibsDB
         from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement
         self.set_folder(Path.joinPath(LibsDB.cloudPath(), "Global", "logger", "ideas"))
         self._jrd = JupyterResultDisplayer()

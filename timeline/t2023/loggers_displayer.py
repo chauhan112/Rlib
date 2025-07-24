@@ -8,7 +8,7 @@ class AssignedOps:
         self.ASSIGNED = "assigned"
     def _make_view(self):
         import ipywidgets as widgets
-        from useful.basic import NameSpace 
+        from basic import NameSpace 
         from timeline.t2023.generic_logger.components import SingleButtonController 
         self._view = NameSpace()
         self._view.people = widgets.Dropdown(layout = {"width": "auto"})
@@ -16,7 +16,7 @@ class AssignedOps:
         self._view.ok_btn = SingleButtonController(description="ok", layout = {"width": "auto"})
         self._view.layout = widgets.HBox([self._view.people, self._view.ops, self._view.ok_btn.layout])
     def set_up(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         self._view.people.options = jupyterDB.pickle().read("temps")["2023"]["coders"]
         self._bsc._bc.views.ev.opsSec.opsDrop.options = list(self._bsc._bc.views.ev.opsSec.opsDrop.options) + [self.ASSIGNED]
         self._view.people.value = "me"

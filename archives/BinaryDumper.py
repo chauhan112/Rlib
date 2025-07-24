@@ -1,20 +1,20 @@
 import sqlite3
-from Database import DB, DBResources
-from SerializationDB import SerializationDB
+from useful.Database import DB, DBResources
+from useful.SerializationDB import SerializationDB
 import time, os
 from useful.CryptsDB import CryptsDB
 from LibPath import resourcePath
 
 class _BinaryDumper:
     def __init__(self):
-        from Path import Path
+        from useful.Path import Path
         self.dbPath = Path.joinPath(DBResources.location, "BinaryDumper.db")
         self.db = sqlite3.connect(self.dbPath)
         self.dumperFolder = Path.joinPath(resourcePath(), "binaryDumper")
         self.alreadyRead = {}
 
     def add(self,key, overwrite = True, content = None):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         file = self._getFile()
         exists = self.read().exists(key)
         if(exists):
@@ -46,7 +46,7 @@ class _BinaryDumper:
                 return len(val)
 
             def fileNr(key):
-                from Path import Path
+                from useful.Path import Path
                 val = Temp._content(key)
                 if(len(val) == 0):
                     raise IOError("Key does not exists") 
@@ -54,7 +54,7 @@ class _BinaryDumper:
                 return Path.joinPath(self.dumperFolder,val[0][fileNrCol])
 
             def keys():
-                from ListDB import ListDB
+                from useful.ListDB import ListDB
                 content = DB.execute('SELECT key from KeyFileNr', self.db)
                 return ListDB.flatten(content)
 
@@ -63,8 +63,8 @@ class _BinaryDumper:
         return Temp
 
     def _readBinary(self, file):        
-        from ModuleDB import ModuleDB
-        from FileDatabase import File
+        from useful.ModuleDB import ModuleDB
+        from useful.FileDatabase import File
 
         start = time.time()
         content = SerializationDB.readPickle(file)
@@ -79,9 +79,9 @@ class _BinaryDumper:
         return content
 
     def _getFile(self):
-        from jupyterDB import jupyterDB
-        from Path import Path
-        from FileDatabase import File
+        from useful.jupyterDB import jupyterDB
+        from useful.Path import Path
+        from useful.FileDatabase import File
         class Temp:
             def getThreshold():
                 name = "globals"
@@ -110,9 +110,9 @@ class _BinaryDumper:
         return Temp.fileBasedOnThreshHold()
 
     def search(self,word = "", applyOnValue = None):
-        from SearchSystem import DicSearchEngine
-        from jupyterDB import jupyterDB
-        from Path import Path
+        from useful.SearchSystem import DicSearchEngine
+        from useful.jupyterDB import jupyterDB
+        from useful.Path import Path
         if(applyOnValue is None):
             applyOnValue = jupyterDB.clip().copy
         values = DB.execute('SELECT * from KeyFileNr', self.db)
@@ -122,7 +122,7 @@ class _BinaryDumper:
         return s.search(word)
 
     def delete(self,key):
-        from Path import Path
+        from useful.Path import Path
         fileKeyList = DB.execute(f"SELECT * from KeyFileNr WHERE key='{key}'", self.db)
         if(len(fileKeyList) == 0):
             raise IOError("no such key exists")
@@ -138,7 +138,7 @@ class _BinaryDumper:
             print("more entries with same key")
 
     def changeKey(self,oldKeyName, newKey):
-        from Path import Path
+        from useful.Path import Path
         if(not self.read().exists(oldKeyName)):
             raise IOError("key does not exists")
         if(self.read().count(oldKeyName) != 1):

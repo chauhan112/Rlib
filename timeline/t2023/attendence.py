@@ -1,13 +1,13 @@
-from RegexDB import RegexDB, NameDicExp
-from TimeDB import TimeDB
-from htmlDB import htmlDB
-from jupyterDB import jupyterDB
-from ListDB import ListDB
+from useful.RegexDB import RegexDB, NameDicExp
+from useful.TimeDB import TimeDB
+from useful.htmlDB import htmlDB
+from useful.jupyterDB import jupyterDB
+from useful.ListDB import ListDB
 import ipywidgets as widgets
 from modules.Explorer.personalizedWidgets import CustomOutput
 import datetime
 import json
-from FileDatabase import File
+from useful.FileDatabase import File
 
 
 class StringEnum:
@@ -83,7 +83,7 @@ class Attendence:
         timesSt = list(map(lambda x: [x[0],{k: self._words_to_meaning(x[1][k]) for k in x[1]}], times))
         timesSt = list(map(lambda x: [x[0],*x[1].values()], timesSt))
         timesSt = list(map(lambda x: [x[0],x[1], self._time_parser(x[2])], timesSt))
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         timep = ListDB.reshape(timesSt, (len(timesSt)//2, 2))
         hrs = list(map(lambda x: self._period_cal(x[0][-1], x[-1][-1]), timep))
         toh, tom = 0, 0

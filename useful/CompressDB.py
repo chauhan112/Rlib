@@ -23,7 +23,7 @@ class CompressDB:
         return Temp
     
     def files():
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         class Cmp:
             def compress(self, files, outputFile):
                 k = _PackCompressedFile(files)
@@ -64,7 +64,7 @@ class _PackCompressedFile:
             self.decompress(file)
 
     def writeFileWithContent(self, name, contentAsBin):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         File.createFileInsideNonExistingFolder(name, contentAsBin, ty= "wb")
         
     def getFileNames(self):

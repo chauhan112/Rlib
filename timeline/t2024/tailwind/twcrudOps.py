@@ -1,9 +1,9 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import ResultDisplayers, AddCancelBtns
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
 from useful.ComparerDB import ComparerDB
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 def DictionaryModel():
     model = {}
     main_loc = []

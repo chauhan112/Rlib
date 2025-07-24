@@ -12,7 +12,7 @@ class CodeLogger:
             self.content = SerializationDB.readPickle(ouputFile)
         self._loaded = True
     def getFilePath(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         import datetime
     
         fileName = ".".join(TimeDB.getTimeStamp(date).split(", ")[::-1]).replace(".", "_") + '.pkl'
@@ -33,7 +33,7 @@ class CodeLogger:
                 _ih.clear()
             self._prev_path = ouputFile
     def get_id(self):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         from useful.CryptsDB import CryptsDB
         device = ModuleDB.laptopName()
         if(NotebookDB.id_ is None):

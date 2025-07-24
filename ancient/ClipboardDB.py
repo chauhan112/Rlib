@@ -55,7 +55,7 @@ class ClipboardDB:
         copy_sys.copy(content)
     
     def clipboardImage2Pdf( name = ''):
-        from Path import Path
+        from useful.Path import Path
         imgPath = ClipboardDB.saveImage()
         image.save(imgPath)
         pdfName = name+".pdf"
@@ -79,7 +79,7 @@ class ClipboardDB:
         return im
     
     def imageText():
-        from Path import Path
+        from useful.Path import Path
         from ancient.ImageProcessing import ImageProcessing as im
         name = ClipboardDB.saveImage()
         text = im.image2text(name)
@@ -90,5 +90,5 @@ class ClipboardDB:
         return paster.get()
         
     def displayCode(name = "python"):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         return ModuleDB.colorPrint(name, ClipboardDB.getText())

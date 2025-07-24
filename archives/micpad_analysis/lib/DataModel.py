@@ -27,7 +27,7 @@ class ClassModel:
                 dic = self.content[name]['methods']
                 return sum([dic[x]['ccn'] for x in dic])/ Temp.noOfMethods(name)
             def allMethods(name, displayIt = True):
-                from htmlDB import htmlDB
+                from useful.htmlDB import htmlDB
                 methods =list(self.content[name]['methods'])
                 if(not displayIt):
                     return methods

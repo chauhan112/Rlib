@@ -28,6 +28,6 @@ class HealthDB:
         return Temp
     
     def _read():
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(HealthDB.storage_id)
     

@@ -13,13 +13,13 @@ class ExplorerDB:
         return exp
     def dicExplorer(dic, name = None):
         import json
-        from LibsDB import LibsDB
-        from SerializationDB import SerializationDB
+        from useful.LibsDB import LibsDB
+        from useful.SerializationDB import SerializationDB
         from IPython.display import HTML
         from useful.CryptsDB import CryptsDB
-        from FileDatabase import File
-        from TimeDB import TimeDB
-        from htmlDB import htmlDB
+        from useful.FileDatabase import File
+        from useful.TimeDB import TimeDB
+        from useful.htmlDB import htmlDB
         content = htmlDB.urlDecode(SerializationDB.readPickle(LibsDB.picklePath("globals"))['codes']['dictionary explorer'])
         if(name is None):
             name = CryptsDB.generateRandomName()

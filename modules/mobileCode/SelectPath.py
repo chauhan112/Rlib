@@ -92,7 +92,7 @@ class DicChangeableList(IChangeableList,GParentable,DicPathOps):
         folders, files= self.exp.keys()
         return [self.prefixDir(ele) for ele in ['..'] +folders] + files
     def isPathDir(self, path):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         path = path.strip("/")
         pos = path.split("/")
         try:
@@ -101,7 +101,7 @@ class DicChangeableList(IChangeableList,GParentable,DicPathOps):
         except:
             return False
     def curVal(self, val):
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         pos = self.exp.currentPath
         return ListDB.dicOps().get(self.exp.content, pos + [val])
 class GSelector(ISelector, IRunnable):

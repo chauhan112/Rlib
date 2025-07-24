@@ -1,6 +1,6 @@
 DISCOURSE_TYPE = ['Lead', 'Position', 'Evidence', 'Claim', 'Concluding Statement', 'Counterclaim', 'Rebuttal']
 import os
-from FileDatabase import File
+from useful.FileDatabase import File
 
 class Range:
     def __init__(self, l, r, discourse_type):

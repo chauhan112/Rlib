@@ -2,8 +2,8 @@ import os
 import re
 from IPython.display import display, Markdown
 import webbrowser
-from Path import Path
-from FileDatabase import File
+from useful.Path import Path
+from useful.FileDatabase import File
 
 class CppCodeRefactoring:
     def uncomment(self, scriptName):

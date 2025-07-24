@@ -17,7 +17,7 @@ class ZiptoolDB:
         return list(filter(lambda x: x[-1] != '/', contentList))
 
     def paths2DicLevelOne(paths):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         dics = OpsDB.grouper(lambda x: x.split("/")[0], paths, 
                             lambda x: x.replace(x.split("/")[0], "").strip("/"))
         return dics

@@ -1,8 +1,8 @@
 import ipywidgets as widgets
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox
 from timeline.t2022.TLCAP import Main as FinderKeeper
-from TimeDB import TimeDB
-from Path import Path
+from useful.TimeDB import TimeDB
+from useful.Path import Path
 import os
 
 class FilesModel:
@@ -62,9 +62,9 @@ class UIController:
 
 
 
-from ExplorerDB import ExplorerDB
-from ListDB import ListDB
-from FileDatabase import File
+from useful.ExplorerDB import ExplorerDB
+from useful.ListDB import ListDB
+from useful.FileDatabase import File
 import json
 
 class ExpView:
@@ -102,7 +102,7 @@ class ExpController:
             ExplorerDB.dicExplorer(ListDB.dicOps().get(data, loc))
     
     def _on_store_clicked(self, wid):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         path = self._ui.filepathWid.value.strip()
         loc = self._parseAList(self._ui.locTextWid.value)
         if path != "" and loc is not None:

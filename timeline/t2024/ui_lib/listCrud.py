@@ -1,7 +1,7 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 from timeline.t2024.generic_logger.generic_loggerV3 import AddCancelBtns, ResultDisplayers
-from SearchSystem import MultilineStringSearch
+from useful.SearchSystem import MultilineStringSearch
 def ListCRUD():
     opsWid = Utils.get_comp({"options": ["add",'update',"delete"]},IpywidgetsComponentsEnum.Dropdown, className = "w-auto")
     textWid = Utils.get_comp({"placeholder":"add word"}, IpywidgetsComponentsEnum.Text, className="w-auto", bind = False)

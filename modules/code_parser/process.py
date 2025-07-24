@@ -1,4 +1,4 @@
-from OpsDB import IOps
+from useful.OpsDB import IOps
 import ast
 
 class Ast2Dic(IOps):

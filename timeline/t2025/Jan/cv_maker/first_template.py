@@ -1,11 +1,11 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 import os
 import subprocess
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2023.dep_extractor.dependency_extractor import DicOps
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
 
 def makePdf(texContent, outputPath= None):
     if outputPath is None:

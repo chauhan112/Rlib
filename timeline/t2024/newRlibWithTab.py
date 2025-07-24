@@ -1,10 +1,10 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import TabComponent
 from modules.SearchSystem.modular import HideableWidget
 from timeline.t2023.newInstructionTable import NewInstructionTable
 import os
-from LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 
 def Tabbar():
     btns = Utils.container([], className="flex flex-wrap")

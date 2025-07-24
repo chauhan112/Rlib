@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name

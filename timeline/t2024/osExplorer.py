@@ -1,6 +1,6 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 import subprocess
-from SystemInfo import SystemInfo
+from useful.SystemInfo import SystemInfo
 import platform
 from enum import Enum
 import threading
@@ -9,8 +9,8 @@ from modules.Explorer.model import OSFileExplorer, ExplorerUtils
 from useful.ComparerDB import ComparerDB
 import os
 from timeline.t2023.searchSystem import NotepadOpener
-from FileDatabase import File
-from Path import Path
+from useful.FileDatabase import File
+from useful.Path import Path
 def OSExpOps():
     createFileBtn = Utils.get_comp({"description": "create file"},IpywidgetsComponentsEnum.Button, className = "w-auto")
     createFolderBtn = Utils.get_comp({"description": "create folder"},IpywidgetsComponentsEnum.Button, className = "w-auto")

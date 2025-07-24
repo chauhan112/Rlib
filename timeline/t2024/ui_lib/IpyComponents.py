@@ -1,5 +1,5 @@
 from timeline.t2024.experiments.morphism.withCIT.morphismWithCIT import IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import NameSpace
+from basic import NameSpace
 import ipywidgets as widgets
 from modules.SearchSystem.modular import HideableWidget
 class BaseComponentV2:

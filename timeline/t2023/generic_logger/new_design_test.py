@@ -1,9 +1,9 @@
 from timeline.t2023.generic_logger import SupportedTypes, LoggerButtonNameDecider, LoggerSearch, LoggerDataCRUDOpsView, NewRenderer
 from modules.SearchSystem.modular import HideableWidget
-from TimeDB import TimeDB
+from useful.TimeDB import TimeDB
 from timeline.t2023.generic_logger.components import SingleButtonController
-from useful.basic import NameSpace
-from SearchSystem import MultilineStringSearch
+from basic import NameSpace
+from useful.SearchSystem import MultilineStringSearch
 from timeline.t2023.searchSystem import Main as SearchWithPagination
 from useful.CryptsDB import CryptsDB
 import ipywidgets as widgets

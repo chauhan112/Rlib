@@ -1,11 +1,11 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.listCrudWithFilter import Main as LMain
-from Path import Path
-from SerializationDB import SerializationDB
+from useful.Path import Path
+from useful.SerializationDB import SerializationDB
 import copy
 import os
-from FileDatabase import File
+from useful.FileDatabase import File
 def SearcherUi():
     from timeline.t2024.CustomFileSearcher import FileContentSearcher
     from timeline.t2023.copy_search_reload import FilesSearch
@@ -91,7 +91,7 @@ class ProjectAnalyserData:
         SerializationDB.pickleOut(self.data, self.path2Save)
 def OSExplorerCustomized():
     from timeline.t2024.osExplorer import Main as OSMain
-    from WordDB import WordDB
+    from useful.WordDB import WordDB
     oe = OSMain.osExplorer()
     oe.views.mainSection.outputs.layout.remove_class("w-50")
     oe.views.mainSection.outputs.layout.add_class("w-100")

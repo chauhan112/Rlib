@@ -1,6 +1,6 @@
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox
 import ipywidgets as widgets
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 class IOpsBtn:
     def display(self):
         pass

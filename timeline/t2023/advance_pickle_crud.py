@@ -171,7 +171,7 @@ class LoggerController:
     def _ok_clicked(self, btn):
         self._ok_clicked_func()
     def loadFromPickleFolder(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         self._basic._view.fileView.pathWidg.set_index(0)
         self._basic._view.fileView.pathWidg.update()
         self._basic._view.fileView.pathDropWidg.options = jupyterDB.pickle().listDir()

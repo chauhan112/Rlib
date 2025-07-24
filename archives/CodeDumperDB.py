@@ -1,12 +1,12 @@
-from NotebookDB import NotebookDB
-from ListDB import ListDB
-from WordDB import WordDB
-from RegexDB import RegexDB
+from archives.NotebookDB import NotebookDB
+from useful.ListDB import ListDB
+from useful.WordDB import WordDB
+from useful.RegexDB import RegexDB
 
 class CodeDumperDB:
     def getSummaryDBofNDaysBefore(nDaysBefore = 0):
-        from SerializationDB import SerializationDB
-        from Database import Database
+        from useful.SerializationDB import SerializationDB
+        from useful.Database import Database
         path = CodeDumperDB.name(nDaysBefore)
         codes = CodeDumperDB.inputLinesFromDumper(SerializationDB.readPickle(path))
         return Database.allRunCellDB(_ih = codes)
@@ -32,7 +32,7 @@ class CodeDumperDB:
         return vals
     
     def name(nDaysEarlier = 0):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         return NotebookDB.outFilename(TimeDB.nDaysBefore(nDaysEarlier))
     
     def firstDay():
@@ -64,7 +64,7 @@ class Parser:
         return self.classes
     
     def allFunctionWithClasses(self):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         name = "fromFileImportClass"
         k = jupyterDB.pickle().read(name)
         return list(filter(lambda x: x.split(".")[0] in set(k.keys()),  

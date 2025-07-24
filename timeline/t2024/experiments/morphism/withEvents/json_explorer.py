@@ -1,5 +1,5 @@
 from timeline.t2024.experiments.morphismWithEvents.morphism import HideableWidget, NameSpace, Parents, Utils, ComponentsLib, IpywidgetsComponentsEnum,BaseComponent, widgets, ValsWrapper
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 class Main:
     def jsonExplorer():
         je = JSONExplorer()

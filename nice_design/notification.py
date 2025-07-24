@@ -3,7 +3,7 @@ class INotifier:
         pass
 class Notifier:
     def playMusic(musicPath):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         OpsDB.cmd().onthread(f"cvlc \"{musicPath}\" --play-and-exit")
 class BasicSetup:
     def __init__(self, title=None, msg=None, time_period: int = 0, time_out: int= 2):
@@ -23,7 +23,7 @@ class BasicSetup:
         self._msg = msg
 class WindowNotifier(INotifier, BasicSetup):
     def notify(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         TimeDB.setTimer().oneTimeTimer(self._time_period, self._notify)
     def _notify(self):
         from plyer import notification
@@ -37,10 +37,10 @@ class WindowNotifier(INotifier, BasicSetup):
         )
 class LinuxNotifier(INotifier, BasicSetup):
     def notify(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         TimeDB.setTimer().oneTimeTimer(self._time_period, self._notify)
     def _notify(self):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         txt = f"notify-send \"{self._msg}\""
         try:
             txt = f"notify-send \"{self._title}\" \"{self._msg}\""

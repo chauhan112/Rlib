@@ -1,5 +1,5 @@
-from ListDB import ListDB
-from FileDatabase import File
+from useful.ListDB import ListDB
+from useful.FileDatabase import File
 
 class Tournament:
     def __init__(self, v=None):

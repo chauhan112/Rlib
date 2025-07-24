@@ -152,7 +152,7 @@ class Scheduler:
             def archive():
                 class Tem:
                     def _pickle():
-                        from PickleCRUDDB import PickleCRUD
+                        from useful.PickleCRUDDB import PickleCRUD
                         return PickleCRUD("temps", loc= ["rlibs","Scheduler"])
                     def add(idNr):
                         Temp.stop(idNr)
@@ -160,7 +160,7 @@ class Scheduler:
                         a.add(['jobs archive', idNr], Scheduler.jobs[idNr])
                         del Scheduler.jobs[idNr]
                     def show(key, reg = False ):
-                        from SearchSystem import MultilineStringSearch
+                        from useful.SearchSystem import MultilineStringSearch
                         a = MultilineStringSearch(Tem.showAll(), allRes=True)
                         ind = a.search(key, reg=reg)
                         vals = []
@@ -288,7 +288,7 @@ class TimeDB:
         return Temp()
 class EventCalender:
     def _pickle():
-        from PickleCRUDDB import PickleCRUD
+        from useful.PickleCRUDDB import PickleCRUD
         return PickleCRUD("oldInfos", loc= ["LifeLogs", "events"])
     def setEvent(date: str, time:str, eventDescription:str):
         """ date - dd.mm.yyyy 16.06.2021, time - 1800, 18:00"""
@@ -305,7 +305,7 @@ class EventCalender:
             dates = filter(lambda x: x[2]>=d, dates)
         return EventCalender._founds(dates)
     def _founds(dates):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         pi = EventCalender._pickle()
         founds = {}
         for y,m,d in dates:

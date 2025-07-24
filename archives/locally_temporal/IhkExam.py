@@ -1,6 +1,6 @@
-from Path import FrequentPaths, Path
+from useful.Path import FrequentPaths, Path
 class IhkExam:
-    from Path import FrequentPaths
+    from useful.Path import FrequentPaths
     ihkPath = FrequentPaths.pathAsDic()["ihk exam"]
     dbs = {}
     def qa():
@@ -41,12 +41,12 @@ class IhkExam:
                         return Path.joinPath(qaPath, "wiso")
 
                     def solutions(self):                        
-                        from ExplorerDB import ExplorerDB
+                        from useful.ExplorerDB import ExplorerDB
                         return ExplorerDB.zipExplorer(Path.joinPath(qaPath, "wiso","WiSo IHK.zip"))
                 return WisoT()
         return Tme
     def fileSearch(files,word = ""):
-        from SearchSystem import FilePathsSearchEngine
+        from useful.SearchSystem import FilePathsSearchEngine
         f = FilePathsSearchEngine(files)
         f.search(word)
         return f
@@ -63,9 +63,9 @@ class IhkExam:
                 return files
                       
             def taskManager():
-                from jupyterDB import jupyterDB
-                from ListDB import ListDB
-                from Path import Path
+                from useful.jupyterDB import jupyterDB
+                from useful.ListDB import ListDB
+                from useful.Path import Path
                 class Ops:
                     name = None
                     def add(year):
@@ -146,8 +146,8 @@ class IhkExam:
             def toPageNr():
                 class TeInterface:
                     def search(self,word = ""):
-                        from SearchSystem import GeneralSearchEngine
-                        from FileDatabase import ChromeAppPdfOpener
+                        from useful.SearchSystem import GeneralSearchEngine
+                        from useful.FileDatabase import ChromeAppPdfOpener
                         class Te:
                             def makeDic(pages):
                                 import os
@@ -165,8 +165,8 @@ class IhkExam:
                     def ops(self):
                         return TeInterface._ops(self.getIndex())
                     def _ops(sub):
-                        from jupyterDB import jupyterDB
-                        from ListDB import ListDB
+                        from useful.jupyterDB import jupyterDB
+                        from useful.ListDB import ListDB
                         class TeTe:
                             sub = None
                             def add(index, value):
@@ -228,7 +228,7 @@ class IhkExam:
             def summary(word = ""):
                 return IhkExam.fileSearch(Path.getFiles(Path.joinPath(IhkExam.ihkPath, "docs", "zusaamenfassuung"), walk=True), word)
             def explorer():
-                from ExplorerDB import ExplorerDB
+                from useful.ExplorerDB import ExplorerDB
                 return ExplorerDB.osFileExplorer(Path.joinPath(IhkExam.ihkPath, "docs"))
             
             def booksDB(refresh = False):
@@ -240,26 +240,26 @@ class IhkExam:
         return Temp
     
     def faysal_docs():
-        from ExplorerDB import ExplorerDB
+        from useful.ExplorerDB import ExplorerDB
         return ExplorerDB.zipExplorer(IhkExam.ihkPath + os.sep + "IHK_Komplett.zip")
         
         
 class GP:
     def getpath():
-        from Path import FrequentPaths
+        from useful.Path import FrequentPaths
         ihkPath = FrequentPaths.pathAsDic()["ihk exam"]
         return Path.joinPath(ihkPath, r"ops\gros_prog")
 
     def explorer(showContent = False):
-        from ExplorerDB import ExplorerDB
-        from jupyterDB import jupyterDB
-        from TreeDB import TreeDB
+        from useful.ExplorerDB import ExplorerDB
+        from useful.jupyterDB import jupyterDB
+        from useful.TreeDB import TreeDB
         exp = ExplorerDB.osFileExplorer(GP.getpath())
         if(not showContent):
             exp.setFileDisplayer("ipynb", lambda x: TreeDB.openWebLink(jupyterDB.localIpyLink(x, False)))
         return exp
 
     def structure():
-        from FileDatabase import File
-        from Path import Path
+        from useful.FileDatabase import File
+        from useful.Path import Path
         File.openFile(Path.joinPath(GP.getpath(), r"Hinweise_GroProg.pdf"))

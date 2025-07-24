@@ -13,7 +13,7 @@ class CopyContentToServerClipboard(ICommand):
     def serialize(self) -> tuple:
         return (commands.Copy2Clipboard.name, self.content)
     def run(self):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         File.createFile('clipboard.txt', self.content)
     def load(self, content):
         self.content = content[1]

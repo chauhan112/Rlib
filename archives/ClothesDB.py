@@ -66,7 +66,7 @@ class ClothesDB:
         return Tem
     
     def search():
-        from SearchSystem import DicSearchEngine
+        from useful.SearchSystem import DicSearchEngine
         pkl = StuffDB._read()
         content = pkl.getContent()[ClothesDB.loc]
         class Temp:
@@ -90,5 +90,5 @@ class ClothesDB:
         return Temp
     
     def _read():
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(ClothesDB.storageID)

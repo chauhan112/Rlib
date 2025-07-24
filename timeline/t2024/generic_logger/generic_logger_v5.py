@@ -1,5 +1,5 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2023.generic_logger.components import GComponent
 from timeline.t2024.ui_lib.refactored_key_value_adder import Main as KVMain
 from timeline.t2024.listCrudWithFilter import Main as LMain
@@ -78,7 +78,7 @@ def formMkaer():
 def gl_ke(filename):
     import os
     from timeline.t2024.generic_logger.generic_loggerV4 import Main
-    from LibsDB import LibsDB
+    from useful.LibsDB import LibsDB
     cnt = Main.generic_logger(filename)
     cnt.process.loggerDataView.handlers.formMaker = formMkaer
     cnt.process.container.views.container.outputs.layout

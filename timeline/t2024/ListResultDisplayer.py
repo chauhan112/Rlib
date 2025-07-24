@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import Pagination
 import math
 from modules.Explorer.model import ExplorerUtils

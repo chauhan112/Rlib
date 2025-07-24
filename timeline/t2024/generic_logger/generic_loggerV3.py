@@ -2,7 +2,7 @@ from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils,
 import math
 from timeline.t2024.experiments.namespace_generic_logger import DictionaryCRUD
 from useful.CryptsDB import CryptsDB
-from useful.basic import NameSpace, addToNameSpace
+from basic import NameSpace, addToNameSpace
 def Constants():
     constants = NameSpace()
     constants.strings = NameSpace()
@@ -543,7 +543,7 @@ def KeyValueComponent():
         editMoreInfoBtn.handlers.handle = editing
         
         addToNameSpace(state, locals(), ["state", "addToNameSpace"])
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         if hasattr(jupyterDB, "_params"):
             moreInfoLay.state.controller._basic._scope = jupyterDB._params
     state = NameSpace()

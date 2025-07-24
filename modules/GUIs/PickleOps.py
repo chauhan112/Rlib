@@ -1,8 +1,8 @@
 import ipywidgets as widgets
-from WidgetsDB import WidgetsDB
-from ListDB import ListDB
+from useful.WidgetsDB import WidgetsDB
+from useful.ListDB import ListDB
 from modules.GUIs.model import KeyManager
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 
 class OpsWid:
     def __init__(self):
@@ -64,7 +64,7 @@ class PickleOpsWidget:
 
 class PickleExpController:
     def __init__(self, file = None, displayIt = True):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         self._options = jupyterDB.pickle().listDir()
         self.set_view(PickleOpsWidget(file, displayIt=displayIt))
         self.set_model(PickleOpsModel())
@@ -324,7 +324,7 @@ class PickleOpsModel:
         self._sync = True
         
     def loadFileFromDB(self, fileName):
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         self._loc = []
         self.content = jupyterDB.pickle().read(fileName)
         self.filePath = jupyterDB.pickle().path(fileName)
@@ -357,7 +357,7 @@ class PickleOpsModel:
             self._loc.pop()
 
     def add(self, key, val):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         ListDB.dicOps().add(self.content,self._loc + [key], val)
         if self._sync:
             SerializationDB.pickleOut(self.content, self.filePath)

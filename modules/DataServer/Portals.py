@@ -50,7 +50,7 @@ class GMessageReader(IMessageReader):
         froPath = self.portal.getPath(fromC)
         if not os.path.exists(froPath):
             return []
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         msgPath = self.portal.getPath(fromC, 'msg.pkl')
         msg = []
         if os.path.exists(msgPath):
@@ -68,7 +68,7 @@ class GMessageWriter(IMessageWriter, GDataSetable):
         topath = self.portal.getPath(to)
         if not os.path.exists(topath):
             os.makedirs(topath)
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         msgPath = self.portal.getPath(to, 'msg.pkl')
         msg = []
         if os.path.exists(msgPath):

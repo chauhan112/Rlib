@@ -20,7 +20,7 @@ class SerializationDB:
         return pickle.loads(binVal)
 
     def serializeProject(files, projectName):
-        from ProjectSerialization import ProjectSerialization
+        from useful.ProjectSerialization import ProjectSerialization
         k = ProjectSerialization(files, projectName)
         k.archive()
 

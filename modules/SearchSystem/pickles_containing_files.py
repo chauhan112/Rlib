@@ -1,7 +1,7 @@
 from modules.SearchSystem.modular import JupyterResultDisplayer, DisplayNElement, GDisplayableResult
-from FileDatabase import NotepadAppTextOpener, File
+from useful.FileDatabase import NotepadAppTextOpener, File
 import os
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 class PickleManyFilesSearch:
     def __init__(self):
         self._jrd = JupyterResultDisplayer()
@@ -18,7 +18,7 @@ class PickleManyFilesSearch:
         self._jrd.display()
         
     def set_pickle(self, pickle): # eg: D:\TimeLine\global\codes\py_files.pkl
-        from SearchSystem import MultilineStringSearch
+        from useful.SearchSystem import MultilineStringSearch
         self._pickle = pickle
         self._content = SerializationDB.readPickle(self._pickle)
         self._line_map = {}

@@ -1,4 +1,4 @@
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 
 def SameRenderer():
     from timeline.t2024.ui_lib.IpyComponents import IpywidgetsComponentsEnum, Utils, ComponentsLib
@@ -60,7 +60,7 @@ def SameRenderer():
 
 def OSDisplayer():
     from timeline.t2024.osExplorer import OSExplorer
-    from ModuleDB import ModuleDB
+    from useful.ModuleDB import ModuleDB
     from IPython.display import display
     def DataLoggerModel():
         path = "/"

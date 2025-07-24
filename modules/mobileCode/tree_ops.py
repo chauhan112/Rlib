@@ -1,5 +1,5 @@
 import os
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 from modules.Explorer.personalizedWidgets import IExplorerDisplayer
 from modules.Explorer.model import IExplorer
 
@@ -136,7 +136,7 @@ class CmdExplorerDisplayer(IExplorerDisplayer):
         return self._exp
     def get_commands(self):
         return self._commands
-from OpsDB import IOps
+from useful.OpsDB import IOps
 from modules.FileAnalyser.FileAnalyser import GNode
 class Dic2Graph(IOps):
     def __init__(self):
@@ -269,7 +269,7 @@ class SyncNodeWithFile(IOps):
         self._root = root
         self._file = file
     def execute(self):
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         nd = Node2Dic()
         nd.set_root(self._root)
         SerializationDB.pickleOut(nd.execute(), self._file)
@@ -308,7 +308,7 @@ class FileModel:
         return self._recycle_file
     def _initialize(self, path):
         from modules.Logger.TextWriter import TextWriter, TextParser
-        from FileDatabase import File
+        from useful.FileDatabase import File
         self._working_dir = path
         info_file = self._working_dir + os.sep + "trees.txt"
         self._recycle_file = self._working_dir + os.sep + ".storage.pkl"
@@ -332,7 +332,7 @@ class NodeOnChangeApply:
     def __init__(self, **infos):
         self._infos = infos
     def apply(self):
-        from DataStructure import MaxDepthInverseCalculator
+        from useful.DataStructure import MaxDepthInverseCalculator
         MaxDepthInverseCalculator(self._infos['root']).execute()
         FillNumber(self._infos['root']).execute()
         if 'model' in self._infos:
@@ -513,7 +513,7 @@ class OpenFolderCommand(GCommand, ModelNeedable):
         dirpath = os.path.dirname(self._model.get_current_file())
         if dirpath == "":
             dirpath = "."
-        from Path import Path
+        from useful.Path import Path
         Path.openExplorerAt(dirpath)
     def get_help(self):
         return f"{self.idd} -> open explorer at current file path"

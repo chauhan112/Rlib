@@ -1,9 +1,9 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 
 
 from datetime import datetime
-from TimeDB import TimeDB
+from useful.TimeDB import TimeDB
 def TimeToolsForLog():
     def getTodayKey():
         return s.handlers.nDayBeforeStamp(0)

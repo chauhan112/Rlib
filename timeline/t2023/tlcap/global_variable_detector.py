@@ -1,6 +1,6 @@
 from timeline.t2022.TLCAP import Main,NameFinder, Tools, LocationData
 from useful.ComparerDB import ComparerDB
-from RegexDB import RegexDB
+from useful.RegexDB import RegexDB
 class ILocCheck:
     def check(self, loc:list):
         pass

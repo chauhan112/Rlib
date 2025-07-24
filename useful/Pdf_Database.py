@@ -1,11 +1,11 @@
 import os
 import PyPDF2
-from Path import Path
+from useful.Path import Path
 import yaml
-from FileDatabase import File
+from useful.FileDatabase import File
 import pikepdf
 from pikepdf import Pdf
-from WidgetsDB import WidgetsDB
+from useful.WidgetsDB import WidgetsDB
 
 from enum import Enum
 class PDFOPS(Enum):
@@ -172,8 +172,8 @@ class PDF:
 
     def getPdfPageAsImage(pdfPath, pageNr):
         from useful.CryptsDB import CryptsDB
-        from Path import Path
-        from LibsDB import LibsDB
+        from useful.Path import Path
+        from useful.LibsDB import LibsDB
         import os
         tempPdf = CryptsDB.generateRandomName(20) + ".pdf"
         PDF.extractPdf(pdfPath, tempPdf, (pageNr-1,pageNr))
@@ -192,8 +192,8 @@ class PDF:
         my_pdf.save(outPath)
         
     def searchInPdfsList(pdfs, word):
-        from SearchSystem import PdfSearchEngine
-        from Database import Database
+        from useful.SearchSystem import PdfSearchEngine
+        from useful.Database import Database
         db = PdfSearchEngine(pdfs)
         return Database.dbSearch(db, word)
         

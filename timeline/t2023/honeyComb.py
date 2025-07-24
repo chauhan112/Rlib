@@ -1,4 +1,4 @@
-from FileDatabase import File
+from useful.FileDatabase import File
 class Directions:
     Left = (0, -2)
     Right = (0, 2)
@@ -178,7 +178,7 @@ class HexCoordinateSystem:
         return x, (y-1)/2
 class Level2:
     def load_file(file):
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         content = File.getFileContent(file)
         contentList = WordDB.regexSplit("\n\n+", content)[1:]
         bhs = []

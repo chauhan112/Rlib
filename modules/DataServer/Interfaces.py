@@ -18,7 +18,7 @@ class INode:
 
 class GNode(INode):
     def __init__(self, updateInterval):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         self.timer = TimeDB.setTimer().regularlyUpdateTime(updateInterval, self.run)
 
 class IMessage:

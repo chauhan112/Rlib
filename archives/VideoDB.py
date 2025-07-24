@@ -65,22 +65,22 @@ class AudioDB:
         return Temp
     def playText(text):
         import pyttsx3
-        from FileDatabase import File
+        from useful.FileDatabase import File
         engine = pyttsx3.init()
         name="pythonsezv7W.mp3"
         engine.save_to_file(text, name)
         engine.runAndWait()
         File.openFile(name)
         
-from OpsDB import IOps
+from useful.OpsDB import IOps
 class CategorizeVideoIntoDifferentSizes(IOps):
     def __init__(self, files, target_folder= None):
         self.files = files
         self._outfolder = target_folder
     def execute(self):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         import os
-        from Path import Path
+        from useful.Path import Path
 
         sizes = {f: VideoDB.size(f) for f in self.files}
         sizesInMin = {f:sizes[f]/60 for f in sizes}

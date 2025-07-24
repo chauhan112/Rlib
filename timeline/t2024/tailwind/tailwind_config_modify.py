@@ -1,5 +1,5 @@
-from useful.basic import Main as ObjMaker
-from FileDatabase import File
+from basic import Main as ObjMaker
+from useful.FileDatabase import File
 
 def LanguageParser():
     content = ""

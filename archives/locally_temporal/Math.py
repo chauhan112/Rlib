@@ -1,12 +1,12 @@
-from Path import Path
+from useful.Path import Path
 class _Opener:
     def pathDB(filesContainer):
-        from SearchSystem import FilePathsSearchEngine
+        from useful.SearchSystem import FilePathsSearchEngine
         fdb = FilePathsSearchEngine(filesContainer)
         return fdb
     
     def pathAsDic():
-        from Path import FrequentPaths
+        from useful.Path import FrequentPaths
         return FrequentPaths.pathAsDic()
 
 class _DocInterface:
@@ -17,14 +17,14 @@ class _DocInterface:
     def pathDB(self):
         return _Opener.pathDB(self._getFiles())
     def contentDB(self):
-        from Database import Database
+        from useful.Database import Database
         if(self._conDB is None):
             self._conDB = Database.pdfDB(self._getFiles())
         return self._conDB
     def set_files(self, files):
         self._files = files
 class MathTheoryAndExercises:
-    from Database import Database
+    from useful.Database import Database
     dbs = {}
     def lin_alg():
         class Teml:
@@ -220,7 +220,7 @@ class MathTheoryAndExercises:
                         return Q()
                     
                     def answers():
-                        from SearchSystem import FoldersExplorerDisplayer
+                        from useful.SearchSystem import FoldersExplorerDisplayer
                         path = Path.joinPath(Temp._getPath(), "operations", "Homework")
                         folders = Path.getDir(path)
                         fdb = FoldersExplorerDisplayer(folders)

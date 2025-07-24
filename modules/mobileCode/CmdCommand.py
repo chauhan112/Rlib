@@ -1,5 +1,5 @@
 from modules.Explorer.model import OSFileExplorer, DictionaryExplorer
-from OpsDB import IOps
+from useful.OpsDB import IOps
 class IRunnable:
     def run(self):
         raise NotImplementedError("abstract method")
@@ -68,7 +68,7 @@ class OSExpList(IReturnable, GDataSetable, GParentable,IListOps):
     def get(self):
         if self.exp is None:
             self.setData(self.parent.container)
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         return ListDB.flatten(self.exp.dirList())
     def setData(self, path):
         self.exp = OSFileExplorer(path)
@@ -81,7 +81,7 @@ class DicList(IReturnable, GDataSetable, GParentable, IListOps):
         self.dicExp = None
     def get(self):
         self._setValue()
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         return ['..'] + ListDB.flatten(self.dicExp.keys())
     def setData(self, dic):
         self.dicExp = DictionaryExplorer(dic)

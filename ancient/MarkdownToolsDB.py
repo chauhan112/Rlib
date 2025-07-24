@@ -1,5 +1,5 @@
 from IPython.display import display,Markdown
-from ListDB import ListDB
+from useful.ListDB import ListDB
 
 
 class MarkdownToolsDB:
@@ -86,7 +86,7 @@ class MarkdownToolsDB:
         pipe = MarkdownToolsDB.dic['pipe']
         return MarkdownToolsDB.brace(val, lr = pipe)
     def search(word):
-        from Database import Database
+        from useful.Database import Database
         return Database.dicDB(MarkdownToolsDB.dic)
 
     def limit(var, tends2):

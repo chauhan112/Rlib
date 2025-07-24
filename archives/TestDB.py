@@ -2,13 +2,13 @@ import os
 
 class TestDB:
     def iterativeJacobiTest():
-        from NumericalAnalysis import NumericalAnalysis as na
+        from archives.NumericalAnalysis import NumericalAnalysis as na
         k = na.jacobiInterativeSolution([lambda x: 0.5 -1.5* x, lambda x: (5 + x)/4],[0,0], 100) == [-1.0, 1.0]
         print(k)
 
     def pickleTest():
         from useful.CryptsDB import CryptsDB
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         data = {"a": "somtezh"}
         name = CryptsDB.generateRandomName()
         SerializationDB.pickleOut(data, name)
@@ -16,7 +16,7 @@ class TestDB:
             print('pickle test passed')
         
     def reListTest():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         inp = ['2. app to generate data about bought stuffs',
             '3. clothes management app',
             '4. tree structure to diagram']
@@ -29,7 +29,7 @@ class TestDB:
 
     def combinerTest():
         from StaggingAreaDB import StaggingAreaDB
-        from MathObjectDB import OpenRange
+        from ancient.MathObjectDB import OpenRange
         testCases = {
             'input': {
                 'l1': [OpenRange(0,3), OpenRange(3, 4), OpenRange(4, 7), OpenRange(8, 9), OpenRange(9, 12)],
@@ -44,7 +44,7 @@ class TestDB:
         assert [str(i) for i in res2] == [str(i) for i in testCases['output']] , 'failed'
         
     def add2DicTest():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         dic = {'key1': {'key11': 'val11'}, 'key2': {'key21': {'key211': 'val211'}}}
         location = ['key2', 'key21', 'key212']
         val = 'val212'
@@ -53,7 +53,7 @@ class TestDB:
         assert(dic == dicOut)
     
     def branchPathTest():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         dic1 = {'a': {'aa':'val', 'bb': {'aaa': 'val', 'aab': {'aaba': 1, 'aabb': 2}}}, 'b': 4}
         dic2 = {'a': 1, 'b': 4, 'c': 5}
         res1 = [['a','aa'],['a','bb','aaa'], ['a','bb','aab', 'aaba'],['a','bb','aab', 'aabb'], ['b']]
@@ -62,7 +62,7 @@ class TestDB:
         assert ListDB.branchPath(dic2) == dic2
         
     def dicFlattenTest():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         inp = {'a':{'b':{'c': 's','d':'a'}, "p":'m'},'k':'kl'}
         out = {'c': 's', 'd': 'a', 'p': 'm', 'k': 'kl'}
         assert(ListDB.dicOps().flatten(inp) == out)
@@ -73,7 +73,7 @@ class TestDB:
         assert(ListDB.dicOps().flatten(inp2) == out2)
     
     def replaceTest():
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         inp = """+ sizeHint() const: QSize
     + updateRecentMenu():"""
         reg = "(?<=\\+ ).*(?=\\()"
@@ -83,13 +83,13 @@ class TestDB:
         assert(RegexDB.replace(reg, inp, func) == out)
         
     def openNotebooktTest():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         inp = r"D:\cloud\timeline\fifth semester\praxis bericht\ops\latex"
         # expected output is printed url which can be clicked to open 
         jupyterDB.localIpyLink(inp)
     
     def replaceTest2():
-        from WordDB import WordDB
+        from useful.WordDB import WordDB
         class WordReplaceTest:
             def withFuncTest():
                 inp = "Ram has brought his laptop."
@@ -156,14 +156,14 @@ class TestDB:
         us.setData(ast.parse(code))
         assert set(us.get()) == set(exp), 'faild'
     def dicDeleteTest():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         dic = {"a": 1, 'b':{'c, d': 2}}
         loc = ['b', 'c, d']
         ListDB.dicOps().delete(dic, loc)
         assert dic == {'a': 1, 'b': {}}
         
     def depth_calc_test():
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         a = {}
         a2 = {'1':2}
         a3 = {1:{2:{3:4}}}
@@ -173,7 +173,7 @@ class TestDB:
         
 class JupyterDBCodeDumper:
     def test_dumper_path():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         foldername = os.path.basename(jupyterDB.codeDumper()._dumper_path)
         assert foldername == "daily code dumper"
         

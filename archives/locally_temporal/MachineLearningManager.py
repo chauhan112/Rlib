@@ -1,7 +1,7 @@
-from Path import FrequentPaths, Path
-from SearchSystem import DicSearchEngine
-from FileDatabase import File
-from Database import Database
+from useful.Path import FrequentPaths, Path
+from useful.SearchSystem import DicSearchEngine
+from useful.FileDatabase import File
+from useful.Database import Database
 class Sth(DicSearchEngine):
     def _callback(self, item):
         import webbrowser
@@ -62,8 +62,8 @@ class MachineLearningManager:
                 s = Sth(files)
                 return s
             def db():
-                from FileDatabase import File
-                from SearchSystem import FilesContentSearchEngine
+                from useful.FileDatabase import File
+                from useful.SearchSystem import FilesContentSearchEngine
                 class HtmlContentSearch(FilesContentSearchEngine):
                     def _callback(self, item):
                         File.openFile(item[0])
@@ -74,14 +74,14 @@ class MachineLearningManager:
                 
         return Temp
     def getLinkForFile(f):
-        from RegexDB import RegexDB
+        from useful.RegexDB import RegexDB
         return RegexDB.replace(".*timeline",f, 
                                lambda x: "http://localhost:8888/notebooks").replace(os.sep, "/").replace(" ","%20")
     def folder():
         Path.openExplorerAt(Path.joinPath(FrequentPaths.pathAsDic()["ml"]))
 
     def codes():
-        from SearchSystem import FilesContentSearchEngine
+        from useful.SearchSystem import FilesContentSearchEngine
         p = Path.joinPath(FrequentPaths.pathAsDic()["ml"], r"operations\class works\exam prep")
         files = Path.filesWithExtension("py", p)
         return FilesContentSearchEngine(files)

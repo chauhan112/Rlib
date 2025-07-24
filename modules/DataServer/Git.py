@@ -19,7 +19,7 @@ class GitPortal(GPortal):
 
     def sendMessage(self, data, to:IContact):
         self.gitManager.pull()
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         self.pathManger.createPathIfDoesNotExists(to.getId())
         dataWithInfo = {Tools.detailedTimeStamp(): data}
         path = self.pathManger.getPathTo(to.getId(), 'msg.pkl')
@@ -32,7 +32,7 @@ class GitPortal(GPortal):
 
     def receiveMessage(self, fromC:IContact):
         self.gitManager.pull()
-        from SerializationDB import SerializationDB
+        from useful.SerializationDB import SerializationDB
         path = self.pathManger.getPathTo(fromC.getId(), 'msg.pkl')
         if(os.path.exists(path)):
             content = SerializationDB.readPickle(path)

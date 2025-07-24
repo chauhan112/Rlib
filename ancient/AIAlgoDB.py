@@ -70,7 +70,7 @@ class AIAlgoDB:
     def incrementalSearch(wordBags = [], resultSize = 1, cost = 3):
         # Auto Complete
         from fast_autocomplete import AutoComplete
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         class _AutoComplete:
             def __init__(self, container, cost = 3, size = 1, synonyms = None):
                 self.container = {k:{} for k in container}

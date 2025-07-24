@@ -1,10 +1,10 @@
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
-from useful.basic import Main as ObjMaker
+from basic import Main as ObjMaker
 from timeline.t2024.generic_logger.generic_loggerV3 import SearchComponent, KeyValueComponent,ResultDisplayers, FieldComponent
 from timeline.t2023.generic_logger import FieldsManagerV2, SupportedTypes, NewRenderer, LoggerSearch, LoggerButtonNameDecider 
 from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SingleField, MetaCRUDUI, UpdateMenu, GenericDateTime
-from SearchSystem import MultilineStringSearch
-from TimeDB import TimeDB
+from useful.SearchSystem import MultilineStringSearch
+from useful.TimeDB import TimeDB
 from useful.CryptsDB import CryptsDB
 from timeline.t2023.sql_crud import SqlCRUD
 from timeline.t2024.ui_lib.refactored_key_value_adder import DicListCRUD

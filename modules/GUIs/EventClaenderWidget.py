@@ -1,7 +1,7 @@
 import ipywidgets as widgets
 import ipydatetime
 import datetime
-from TimeDB import EventCalender
+from useful.TimeDB import EventCalender
 class _EventCalenderOpsWidget:
     def __init__(self):
         print("Event calender")
@@ -66,7 +66,7 @@ class EventCalenderModel:
         self.calender = EventCalender
     
     def nowTimeTillMin(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         (y,m,d), (h,minu, _) =TimeDB.today()
         return datetime.datetime(y, m,d, h,minu)
     

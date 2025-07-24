@@ -1,6 +1,6 @@
-from ListDB import ListDB
+from useful.ListDB import ListDB
 import yaml
-from WordDB import WordDB
+from useful.WordDB import WordDB
 class ParserDB:
     def parseBlock(contentInfos):
         txt = ''
@@ -48,9 +48,9 @@ class ParserDB:
                 i, key))
         return ParserDB.mergeDic(ParserDB.parseBlock(newG))
     def getFunctions(content):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         from ancient.CodeDB import CodeDB
-        from Path import Path
+        from useful.Path import Path
         filePath = "temp.py"
         File.overWrite(filePath, content)
         p = CodeDB.parseFile(filePath)
@@ -74,7 +74,7 @@ class ParserDB:
             raise IOError("Wrong format")
         return groups
         
-from RegexDB import RegexDB
+from useful.RegexDB import RegexDB
 class CustomParser:
     def parser_layers(content):
         pass

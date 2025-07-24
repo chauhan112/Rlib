@@ -1,6 +1,6 @@
 from modules.Explorer.model import IExplorer
 import ast
-from ModuleDB import ModuleDB
+from useful.ModuleDB import ModuleDB
 
 
 class AstExplorer(IExplorer):
@@ -32,7 +32,7 @@ class AstExplorer(IExplorer):
         self._content = content
         self.set_model(ast.parse(content))
     def set_file(self, file: str):
-        from FileDatabase import File
+        from useful.FileDatabase import File
         self._file_path = file
         self.set_content(File.getFileContent(file))
 

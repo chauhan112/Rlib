@@ -1,9 +1,9 @@
-from OpsDB import IOps
+from useful.OpsDB import IOps
 from modules.mobileCode.CmdCommand import GCommand, IDisplayElements, ICommand, \
     ResultFilter, Search, DicList
 from modules.Explorer.model import DictionaryExplorer
 from treelib import Tree, Node
-from ListDB import ListDB
+from useful.ListDB import ListDB
 class DisplayTree(IOps):
     def __init__(self, dic, parent='root'):
         self.data = dic

@@ -2,15 +2,15 @@ import ipywidgets as widgets
 from modules.SearchSystem.modular import HideableWidget
 from modules.Explorer.personalizedWidgets import CustomOutput
 from timeline.t2023.searchSystem import Main as SearchWithPagination
-from PickleCRUDDB import PickleCRUDOps
+from useful.PickleCRUDDB import PickleCRUDOps
 from enum import Enum
-from SearchSystem import ISearch
+from useful.SearchSystem import ISearch
 from useful.ComparerDB import ComparerDB
-from SerializationDB import SerializationDB
-from LibsDB import LibsDB
+from useful.SerializationDB import SerializationDB
+from useful.LibsDB import LibsDB
 from useful.CryptsDB import CryptsDB
 from timeline.t2023.generic_logger.components import TextInput, TextAreaInput, BooleanOptionInput, DropdownInput, DateInput, TimeInput, DateTimeInput, MultipleSelect, KeyValueInput, SingleButtonController
-from useful.basic import BasicController, LoggerSystem
+from basic import BasicController, LoggerSystem
 from timeline.t2023.generic_logger.UIComponents import CrudViewV2, SearchComponent, ObjMaker, SingleField, UpdateMenu
 from timeline.t2024.ui_lib.IpyComponents import Utils, IpywidgetsComponentsEnum, ComponentsLib
 
@@ -284,7 +284,7 @@ class LoggerSearcherController:
         return btn.outputs.layout
     def get_default_searcher(self):
         from timeline.t2023.links_crud_ui import SearchEngine, ButtonViewWithPagination
-        from SearchSystem import MultilineStringSearch
+        from useful.SearchSystem import MultilineStringSearch
         see = SearchEngine()
         bvvp = ButtonViewWithPagination()
         bvvp.set_element_maker(self._btn_maker)

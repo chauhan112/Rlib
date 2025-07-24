@@ -3,7 +3,7 @@ from projects.kami.kami import KamiPart, IFontWriter,ExportQuestion, QuestionFro
 from projects.kami.kami import DistanceCalcWithDijektra, KamiSolverTreeMethod, ImageSplitterIntoBlocks
 from ancient.ImageProcessing import ColorBoundFromPickle
 from modules.Explorer.personalizedWidgets import IBox, GenerateNRowsBox
-from SerializationDB import SerializationDB
+from useful.SerializationDB import SerializationDB
 GRID_SIZE = (28,10)
 class Main:
     def nebors_finder(img_path, color_map):
@@ -92,7 +92,7 @@ class Main:
     def project():
         class Temp:
             def display_all(set_nr):
-                from Path import Path
+                from useful.Path import Path
                 path = f'kami-images/set-{set_nr}/'
                 pngs = Path.filesWithExtension('png', path)
                 for png in pngs:
@@ -112,7 +112,7 @@ class Main:
             def nebor():
                 class Tem:
                     def get_key_depth_map(pkl):
-                        from ListDB import ListDB
+                        from useful.ListDB import ListDB
                         from modules.Explorer.DictionaryExplorer import Graph2NodeTreeMakerBreadthFirstSearch
                         qfi = QuestionFromPickle(pkl)
                         rel = qfi.get_info() ['relation']
@@ -183,9 +183,9 @@ class AnalyserGUI(IBox):
     def __init__(self):
         self._lay = self._get_layout()
     def _get_layout(self):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         import ipywidgets as widgets
-        from Path import Path
+        from useful.Path import Path
         lay = GenerateNRowsBox(4)
         row1 = lay.get_child(0)
         row1.add_widget(widgets.Label(value = "Current image:: "))

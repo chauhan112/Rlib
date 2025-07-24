@@ -1,8 +1,8 @@
 import os
-from FileDatabase import File
+from useful.FileDatabase import File
 import ast
-from ListDB import ListDB
-from jupyterDB import jupyterDB
+from useful.ListDB import ListDB
+from useful.jupyterDB import jupyterDB
 
 class NameSpace:
     pass
@@ -971,7 +971,7 @@ class RenameSameNameClasses:
         else:
             print("error a different type of node was detected", node)
     def rename(self):
-        from OpsDB import OpsDB
+        from useful.OpsDB import OpsDB
         clsToFiles = OpsDB.group(self._riac._resolved, lambda x: x[1])
         toRename = list(filter(lambda x: len(clsToFiles[x]) > 1, clsToFiles))
         for clsName in toRename:

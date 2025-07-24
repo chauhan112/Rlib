@@ -1,9 +1,9 @@
-from jupyterDB import jupyterDB
+from useful.jupyterDB import jupyterDB
 import urllib
 import bs4
-from TreeDB import TreeDB
-from htmlDB import htmlDB
-from OpsDB import IOps
+from useful.TreeDB import TreeDB
+from useful.htmlDB import htmlDB
+from useful.OpsDB import IOps
 from modules.Explorer.personalizedWidgets import IExplorerDisplayer
 
 class Main:
@@ -65,13 +65,13 @@ class DrawIOExplorer(IExplorerDisplayer):
 
     def _file_func(self, x, model=None):
         from IPython.display import display
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         self._exp_ds._wid.components.outputDisplay.clear_output()
         with self._exp_ds._wid.components.outputDisplay:
             display(ModuleDB.colorPrint("html", self._tree_dic[x].extra_info.value))
 
     def _folder_click(self, x, model=None):
-        from ModuleDB import ModuleDB
+        from useful.ModuleDB import ModuleDB
         self._exp_ds._wid.components.outputDisplay.clear_output()
         with self._exp_ds._wid.components.outputDisplay:
             if x in self._tree_dic:
@@ -175,7 +175,7 @@ class StatusLoggerParser(IParser):
         self._nte = nte
     def sort(self, res):
         """ele = '<font color="#4c0099"><span style="font-size: 14px">Saturday,<br>02.04.2022</span></font>'"""
-        from RegexDB import RegexDB, NameDicExp
+        from useful.RegexDB import RegexDB, NameDicExp
         data = lambda x: RegexDB.group_name_search(NameDicExp(".*?",'date', "\d+\.\d+\.\d+", ".*"), x)
         return sorted(res, key=lambda x:list(map(int, list(data(list(x.keys())[0]).values())[0].split(".")[::-1])))
     def set_file_path(self, path:str):

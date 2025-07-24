@@ -1,8 +1,8 @@
 from datetime import timedelta, datetime
-from PickleCRUDDB import PickleCRUD
-from ListDB import ListDB
-from SerializationDB import SerializationDB
-from Path import Path
+from useful.PickleCRUDDB import PickleCRUD
+from useful.ListDB import ListDB
+from useful.SerializationDB import SerializationDB
+from useful.Path import Path
 
 def downLoadFile(url, path):
     pass
@@ -61,13 +61,13 @@ class NumberOfWidgetsLogger:
         self.noteBookId = notebookId
 
     def log(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         (y,m,d), (hr, mi, ss) = TimeDB.today()
         pkl = NumberOfWidgetsLogger._read()
         pkl.add([self.noteBookId, f'{y}_{m}_{d} hour:{hr}'], len(self.anInstance.widgets))
 
     def _read():
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(NumberOfWidgetsLogger.storageID)
 
 class ForestTreeLogger:
@@ -76,22 +76,22 @@ class ForestTreeLogger:
         self.forestPath = self._path()
 
     def _path(self):
-        from Path import FrequentPaths
+        from useful.Path import FrequentPaths
         return FrequentPaths.pathAsDic()['forest']
 
     def fileNodes(self):
-        from Path import Path
+        from useful.Path import Path
         files = Path.filesWithExtension("drawio", self.forestPath)
         relLoc = {tuple(x.replace(self.forestPath, "").strip(os.sep).split(os.sep)): x for x in files}
         return relLoc
 
     def _read():
-        from StorageSystem import StorageSystem
+        from useful.StorageSystem import StorageSystem
         return StorageSystem.dataStructureForIndex(ForestTreeLogger.storageId)
 
     def log(self):
-        from TimeDB import TimeDB
-        from FileDatabase import File
+        from useful.TimeDB import TimeDB
+        from useful.FileDatabase import File
         day,_ = TimeDB.today()
         pkl = ForestTreeLogger._read()
         filesLoc = self.fileNodes()
@@ -109,10 +109,10 @@ class GenericLogger:
     def log(self):
         for func in self._funcs:
             func()
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         self._logged_times.append(TimeDB.today())
     def start_auto_log(self):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         if self._timer is None:
             self._timer = TimeDB.setTimer().regularlyUpdateTime(self._interval, self.log)
     
@@ -128,5 +128,5 @@ class GenericLogger:
         """func is without parameters"""
         self._funcs.append(func)
     def code_logger():
-        from jupyterDB import jupyterDB
+        from useful.jupyterDB import jupyterDB
         jupyterDB.codeDumper().summarize(jupyterDB._params['_ih'])

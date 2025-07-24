@@ -1,6 +1,6 @@
-from SerializationDB import SerializationDB 
-from LibsDB import LibsDB
-from Database import Database
+from useful.SerializationDB import SerializationDB 
+from useful.LibsDB import LibsDB
+from useful.Database import Database
 
 class UrlDB:
     def learning(word = None):
@@ -13,7 +13,7 @@ class UrlDB:
         return SerializationDB.readPickle(LibsDB.picklePath('urlDB.pkl'))[key]
     
     def db(word = None):
-        from StaticDisplayerManager import StaticDisplayerManager
+        from ancient.StaticDisplayerManager import StaticDisplayerManager
         k = SerializationDB.readPickle(LibsDB.picklePath('urlDB.pkl'))
         p = {}
         for key in k:
@@ -28,7 +28,7 @@ class UrlDB:
       
     def urlOps():
         from ancient.AIAlgoDB import AIAlgoDB
-        from ListDB import ListDB
+        from useful.ListDB import ListDB
         class TempUrl:
             content = SerializationDB.readPickle(LibsDB.picklePath('urlDB.pkl'))
             def getCategories(self):

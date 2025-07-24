@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import json, os
-from FileDatabase import File
+from useful.FileDatabase import File
 import ipywidgets as widgets
 from modules.Explorer.personalizedWidgets import GenerateNRowsBox
 from timeline.t2023.tlcap.app_deploy import AppDeployment
@@ -135,7 +135,7 @@ class Main:
         vea.set_file(file)
         return vea.get_components()
     def get_ui(path="json"):
-        from TimeDB import TimeDB
+        from useful.TimeDB import TimeDB
         uic = UICompSearcherController()
         uic.set_model(FilesModel(path))
         view =TLCapUIComponentsSearchView()
@@ -146,7 +146,7 @@ class Main:
         return uic
 class FilesModel:
     def __init__(self, path):
-        from Path import Path
+        from useful.Path import Path
         self._path = path
         self._files = list(map(lambda x: (os.path.basename(x),x),Path.filesWithExtension("json",self._path)))
 class TLCapUIComponentsSearchView:

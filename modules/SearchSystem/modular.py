@@ -47,7 +47,7 @@ class ButtonMaker(IButtonMaker):
         self._info = btn_info
     def get(self):
         if self._btn is None:
-            from WidgetsDB import WidgetsDB
+            from useful.WidgetsDB import WidgetsDB
             name = self._info.get_button_name()
             key = self._info.get_btn_key()
             tooltip = self._info.get_tool_tip()
@@ -68,7 +68,7 @@ class AllDisplayer(INumberOfDisplayer):
     def __init__(self):
         self.set_ncols(6)
     def get_layout(self):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         import ipywidgets as widgets
         output = WidgetsDB.searchEngine().resultWidget()
         output.searchRes.clear_output()
@@ -178,7 +178,7 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
         self.set_layout(gnrb)
 
     def set_limit(self, val):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         self._limit = val
         self._buttons.clear()
         for i in range(self._limit):
@@ -218,7 +218,7 @@ class DisplayNElement(IRWidget, INumberOfDisplayer):
         return self.get()
 class JupyterResultDisplayer(IResultDisplayer):
     def __init__(self):
-        from WidgetsDB import WidgetsDB
+        from useful.WidgetsDB import WidgetsDB
         self._results = None
         self._area = WidgetsDB.searchEngine().resultWidget()
         self.set_displayer_way(AllDisplayer())
