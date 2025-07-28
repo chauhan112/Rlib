@@ -1,7 +1,22 @@
 import logging
 from datetime import datetime
+import inspect
+
 class NameSpace:
-    pass
+    def __str__(self):
+        props = []
+        funcs = []
+        for l in self.__dict__:
+            if inspect.isfunction(self.__dict__[l]):
+                funcs.append(l)
+            else:
+                props.append(l)
+        
+        return "\n".join([
+            "funcs : " + " ".join(funcs), "attrs : " + " ".join(props),
+        ])
+    def __repr__(self):
+        return self.__str__()
 class BasicController:
     def __init__(self) -> None:
         self.controllers = NameSpace()

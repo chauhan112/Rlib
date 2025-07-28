@@ -1,6 +1,18 @@
 #%%
-from timeline.t2025.July.backendAPIForLocalTools.mainCode import get_app
-app = get_app()
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+from useful.jupyterDB import jupyterDB
+jupyterDB._params = globals()
+from timeline.t2025.Jan.newrlib import NewRlibItTools
+from basic import Main as ObjMaker
+
+rlib = ObjMaker.namespace()
+rlib.kvstools = NewRlibItTools()
+rlib.kvstools.handlers.set_up()
+rlib.kvs = rlib.kvstools.process.kvs
+rlib.itLayout = rlib.kvs.views.container.outputs.layout
+
+#%%
+rlib.itLayout
+# %%
+from useful.CSS import Main as CSSMain
+CSSMain.loadInCssComponent()
+# %%

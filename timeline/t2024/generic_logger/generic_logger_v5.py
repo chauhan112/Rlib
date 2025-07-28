@@ -76,9 +76,7 @@ def formMkaer():
     fg2.process.viewGenerator._creator_map[SupportedTypes.MultipleSelect.name] = lambda **x: NewListComponent(**x)
     return fg2
 def gl_ke(filename):
-    import os
     from timeline.t2024.generic_logger.generic_loggerV4 import Main
-    from useful.LibsDB import LibsDB
     cnt = Main.generic_logger(filename)
     cnt.process.loggerDataView.handlers.formMaker = formMkaer
     cnt.process.container.views.container.outputs.layout
