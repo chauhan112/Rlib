@@ -634,6 +634,11 @@ def OperationManager():
                 s.handlers.delete(loc)
         s.handlers.opsSelected(1) 
         s.handlers.refresh_keys()
+    def _get_prev_dir_list():
+        if not s.process.prev_funcs.dirListIsSelected:
+            s.process.prev_funcs.dirListIsSelected = True
+            s.process.prev_funcs.dirList = s.process.parent.process.model.dirList
+        return s.process.prev_funcs.dirList
     def dirList():
         results = s.process.prev_funcs.dirList()
         newResults = list(filter(lambda x: (x[0], x[1][1]) not in s.process.selected_keys, results))
@@ -643,7 +648,7 @@ def OperationManager():
         s.process.parent.process.opsComp.views.opsType.outputs.layout.options = list(opt) + ["cut", "copy", "paste"]
         s.process.prev_funcs.opsSelected = s.process.parent.handlers.opsChangedV2
         s.process.parent.process.opsComp.views.opsType.handlers.handle = s.handlers.opsSelected
-        s.process.prev_funcs.dirList = s.process.parent.process.model.dirList
+        s.process.prev_funcs.dirListIsSelected = False
         s.process.prev_funcs.render_and_update_ops_comp = s.process.parent.handlers.render_and_update_ops_comp
         s.process.parent.handlers.render_and_update_ops_comp = s.handlers.render_and_update_ops_comp
     def render_and_update_ops_comp():
@@ -689,10 +694,11 @@ def OperationManager():
             if s.process.prev_ops in cutCopyList:
                 s.handlers.refresh_keys()
         cutCopyList = ["cut", "copy", "paste"]
+        
         if ops in cutCopyList:
             s.process.parent.process.model.dirList = s.handlers.dirList
         else:
-            s.process.parent.process.model.dirList = s.process.prev_funcs.dirList
+            s.process.parent.process.model.dirList = s.handlers._get_prev_dir_list()
         s.process.prev_ops = ops
     def refresh_keys():
         s.process.parent.process.opsComp.handlers.clearFields()

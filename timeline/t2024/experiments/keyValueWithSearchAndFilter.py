@@ -192,7 +192,7 @@ def KeyValueWithSearchAndSort():
             s.process.searchComp.views.selected.hide()
         return res
     def getSelectedResults(res, infos):
-        if type(infos) == list:
+        if isinstance(infos, list):
             nress = res
             for ele in infos:
                 nress = s.handlers.search_for_setting(ele, nress)
