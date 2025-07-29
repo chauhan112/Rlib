@@ -3,7 +3,14 @@ from pydantic import BaseModel
 from .ExposedCommands import Controller
 app = FastAPI()
 ctrl = Controller()
-
+# from fastapi.middleware.cors import CORSMiddleware
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 class Command(BaseModel):
     name: str
     params: list | None = None
