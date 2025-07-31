@@ -640,7 +640,7 @@ def OperationManager():
             s.process.prev_funcs.dirList = s.process.parent.process.model.dirList
         return s.process.prev_funcs.dirList
     def dirList():
-        results = s.handlers.get_prev_dir_list()()
+        results = s.handlers._get_prev_dir_list()()
         newResults = list(filter(lambda x: (x[0], x[1][1]) not in s.process.selected_keys, results))
         return newResults
     def set_up():
