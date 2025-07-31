@@ -967,6 +967,7 @@ def MetaKeyValuePair():
         vals = s.process.model._model._dic
         s.process.parent.process.keyValueModel.process.tools.handlers.write_meta(s.process.parent.process.current_location, vals, True)
         s.handlers.cancelled(w)
+        s.process.parent.handlers.render_and_update_ops_comp()
     def refreshItInBetween(w):
         s.process.kvsForMeta.views.outputArea.outputs.layout.clear_output()
         if not s.process.kvsForMeta.views.metaOpsCheckbox.outputs.layout.value:

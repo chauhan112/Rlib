@@ -1,3 +1,7 @@
+#%%
+import sys 
+sys.path.insert(0,"../../../..")
+
 # %%
 from useful.jupyterDB import jupyterDB
 jupyterDB._params = globals()
@@ -10,3 +14,4 @@ from useful.LibsDB import LibsDB
 filename = os.sep.join([LibsDB.cloudPath(), 'timeline', '2024', '10_Oct', "abc.sqlite"])
 gl = GenericLoggerV6(filename)
 gl.views.container.outputs.layout
+# %%
