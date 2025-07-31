@@ -694,11 +694,10 @@ def OperationManager():
             if s.process.prev_ops in cutCopyList:
                 s.handlers.refresh_keys()
         cutCopyList = ["cut", "copy", "paste"]
-        
+        s.process.parent.process.model.dirList = s.handlers._get_prev_dir_list()
         if ops in cutCopyList:
             s.process.parent.process.model.dirList = s.handlers.dirList
-        else:
-            s.process.parent.process.model.dirList = s.handlers._get_prev_dir_list()
+
         s.process.prev_ops = ops
     def refresh_keys():
         s.process.parent.process.opsComp.handlers.clearFields()
