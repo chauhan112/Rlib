@@ -128,17 +128,8 @@ class Mutation:
 
     @strawberry.mutation
     def add_link(self, link_input: AddUrlLinkInput) -> UrlLinkType:
-        print("trying to create a new link...", link_input)
-        from useful.FileDatabase import File
-        import json
-        File.overWrite("test.txt", json.dumps(link_input))
-        
         with db.connection_context():
-            new_link = UrlLink.create(
-                url=link_input.url,
-                title=link_input.title,
-                collection_id=link_input.collectionId
-            )
+            new_link = UrlLink.create(url=link_input.url, title=link_input.title, collection_id=link_input.collectionId)
             return UrlLinkType.from_instance(new_link)
 
     @strawberry.mutation
