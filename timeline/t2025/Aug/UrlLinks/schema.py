@@ -166,11 +166,13 @@ class Mutation:
             except UrlLink.DoesNotExist:
                 return False
 
-def get_app():
+def get_graphql_app():
     schema = strawberry.Schema(query=Query, mutation=Mutation)
     graphql_app = GraphQLRouter(schema)
 
+    return graphql_app
+def get_app():
     app = FastAPI()
-    app.include_router(graphql_app, prefix="/graphql")
+    app.include_router(get_graphql_app(), prefix="/graphql")
     # uvicorn main:app --reload
     return app

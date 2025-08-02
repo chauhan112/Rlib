@@ -50,7 +50,6 @@ def InstanceGetter():
         res = list(map(lambda x: s.process.sc.process.values[x], res))
         return res
     def btnClicked(key):
-        
         jupyterDB._params["cnt"] = s.process.data[key]
         with s.process.srk.views.outArea.outputs.layout:
             display("assigned to variable cnt")

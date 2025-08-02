@@ -1,5 +1,5 @@
 
-from .....useful.LibsDB import LibsDB
+from useful.LibsDB import LibsDB
 import os
 from peewee import (
     SqliteDatabase,
