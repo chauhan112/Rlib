@@ -17,8 +17,20 @@ class UrlLinkType:
     id: int
     url: str
     title: str
+    collection_id: int
     created_on: datetime
     modified_on: datetime
+
+    @classmethod
+    def from_instance(cls, model: UrlLink):
+        return cls(
+            id=model.id,
+            url=model.url,
+            title=model.title,
+            collection_id=model.collection_id,
+            created_on=model.created_on.isoformat(),
+            modified_on=model.modified_on.isoformat()
+        )
 
 @strawberry.type
 class UrlsCollectionType:
@@ -30,7 +42,17 @@ class UrlsCollectionType:
 
     @strawberry.field
     def links(self) -> List[UrlLinkType]:
-        return [UrlLinkType(id=link.id, url=link.url, title=link.title, created_on=link.created_on, modified_on=link.modified_on) for link in UrlLink.select().where(UrlLink.collection_id == self.id)]
+        return [UrlLinkType.from_instance(link) for link in UrlLink.select().where(UrlLink.collection_id == self.id)]
+
+    @classmethod
+    def from_instance(cls, model: UrlsCollection):
+        return cls(
+            id=model.id,
+            name=model.name,
+            description=model.description,
+            created_on=model.created_on.isoformat(),
+            modified_on=model.modified_on.isoformat()
+        )
 
 # --- Input Types for Mutations ---
 
@@ -43,7 +65,7 @@ class AddUrlsCollectionInput:
 class AddUrlLinkInput:
     url: str
     title: str
-    collection_id: Optional[int] = None
+    collectionId: int
 
 @strawberry.input
 class UpdateUrlsCollectionInput:
@@ -56,7 +78,7 @@ class UpdateUrlLinkInput:
     id: int
     url: Optional[str] = None
     title: Optional[str] = None
-    collection_id: Optional[int] = None
+    collectionId: Optional[int] = None
 
 # --- Queries ---
 
@@ -65,27 +87,27 @@ class Query:
     @strawberry.field
     def all_collections(self) -> List[UrlsCollectionType]:
         with db.connection_context():
-            return [UrlsCollectionType(id=col.id, name=col.name, description=col.description, created_on=col.created_on, modified_on=col.modified_on) for col in UrlsCollection.select()]
+            return [UrlsCollectionType.from_instance(col) for col in UrlsCollection.select()]
 
     @strawberry.field
     def collection_by_id(self, id: int) -> Optional[UrlsCollectionType]:
         with db.connection_context():
             collection = UrlsCollection.get_or_none(UrlsCollection.id == id)
             if collection:
-                return UrlsCollectionType(id=collection.id, name=collection.name, description=collection.description, created_on=collection.created_on, modified_on=collection.modified_on)
+                return UrlsCollectionType.from_instance(collection)
             return None
 
     @strawberry.field
     def all_links(self) -> List[UrlLinkType]:
         with db.connection_context():
-            return [UrlLinkType(id=link.id, url=link.url, title=link.title, created_on=link.created_on, modified_on=link.modified_on) for link in UrlLink.select()]
+            return [UrlLinkType.from_instance(link) for link in UrlLink.select()]
 
     @strawberry.field
     def link_by_id(self, id: int) -> Optional[UrlLinkType]:
         with db.connection_context():
             link = UrlLink.get_or_none(UrlLink.id == id)
             if link:
-                return UrlLinkType(id=link.id, url=link.url, title=link.title, created_on=link.created_on, modified_on=link.modified_on)
+                return UrlLinkType.from_instance(link)
             return None
 
 # --- Mutations ---
@@ -100,19 +122,24 @@ class Mutation:
                     name=collection_input.name,
                     description=collection_input.description
                 )
-                return UrlsCollectionType(id=new_collection.id, name=new_collection.name, description=new_collection.description, created_on=new_collection.created_on, modified_on=new_collection.modified_on)
+                return UrlsCollectionType.from_instance(new_collection)
             except IntegrityError:
                 raise Exception("A collection with this name already exists.")
 
     @strawberry.mutation
     def add_link(self, link_input: AddUrlLinkInput) -> UrlLinkType:
+        print("trying to create a new link...", link_input)
+        from useful.FileDatabase import File
+        import json
+        File.overWrite("test.txt", json.dumps(link_input))
+        
         with db.connection_context():
             new_link = UrlLink.create(
                 url=link_input.url,
                 title=link_input.title,
-                collection_id=link_input.collection_id
+                collection_id=link_input.collectionId
             )
-            return UrlLinkType(id=new_link.id, url=new_link.url, title=new_link.title, created_on=new_link.created_on, modified_on=new_link.modified_on)
+            return UrlLinkType.from_instance(new_link)
 
     @strawberry.mutation
     def update_collection(self, collection_input: UpdateUrlsCollectionInput) -> Optional[UrlsCollectionType]:
@@ -125,7 +152,7 @@ class Mutation:
                     collection.description = collection_input.description
                 collection.modified_on = datetime.now()
                 collection.save()
-                return UrlsCollectionType(id=collection.id, name=collection.name, description=collection.description, created_on=collection.created_on, modified_on=collection.modified_on)
+                return UrlsCollectionType.from_instance(collection)
             except UrlsCollection.DoesNotExist:
                 return None
 
@@ -138,11 +165,11 @@ class Mutation:
                     link.url = link_input.url
                 if link_input.title is not None:
                     link.title = link_input.title
-                if link_input.collection_id is not None:
-                    link.collection_id = link_input.collection_id
+                if link_input.collectionId is not None:
+                    link.collection_id = link_input.collectionId
                 link.modified_on = datetime.now()
                 link.save()
-                return UrlLinkType(id=link.id, url=link.url, title=link.title, created_on=link.created_on, modified_on=link.modified_on)
+                return UrlLinkType.from_instance(link)
             except UrlLink.DoesNotExist:
                 return None
 
