@@ -1,4 +1,4 @@
-from peewee import TextField, CharField, DateTimeField
+from peewee import TextField, CharField, DateTimeField, ForeignKeyField
 from datetime import datetime
 from ..cvMotivationMaker.db import db, BaseModel
 
@@ -13,6 +13,7 @@ class UrlLink(BaseModel):
     modified_on = DateTimeField(default=datetime.now)
     url = CharField(null=True)
     title = CharField(null=True)
+    collection_id = ForeignKeyField(UrlsCollection, backref='cvs')
 
 def create_tables_for_url_links():
     with db:
