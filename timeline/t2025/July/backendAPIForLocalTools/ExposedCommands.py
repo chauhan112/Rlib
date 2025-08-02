@@ -41,7 +41,6 @@ def Controller():
         for cmd in cmds:
             res = run(cmd, res)
         return res
-
     commands = {
         "folder": FolderCommand(),
         "filesInfo": FilesInfo(),
@@ -71,10 +70,8 @@ def Controller():
             else:
                 return None
         return resCommand
-            
     def runCommand(cmd, *args):
         cmdF = s.handlers.get_command(cmd)
         return cmdF(*args)
-
     s = ObjMaker.variablesAndFunction(locals())
     return s

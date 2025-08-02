@@ -1,6 +1,6 @@
 from peewee import TextField, CharField, DateTimeField
 from datetime import datetime
-from ...Aug.cvMotivationMaker.db import BaseModel, db
+from ..cvMotivationMaker.db import db, BaseModel
 
 class UrlsCollection(BaseModel):
     created_on = DateTimeField(default=datetime.now)
@@ -17,3 +17,5 @@ class UrlLink(BaseModel):
 def create_tables_for_url_links():
     with db:
         db.create_tables([UrlsCollection, UrlLink], safe=True)
+
+
