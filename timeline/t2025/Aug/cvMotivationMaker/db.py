@@ -1,5 +1,5 @@
 
-from ....useful.LibsDB import LibsDB
+from .....useful.LibsDB import LibsDB
 import os
 from peewee import (
     SqliteDatabase,
@@ -52,7 +52,7 @@ class MotivationCV(BaseModel):
     all_content = CharField(null=True)
     job = ForeignKeyField(Job, backref='cvs', null=True)
 
-def create_tables():
+def create_tables_for_job_cv():
     db.connect()
     db.create_tables([Job, JobCV, MotivationCV], safe=True)
     db.close()
@@ -63,7 +63,6 @@ def connectionWrapper(func):
             result = func(*args, **kwargs)
         return result
     return wrapper
-
 @connectionWrapper
 def addData(tableName:str, data):
     table = eval(tableName)
