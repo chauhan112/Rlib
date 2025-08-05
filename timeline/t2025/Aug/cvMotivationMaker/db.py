@@ -31,32 +31,36 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+def currentISO():
+    return datetime.now().isoformat()
+
 class Job(BaseModel):
-    created_on = DateTimeField(default=datetime.now)
-    modified_on = DateTimeField(default=datetime.now)
-    description = CharField(null=True)
-    summary = CharField(null=True)
+    created_on = DateTimeField(default=currentISO)
+    modified_on = DateTimeField(default=currentISO)
+    title = CharField(null=True)
+    description = TextField(null=True)
+    summary = TextField(null=True)
     link = CharField(null=True)
     more_info = JSONField(null=True)
 
 class JobCV(BaseModel):
-    created_on = DateTimeField(default=datetime.now)
-    modified_on = DateTimeField(default=datetime.now)
-    content = CharField(null=True)
-    all_content = CharField(null=True)
+    created_on = DateTimeField(default=currentISO)
+    modified_on = DateTimeField(default=currentISO)
+    content = TextField(null=True)
+    all_content = TextField(null=True)
     job = ForeignKeyField(Job, backref='cvs', null=True)
 class MotivationCV(BaseModel):
-    created_on = DateTimeField(default=datetime.now)
-    modified_on = DateTimeField(default=datetime.now)
-    content = CharField(null=True)
-    all_content = CharField(null=True)
+    created_on = DateTimeField(default=currentISO)
+    modified_on = DateTimeField(default=currentISO)
+    content = TextField(null=True)
+    all_content = TextField(null=True)
     job = ForeignKeyField(Job, backref='cvs', null=True)
-
-def create_tables_for_job_cv():
+def create_tables_for_job_cv(deletePrevious = False):
     db.connect()
+    if deletePrevious:
+        db.drop_tables([Job, JobCV, MotivationCV], safe=True)
     db.create_tables([Job, JobCV, MotivationCV], safe=True)
     db.close()
-
 def connectionWrapper(func):
     def wrapper(*args, **kwargs):
         with db:
