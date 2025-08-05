@@ -63,6 +63,9 @@ def connectionWrapper(func):
             result = func(*args, **kwargs)
         return result
     return wrapper
+def selectResToList(res):
+    return [j.__data__ for j in res]
+
 @connectionWrapper
 def addData(tableName:str, data):
     table = eval(tableName)
@@ -83,19 +86,19 @@ def updateData(tableName:str, id:int, data):
 def readAsDic(tableName:str, id:int):
     table = eval(tableName)
     data = table.select().where(table.id == id).get()
-    return data
+    return data.__data__
 @connectionWrapper
 def readAllWithPagination(tableName:str, page:int, perPage:int):
     table = eval(tableName)
     data = table.select().paginate(page, perPage)
-    return data
+    return selectResToList(data)
 @connectionWrapper
 def readWhere(tableName:str, data):
     table = eval(tableName)
     data = table.select().where(**data)
-    return data
+    return selectResToList(data)
 @connectionWrapper
 def readAll(tableName:str):
     table = eval(tableName)
     data = table.select()
-    return data
+    return selectResToList(data)
