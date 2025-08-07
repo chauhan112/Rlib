@@ -1,8 +1,10 @@
+from .CVMotivationMaker import generateCV, generateSummary, generateMotivation
 from fastapi import FastAPI
 from pydantic import BaseModel
 from .db import addData, deleteDataWithId, deleteDataWhere, readAllWithPagination, \
     readAsDic, readWhere, updateData, readAll
 app = FastAPI()
+import inspect
 
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
@@ -26,6 +28,16 @@ def run_cmd(command: Command):
     if params is None:
         params = []
     return eval(command.name)(*params)
+
+@app.post("/async/run/")
+async def run_cmd(command: Command):
+    params = command.params
+    if inspect.iscoroutinefunction(eval(command.name)):
+        return await eval(command.name)(*params)
+    else:
+        return eval(command.name)(*params)
+
+    
 
 def get_app():
     return app
