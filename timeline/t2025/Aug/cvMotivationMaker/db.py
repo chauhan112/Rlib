@@ -16,7 +16,7 @@ import json
 dbPath = os.path.join(LibsDB.cloudPath(), 'Global', 'code', 'libs', 'resource', 'dbs', 'timeline', '2025', 'general.sqlite')
 if not os.path.exists(dbPath):
     os.makedirs(os.path.dirname(dbPath), exist_ok=True)
-db = SqliteDatabase(dbPath)
+db = SqliteDatabase(dbPath, pragmas={'foreign_keys': 1})
 
 
 class JSONField(TextField):
@@ -48,7 +48,7 @@ class JobCV(BaseModel):
     modified_on = DateTimeField(default=currentISO)
     content = TextField(null=True) # cv content only
     all_content = TextField(null=True) # cv content + think tag
-    job = ForeignKeyField(Job, backref='cvs', null=True)
+    job = ForeignKeyField(Job, backref='cvs')
 class MotivationCV(BaseModel):
     created_on = DateTimeField(default=currentISO)
     modified_on = DateTimeField(default=currentISO)
@@ -69,40 +69,50 @@ def connectionWrapper(func):
     return wrapper
 def selectResToList(res):
     return [j.__data__ for j in res]
+def get_table(name:str):
+    names = {
+        'Job':Job,
+        'JobCV':JobCV,
+        'MotivationCV':MotivationCV
+    }
+    return names[name]
 
 @connectionWrapper
 def addData(tableName:str, data):
-    table = eval(tableName)
+    table = get_table(tableName)
     table.create(**data)
 @connectionWrapper
 def deleteDataWhere(tableName:str, data):
-    table = eval(tableName)
+    table = get_table(tableName)
     table.delete().where(**data).execute()
 @connectionWrapper
 def deleteDataWithId(tableName:str, id:int):
-    table = eval(tableName)
+    table = get_table(tableName)
     table.delete().where(table.id == id).execute()
 @connectionWrapper
 def updateData(tableName:str, id:int, data):
-    table = eval(tableName)
+    table = get_table(tableName)
     table.update(**data).where(table.id == id).execute()
 @connectionWrapper
 def readAsDic(tableName:str, id:int):
-    table = eval(tableName)
+    table = get_table(tableName)
     data = table.select().where(table.id == id).get()
     return data.__data__
 @connectionWrapper
 def readAllWithPagination(tableName:str, page:int, perPage:int):
-    table = eval(tableName)
+    table = get_table(tableName)
     data = table.select().paginate(page, perPage)
     return selectResToList(data)
 @connectionWrapper
 def readWhere(tableName:str, data):
-    table = eval(tableName)
-    data = table.select().where(**data)
+    table = get_table(tableName)
+    conditions = []
+    for k, v in data.items():
+        conditions.append(getattr(table, k) == v)
+    data = table.select().where(*conditions)
     return selectResToList(data)
 @connectionWrapper
 def readAll(tableName:str):
-    table = eval(tableName)
+    table = get_table(tableName)
     data = table.select()
     return selectResToList(data)
