@@ -46,8 +46,8 @@ class Job(BaseModel):
 class JobCV(BaseModel):
     created_on = DateTimeField(default=currentISO)
     modified_on = DateTimeField(default=currentISO)
-    content = TextField(null=True)
-    all_content = TextField(null=True)
+    content = TextField(null=True) # cv content only
+    all_content = TextField(null=True) # cv content + think tag
     job = ForeignKeyField(Job, backref='cvs', null=True)
 class MotivationCV(BaseModel):
     created_on = DateTimeField(default=currentISO)
