@@ -3,9 +3,6 @@ from fastapi import FastAPI
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 
-# schema.py
-import strawberry
-from typing import List, Optional
 from .models import UrlsCollection, UrlLink, db
 from datetime import datetime
 from peewee import IntegrityError
