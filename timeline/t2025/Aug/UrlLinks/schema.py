@@ -189,8 +189,18 @@ def get_graphql_app():
     graphql_app = GraphQLRouter(schema)
 
     return graphql_app
-def get_app():
+def get_app(allow_localhost=True):
+    from fastapi.middleware.cors import CORSMiddleware
+    
     app = FastAPI()
+    if allow_localhost:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
     app.include_router(get_graphql_app(), prefix="/graphql")
     # uvicorn main:app --reload
     return app
